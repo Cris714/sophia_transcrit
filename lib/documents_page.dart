@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'view_text_page.dart';
+import 'file_manager_s.dart';
+
 class DocumentsPage extends StatefulWidget {
   const DocumentsPage({super.key});
 
@@ -14,10 +17,10 @@ class _DocumentsPage extends State<DocumentsPage> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
+          const Row(
               children: [
                 IconButton(
                     onPressed: null,
@@ -32,7 +35,16 @@ class _DocumentsPage extends State<DocumentsPage> {
                 ),
               ]
           ),
-          Divider()
+          const Divider(),
+          ElevatedButton(
+              onPressed: () {
+                readDocument('test_transcription');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ViewText()),
+                );
+              },
+              child: const Text('(read)')),
         ],
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'synthesis_page.dart';
+import 'requests_manager.dart';
+import 'file_manager_s.dart';
 
 class TranscriptionsPage extends StatefulWidget {
   const TranscriptionsPage({super.key});
@@ -35,7 +37,14 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             ]
           ),
           const Divider(),
-          const SizedBox(height: 550),
+          const SizedBox(height: 400),
+          ElevatedButton(
+              onPressed: () async {
+                var content = await getTranscription();
+                writeDocument('test_transcription', content);
+              },
+              child: const Text('(temp)')
+          ),
           ElevatedButton(
               onPressed: () {
                   Navigator.push(
@@ -43,8 +52,8 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                     MaterialPageRoute(builder: (context) => const SynthesisPage()),
                   );
                 },
-              child: const Text('Process'))
-
+              child: const Text('Process')
+          )
         ],
       ),
     );
