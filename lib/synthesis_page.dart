@@ -76,7 +76,7 @@ class _SynthesisPage extends State<SynthesisPage> {
             const SizedBox(height: 380),
             ElevatedButton(
               onPressed: () async {
-                sendFile('test_transcription');
+                sendText('test_transcription');
                 var content = await getProcessedContent('test_transcription');
                 writeDocument('test_process', content);
                 // readTranscription();

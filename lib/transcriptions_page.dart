@@ -12,8 +12,6 @@ class TranscriptionsPage extends StatefulWidget {
 }
 
 class _TranscriptionsPage extends State<TranscriptionsPage> {
-  Future<void> computeFuture = Future.value();
-
   @override
   Widget build(BuildContext context) {
     return Container(

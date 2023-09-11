@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sophia_transcrit2/view_audio_page.dart';
 
 import 'file_manager_s.dart';
 
@@ -10,8 +11,6 @@ class GetAudioPage extends StatefulWidget {
 }
 
 class _GetAudioPage extends State<GetAudioPage> {
-  Future<void> computeFuture = Future.value();
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -44,21 +43,27 @@ class _GetAudioPage extends State<GetAudioPage> {
             padding: const EdgeInsets.only(top: 150),
             child: Column(
               children: [
-                FutureBuilder(
-                  future: computeFuture,
-                  builder: (context, snapshot) {
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(elevation: 8.0),
-                      onPressed: null,
-                      child: const Text('Start Recording'),
-                    );
-                  },
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(elevation: 8.0),
+                  onPressed: null,
+                  child: const Text('Start Recording'),
                 ),
                 ElevatedButton(
                 style: ElevatedButton.styleFrom(elevation: 8.0),
                 //onPressed: openFileManager(),
-                onPressed: () {
-                  pickFile();
+                onPressed: () async {
+                  var filename = await pickFile();
+                  if (filename != '') {
+                    if (context.mounted) {
+                      final args = Todo(filename);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ViewAudio(todo: args),
+                        ),
+                      );
+                    }
+                  }
                 },
                 child: const Text('Import Audio')
                 ),

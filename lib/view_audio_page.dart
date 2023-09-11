@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'requests_manager.dart';
 
-import 'file_manager_s.dart';
+class Todo {
+  final String filename;
 
-class ViewText extends StatefulWidget {
-  const ViewText({super.key});
-
-  @override
-  State<ViewText> createState() => _ViewText();
+  const Todo(this.filename);
 }
 
-class _ViewText extends State<ViewText> {
+
+class ViewAudio extends StatelessWidget {
+  const ViewAudio({super.key, required this.todo});
+  final Todo todo;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +31,7 @@ class _ViewText extends State<ViewText> {
                   const SizedBox(width: 20),
                   const Center(
                     child: Text(
-                        "test_transcription",
+                        "test_audio",
                         style: TextStyle(fontSize: 20)
                     ),
                   ),
@@ -39,15 +41,17 @@ class _ViewText extends State<ViewText> {
             Container(
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: FutureBuilder<String>(
-                future: readDocument('test_process'),
-                builder: (context, snapshot) {
-                  return Text(
-                      snapshot.data ?? "Loading...",
-                      style: const TextStyle(fontSize: 17)
-                  );
-                },
-              ),
+              child: Text(
+                todo.filename,
+                style: const TextStyle(fontSize: 17)
+              )
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(elevation: 8.0),
+              onPressed: () async {
+                sendAudio(todo.filename);
+              },
+              child: const Text('Transcribe'),
             ),
           ],
         ),
@@ -55,6 +59,4 @@ class _ViewText extends State<ViewText> {
     );
   }
 }
-
-
 
