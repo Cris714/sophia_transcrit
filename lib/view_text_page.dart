@@ -40,7 +40,7 @@ class _ViewText extends State<ViewText> {
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: FutureBuilder<String>(
-                future: readDocument('badromance'),
+                future: readDocument('badromance'), //Automatizar esto
                 builder: (context, snapshot) {
                   return Text(
                       snapshot.data ?? "Loading...",

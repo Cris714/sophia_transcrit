@@ -3,15 +3,17 @@ import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
+const address = 'http://172.17.55.62:8000';
+
 Future getTranscription(String query) async {
   http.Response response = await http.get(
-      Uri.parse('http://172.17.34.112:8000/transcript?File=$query'));
+      Uri.parse('$address/transcript?File=$query'));
   return response.body;
 }
 
 Future getProcessedContent(String query) async {
   http.Response response = await http.get(
-      Uri.parse('http://172.17.34.112:8000/process?File=$query'));
+      Uri.parse('$address/process?File=$query'));
   return response.body;
 }
 
@@ -23,7 +25,7 @@ Future<String> get _localPath async {
 
 sendText(String filename) async {
   http.MultipartRequest request = http.MultipartRequest('POST',
-      Uri.parse('http://172.17.34.112:8000/text'));
+      Uri.parse('$address/text'));
 
   final path = await _localPath;
 
@@ -42,7 +44,7 @@ sendText(String filename) async {
 
 sendAudio(String path) async {
   http.MultipartRequest request = http.MultipartRequest('POST',
-      Uri.parse('http://172.17.34.112:8000/audio'));
+      Uri.parse('$address/audio'));
 
   request.files.add(
     await http.MultipartFile.fromPath(

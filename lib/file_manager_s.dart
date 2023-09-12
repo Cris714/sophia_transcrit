@@ -47,6 +47,6 @@ Future<String> readDocument(String filename) async {
     return contents;
   } catch (e) {
     // If encountering an error, return 0
-    return 'Error';
+    return 'No se pudo leer el archivo';
   }
 }
