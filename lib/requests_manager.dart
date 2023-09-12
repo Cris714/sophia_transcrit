@@ -3,9 +3,9 @@ import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-Future getTranscription() async {
+Future getTranscription(String query) async {
   http.Response response = await http.get(
-      Uri.parse('http://172.17.34.112:8000/transcript'));
+      Uri.parse('http://172.17.34.112:8000/transcript?File=$query'));
   return response.body;
 }
 

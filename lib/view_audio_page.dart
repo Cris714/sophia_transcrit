@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+
 import 'requests_manager.dart';
+import 'file_manager_s.dart';
 
 class Todo {
-  final String filename;
+  final String path;
 
-  const Todo(this.filename);
+  const Todo(this.path);
 }
 
 
@@ -42,14 +44,21 @@ class ViewAudio extends StatelessWidget {
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: Text(
-                todo.filename,
+                todo.path,
                 style: const TextStyle(fontSize: 17)
               )
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(elevation: 8.0),
-              onPressed: () async {
-                sendAudio(todo.filename);
+              onPressed: () {
+                String filename = todo.path.split('/').last.split('.').first;
+                () async {
+                  await sendAudio(todo.path);
+                  var content = await getTranscription(filename);
+                  writeDocument(filename, content);
+                }();
+                Navigator.pop(context);
+
               },
               child: const Text('Transcribe'),
             ),
