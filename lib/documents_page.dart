@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'view_text_page.dart';
-import 'file_manager_s.dart';
 
 class DocumentsPage extends StatefulWidget {
   const DocumentsPage({super.key});
@@ -38,10 +37,9 @@ class _DocumentsPage extends State<DocumentsPage> {
           const Divider(),
           ElevatedButton(
               onPressed: () {
-                readDocument('test_transcription');
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ViewText()),
+                  MaterialPageRoute(builder: (context) => const ViewText(filename : 'badromance.txt')),
                 );
               },
               child: const Text('(read)')),

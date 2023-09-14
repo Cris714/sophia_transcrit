@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'file_manager_s.dart';
 
-class ViewText extends StatefulWidget {
-  const ViewText({super.key});
 
-  @override
-  State<ViewText> createState() => _ViewText();
-}
+class ViewText extends StatelessWidget {
+  final String filename;
+  const ViewText({super.key, required this.filename});
 
-class _ViewText extends State<ViewText> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,13 +21,13 @@ class _ViewText extends State<ViewText> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(Icons.home, size: 35)
+                      icon: const Icon(Icons.arrow_back, size: 35)
                   ),
                   const SizedBox(width: 20),
-                  const Center(
+                  Center(
                     child: Text(
-                        "test_transcription",
-                        style: TextStyle(fontSize: 20)
+                        filename,
+                        style: const TextStyle(fontSize: 20)
                     ),
                   ),
                 ]
@@ -40,7 +37,7 @@ class _ViewText extends State<ViewText> {
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: FutureBuilder<String>(
-                future: readDocument('badromance'), //Automatizar esto
+                future: readDocument(filename),
                 builder: (context, snapshot) {
                   return Text(
                       snapshot.data ?? "Loading...",

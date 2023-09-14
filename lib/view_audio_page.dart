@@ -58,8 +58,6 @@ class ViewAudio extends StatelessWidget {
                   writeDocument(filename, content);
                 }();
                 Navigator.pop(context);
-                // Navigator.popAndPushNamed(context, '/transcription');
-
               },
               child: const Text('Transcribe'),
             ),

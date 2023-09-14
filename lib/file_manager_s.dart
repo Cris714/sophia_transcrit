@@ -39,7 +39,7 @@ Future<File> writeDocument(String filename, String content) async {
 Future<String> readDocument(String filename) async {
   try {
     final path = await _localPath;
-    final file = File('$path/$filename.txt');
+    final file = File('$path/$filename');
 
     // Read the file
     final contents = await file.readAsString();
@@ -48,5 +48,19 @@ Future<String> readDocument(String filename) async {
   } catch (e) {
     // If encountering an error, return 0
     return 'No se pudo leer el archivo';
+  }
+}
+
+Future<int> deleteFile(String filename) async {
+  try {
+    final path = await _localPath;
+    final file = File('$path/$filename');
+
+    await file.delete();
+    print("aaaa");
+    return 1;
+  } catch (e) {
+    // If encountering an error, return 0
+    return 0;
   }
 }
