@@ -23,12 +23,25 @@ class ViewText extends StatelessWidget {
                       },
                       icon: const Icon(Icons.arrow_back, size: 35)
                   ),
-                  const SizedBox(width: 20),
-                  Center(
-                    child: Text(
+                  Expanded( // Envuelve el Text con Expanded
+                    child: Center(
+                      child: Text(
                         filename,
-                        style: const TextStyle(fontSize: 20)
+                        style: const TextStyle(fontSize: 20),
+                      ),
                     ),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context); // cambiar esto
+                      },
+                      icon: const Icon(Icons.import_export, size: 35)
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context); // cambiar esto
+                      },
+                      icon: const Icon(Icons.share, size: 35)
                   ),
                 ]
             ),

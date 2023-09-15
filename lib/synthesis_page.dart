@@ -12,6 +12,8 @@ class SynthesisPage extends StatefulWidget {
 
 class _SynthesisPage extends State<SynthesisPage> {
   Future<void> computeFuture = Future.value();
+  bool keySelected = false;
+  bool sumSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,33 +46,41 @@ class _SynthesisPage extends State<SynthesisPage> {
               ),
             ),
             const SizedBox(height: 50),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   "Key words",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
                 ),
-                SizedBox(width: 30),
+                const SizedBox(width: 30),
                 Switch(
-                    value: true,
-                    onChanged: null
-                )
+                  value: keySelected,
+                  onChanged: (value) {
+                    setState(() {
+                      keySelected = value;
+                    });
+                  },
+                ),
               ]
             ),
             const SizedBox(height: 20),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                     "Summary",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
                 ),
                 SizedBox(width: 30),
                 Switch(
-                    value: true,
-                    onChanged: null
-                )
+                  value: sumSelected,
+                  onChanged: (value) {
+                    setState(() {
+                      sumSelected = value;
+                    });
+                  },
+                ),
               ]
             ),
             const SizedBox(height: 380),

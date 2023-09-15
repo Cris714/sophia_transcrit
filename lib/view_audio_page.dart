@@ -33,7 +33,7 @@ class ViewAudio extends StatelessWidget {
                   const SizedBox(width: 20),
                   const Center(
                     child: Text(
-                        "test_audio",
+                        "Recording info",
                         style: TextStyle(fontSize: 20)
                     ),
                   ),
@@ -47,6 +47,13 @@ class ViewAudio extends StatelessWidget {
                 todo.path,
                 style: const TextStyle(fontSize: 17)
               )
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(elevation: 8.0),
+              onPressed: () {
+                null;
+              },
+              child: const Text('Generate document'),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(elevation: 8.0),

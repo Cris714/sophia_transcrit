@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -7,8 +6,6 @@ import 'synthesis_page.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
 import 'delete_popup.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 
 class TranscriptionsPage extends StatefulWidget {
   const TranscriptionsPage({super.key});
@@ -18,21 +15,20 @@ class TranscriptionsPage extends StatefulWidget {
 }
 
 class _TranscriptionsPage extends State<TranscriptionsPage> {
-  List<File> fileList = [];
+  List<String> fileList = [];
 
-  _TranscriptionsPage() {
+  @override
+  void initState() {
+    super.initState();
     _getFilesInPath();
   }
 
   Future<void> _getFilesInPath() async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final dirPath = directory.path;
-
-      final files = Directory(dirPath).listSync();
+      final filenames = await getFilesInPath();
 
       setState(() {
-        fileList = files.whereType<File>().toList();
+        fileList = filenames;
       });
     } catch (e) {
       print("Error al leer archivos: $e");
@@ -68,37 +64,30 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             ]
           ),
           const Divider(),
-          // const SizedBox(height: 400),
-          /*ElevatedButton(
-              onPressed: () async {
-                var content = await getTranscription();
-                writeDocument('test_transcription', content);
-              },
-              child: const Text('(temp)')
-          ),*/
 
           // Lista de archivos transcritos
           Expanded(
-            child: ListView.builder(
+            child: ListView.separated(
               itemCount: fileList.length,
+              separatorBuilder: (context, index) => Divider(),
               itemBuilder: (context, index) {
-                final file = fileList[index];
-                final filename = path.basename(file.path);
+                final filename = fileList[index];
                 return Column(
                   children: <Widget>[
                     ListTile(
                       leading: const Icon(Icons.file_present_rounded),
                       title: Text(filename),
+                      // Botón de eliminación
                       trailing: IconButton(
-                        icon: Icon(Icons.delete),
+                        icon: const Icon(Icons.delete),
                         onPressed: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return DeleteConfirmationDialog(
                                 onConfirm: () {
-                                  deleteFile(filename);
-                                  _removeItem(index);
+                                  deleteFile(filename); //Elimina un archivo de la carpeta
+                                  _removeItem(index); // Actualiza la lista eliminándolo de la misma
                                 },
                               );
                             },
@@ -106,14 +95,13 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                         },
                       ),
                       onTap: () {
-                        // Navegar a la nueva página cuando se presiona un elemento
+                        // Navegar al visualizador de archivos cuando se presiona un elemento
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => ViewText(filename: filename)),
                         );
                       },
                     ),
-                    const Divider(),
                   ],
                 );
               },

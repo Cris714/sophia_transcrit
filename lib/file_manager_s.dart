@@ -9,7 +9,7 @@ Future<String> pickFile() async {
   // you can also toggle "allowMultiple" true or false depending on your need
   final result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
-    allowMultiple: false,
+    allowMultiple: true,
     allowedExtensions: ['mp3']
   );
 
@@ -57,10 +57,28 @@ Future<int> deleteFile(String filename) async {
     final file = File('$path/$filename');
 
     await file.delete();
-    print("aaaa");
     return 1;
   } catch (e) {
-    // If encountering an error, return 0
     return 0;
+  }
+}
+
+Future<List<String>> getFilesInPath() async {
+  try {
+    final dirPath =  await _localPath;
+
+    final files = Directory(dirPath).listSync();
+
+    List<String> filenames = [];
+    for (var file in files) {
+      if (file is File) {
+        filenames.add(file.uri.pathSegments.last);
+      }
+    }
+
+    return filenames;
+  } catch (e) {
+    print("Error al leer archivos: $e");
+    return [];
   }
 }
