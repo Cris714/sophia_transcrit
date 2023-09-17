@@ -50,12 +50,13 @@ Future<String> readDocument(String folder, String filename) async {
   }
 }
 
-Future<int> deleteFile(String folder, String filename) async {
+Future<int> deleteFiles(String folder, List<String> filenames) async {
   try {
     final path = await _localPath;
-    final file = File('$path/$folder/$filename');
-
-    await file.delete();
+    for (var filename in filenames) {
+      final file = File('$path/$folder/$filename');
+      await file.delete();
+    }
     return 1;
   } catch (e) {
     return 0;

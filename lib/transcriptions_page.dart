@@ -4,7 +4,6 @@ import 'synthesis_page.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
 import 'delete_popup.dart';
-import 'dart:io';
 
 class ListItem {
   String text;
@@ -44,44 +43,79 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
     });
   }
 
-  void _removeItem(int index) {
-    setState(() {
-      fileObj.removeAt(index);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
               _showCheckboxes ?
-              IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _showCheckboxes = false;
-                      for (var f in fileObj) {
-                        f.checked = false;
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.arrow_back, size: 35)
-              ) :
-              const IconButton(
-                  onPressed: null,
-                  icon: Icon(Icons.logout, size: 35)
-              ),
-              const SizedBox(width: 20),
-              const Center(
-                child: Text(
-                    "My Transcriptions",
-                    style: TextStyle(fontSize: 20)
+              SizedBox(
+                width: MediaQuery.of(context).size.width-50,
+
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _showCheckboxes = false;
+                              for (var f in fileObj) {
+                                f.checked = false;
+                              }
+                            });
+                          },
+                          icon: const Icon(Icons.arrow_back, size: 35)
+                      ),
+                      Center(
+                        child: Text(
+                            'Selected ${fileObj.where((item) => item.checked).length} files',
+                            style: const TextStyle(fontSize: 20)
+                        ),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              List<ListItem> checkedItems = fileObj.where((item) => item.checked).toList();
+                              if(checkedItems.isNotEmpty){
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return DeleteConfirmationDialog(
+                                      onConfirm: () {
+                                        deleteFiles(transcriptFolder,checkedItems.map((file) => file.text).toList()); //Elimina un archivo de la carpeta
+                                        setState(() {
+                                          fileObj.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
+                                        });
+                                      },
+                                    );
+                                  },
+                                );
+                              }
+                            });
+                          },
+                          icon: const Icon(Icons.delete, size: 35)
+                      ),
+                    ]
                 ),
-              ),
+              )
+            : const Row(
+                children: [
+                  IconButton(
+                      onPressed: null,
+                      icon: Icon(Icons.logout, size: 35)
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: Text(
+                        "My Transcriptions",
+                        style: TextStyle(fontSize: 20)
+                    ),
+                  ),
+                ],
+              )
             ]
           ),
           const Divider(),
@@ -114,29 +148,14 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                         })
                         : const Icon(Icons.file_present_rounded),
                     title: Text(file.text),
-                    // Botón de eliminación
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return DeleteConfirmationDialog(
-                              onConfirm: () {
-                                deleteFile(transcriptFolder,file.text); //Elimina un archivo de la carpeta
-                                _removeItem(index); // Actualiza la lista eliminándolo de la misma
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
                     onTap: () {
                       // Navegar al visualizador de archivos cuando se presiona un elemento
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folderPath)),
-                      );
+                      if(!_showCheckboxes){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folderPath)),
+                        );
+                      }
                     },
                   ),
                 );
@@ -144,6 +163,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             ),
           ),
 
+          _showCheckboxes ?
           ElevatedButton(
               onPressed: () {
                 ListItem firstCheckedItem =
@@ -155,13 +175,11 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                     MaterialPageRoute(builder: (context) => SynthesisPage(path: '$folderPath/$text')),
                   );
                 }
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => SynthesisPage(path: '$folderPath/badromance.txt')),
-                  // );
                 },
               child: const Text('Process')
-          ),
+          ) : const ElevatedButton(
+              onPressed: null,
+              child: Text('Select Files to Process'))
 
         ],
       ),
