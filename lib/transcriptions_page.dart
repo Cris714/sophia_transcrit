@@ -174,6 +174,12 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                     context,
                     MaterialPageRoute(builder: (context) => SynthesisPage(path: '$folderPath/$text')),
                   );
+                  setState(() {
+                    _showCheckboxes = false;
+                    for (var f in fileObj) {
+                      f.checked = false;
+                    }
+                  });
                 }
                 },
               child: const Text('Process')
