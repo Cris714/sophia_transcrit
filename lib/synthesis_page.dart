@@ -101,13 +101,11 @@ class _SynthesisPage extends State<SynthesisPage> {
             const SizedBox(height: 380),
             ElevatedButton(
                 onPressed: () {
-                  print(sumSelected);
-                  print(keySelected);
                   String filename = path.split('/').last.split('.').first;
                   String file = path.split('/').last;
                   () async {
                     await sendText(path);
-                    var content = await getProcessedContent(file);
+                    var content = await getProcessedContent(file, keySelected, sumSelected);
                     writeDocument('documents', filename, content);
                   }();
                   Navigator.pop(context);
