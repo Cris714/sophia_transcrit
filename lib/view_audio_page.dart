@@ -59,10 +59,12 @@ class ViewAudio extends StatelessWidget {
               style: ElevatedButton.styleFrom(elevation: 8.0),
               onPressed: () {
                 String filename = todo.path.split('/').last.split('.').first;
+                String file = todo.path.split('/').last;
+                print(file);
                 () async {
                   await sendAudio(todo.path);
-                  var content = await getTranscription(filename);
-                  writeDocument(filename, content);
+                  var content = await getTranscription(file);
+                  writeDocument('transcriptions',filename, content);
                 }();
                 Navigator.pop(context);
               },

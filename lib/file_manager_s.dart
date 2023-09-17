@@ -28,18 +28,17 @@ Future<String> get _localPath async {
   return directory.path;
 }
 
-Future<File> writeDocument(String filename, String content) async {
+Future<File> writeDocument(String folder, String filename, String content) async {
   final path = await _localPath;
-  final file = File('$path/$filename.txt');
+  final file = File('$path/$folder/$filename.txt');
 
   // Write the file
   return file.writeAsString(content);
 }
 
-Future<String> readDocument(String filename) async {
+Future<String> readDocument(String folder, String filename) async {
   try {
-    final path = await _localPath;
-    final file = File('$path/$filename');
+    final file = File('$folder/$filename');
 
     // Read the file
     final contents = await file.readAsString();
@@ -51,10 +50,10 @@ Future<String> readDocument(String filename) async {
   }
 }
 
-Future<int> deleteFile(String filename) async {
+Future<int> deleteFile(String folder, String filename) async {
   try {
     final path = await _localPath;
-    final file = File('$path/$filename');
+    final file = File('$path/$folder/$filename');
 
     await file.delete();
     return 1;
@@ -63,22 +62,38 @@ Future<int> deleteFile(String filename) async {
   }
 }
 
-Future<List<String>> getFilesInPath() async {
+Future<List<String>> getFilesInFolder(String folderPath) async {
   try {
-    final dirPath =  await _localPath;
+    final files = Directory(folderPath).listSync();
 
-    final files = Directory(dirPath).listSync();
-
-    List<String> filenames = [];
-    for (var file in files) {
-      if (file is File) {
-        filenames.add(file.uri.pathSegments.last);
-      }
-    }
+    final filenames = files
+        .whereType<File>() // Filtra solo los elementos que son archivos
+        .where((file) => file.uri.path.endsWith('.txt')) // Filtra por extensión .txt
+        .map((file) => file.uri.pathSegments.last) // Extrae los nombres de archivo
+        .toList();
 
     return filenames;
+
   } catch (e) {
     print("Error al leer archivos: $e");
     return [];
+  }
+}
+
+Future<String> createFolderInAppDocDir(String folderName) async {
+  //Get this App Document Directory
+
+  final Directory appDocDir = await getApplicationDocumentsDirectory();
+  //App Document Directory + folder name
+  final Directory appDocDirFolder =
+  Directory('${appDocDir.path}/$folderName/');
+
+  if (await appDocDirFolder.exists()) {
+    //if folder already exists return path
+    return appDocDirFolder.path;
+  } else {
+    //if folder not exists create folder and then return its path
+    final Directory appDocDirNewFolder = await appDocDirFolder.create(recursive: true);
+    return appDocDirNewFolder.path;
   }
 }

@@ -1,11 +1,17 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import 'synthesis_page.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
 import 'delete_popup.dart';
+import 'dart:io';
+
+class ListItem {
+  String text;
+  bool checked;
+
+  ListItem(this.text, this.checked);
+}
 
 class TranscriptionsPage extends StatefulWidget {
   const TranscriptionsPage({super.key});
@@ -15,29 +21,32 @@ class TranscriptionsPage extends StatefulWidget {
 }
 
 class _TranscriptionsPage extends State<TranscriptionsPage> {
-  List<String> fileList = [];
+  List<ListItem> fileObj = [];
+
+  String folderPath = "";
+  String transcriptFolder = "transcriptions";
+
+  bool _showCheckboxes = false;
 
   @override
   void initState() {
     super.initState();
-    _getFilesInPath();
+    _getFiles();
   }
 
-  Future<void> _getFilesInPath() async {
-    try {
-      final filenames = await getFilesInPath();
+  void _getFiles() async {
+    final folder = await createFolderInAppDocDir(transcriptFolder);
+    final filenames = await getFilesInFolder(folder);
 
-      setState(() {
-        fileList = filenames;
-      });
-    } catch (e) {
-      print("Error al leer archivos: $e");
-    }
+    setState(() {
+      folderPath = folder;
+      fileObj = filenames.map((text) => ListItem(text, false)).toList();
+    });
   }
 
   void _removeItem(int index) {
     setState(() {
-      fileList.removeAt(index);
+      fileObj.removeAt(index);
     });
   }
 
@@ -48,14 +57,26 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
+          Row(
             children: [
+              _showCheckboxes ?
               IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _showCheckboxes = false;
+                      for (var f in fileObj) {
+                        f.checked = false;
+                      }
+                    });
+                  },
+                  icon: const Icon(Icons.arrow_back, size: 35)
+              ) :
+              const IconButton(
                   onPressed: null,
                   icon: Icon(Icons.logout, size: 35)
               ),
-              SizedBox(width: 20),
-              Center(
+              const SizedBox(width: 20),
+              const Center(
                 child: Text(
                     "My Transcriptions",
                     style: TextStyle(fontSize: 20)
@@ -68,41 +89,56 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
           // Lista de archivos transcritos
           Expanded(
             child: ListView.separated(
-              itemCount: fileList.length,
-              separatorBuilder: (context, index) => Divider(),
+              itemCount: fileObj.length,
+              separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final filename = fileList[index];
-                return Column(
-                  children: <Widget>[
-                    ListTile(
-                      leading: const Icon(Icons.file_present_rounded),
-                      title: Text(filename),
-                      // Botón de eliminación
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return DeleteConfirmationDialog(
-                                onConfirm: () {
-                                  deleteFile(filename); //Elimina un archivo de la carpeta
-                                  _removeItem(index); // Actualiza la lista eliminándolo de la misma
-                                },
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      onTap: () {
-                        // Navegar al visualizador de archivos cuando se presiona un elemento
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ViewText(filename: filename)),
+                final file = fileObj[index];
+
+                return GestureDetector(
+                  onLongPress: () {
+                    setState(() {
+                      _showCheckboxes = true;
+                      setState(() {
+                        file.checked = !file.checked;
+                      });
+                    });
+                  },
+                  child: ListTile(
+                    leading: _showCheckboxes
+                        ? Checkbox(
+                        value: file.checked,
+                        onChanged: (value) {
+                          setState(() {
+                            file.checked = !file.checked;
+                          });
+                        })
+                        : const Icon(Icons.file_present_rounded),
+                    title: Text(file.text),
+                    // Botón de eliminación
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DeleteConfirmationDialog(
+                              onConfirm: () {
+                                deleteFile(transcriptFolder,file.text); //Elimina un archivo de la carpeta
+                                _removeItem(index); // Actualiza la lista eliminándolo de la misma
+                              },
+                            );
+                          },
                         );
                       },
                     ),
-                  ],
+                    onTap: () {
+                      // Navegar al visualizador de archivos cuando se presiona un elemento
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folderPath)),
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -110,10 +146,19 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
 
           ElevatedButton(
               onPressed: () {
+                ListItem firstCheckedItem =
+                fileObj.firstWhere((item) => item.checked, orElse: () => ListItem('', false));
+                if(firstCheckedItem.checked == true){
+                  final text = firstCheckedItem.text;
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SynthesisPage()),
+                    MaterialPageRoute(builder: (context) => SynthesisPage(path: '$folderPath/$text')),
                   );
+                }
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => SynthesisPage(path: '$folderPath/badromance.txt')),
+                  // );
                 },
               child: const Text('Process')
           ),

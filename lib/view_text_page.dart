@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'file_manager_s.dart';
+import 'synthesis_page.dart';
 
 
 class ViewText extends StatelessWidget {
   final String filename;
-  const ViewText({super.key, required this.filename});
+  final String folder;
+  const ViewText({super.key, required this.filename, required this.folder});
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +52,15 @@ class ViewText extends StatelessWidget {
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: FutureBuilder<String>(
-                future: readDocument(filename),
+                future: readDocument(folder, filename),
                 builder: (context, snapshot) {
-                  return Text(
+                  return Column(
+                    children: <Widget>[
+                      Text(
                       snapshot.data ?? "Loading...",
-                      style: const TextStyle(fontSize: 17)
+                          style: const TextStyle(fontSize: 17)
+                      ),
+                    ],
                   );
                 },
               ),
