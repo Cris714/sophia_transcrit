@@ -17,14 +17,20 @@ class _GetAudioPage extends State<GetAudioPage> {
     return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async{
-            var filename = await pickFile();
-            if (filename != '') {
+            var file = await pickFile();
+            if (file != null) {
               if (context.mounted) {
-                final args = Todo(filename);
+                var filename = file.path;
+                final kb = file.size / 1024;
+                final mb = kb / 1024;
+                final size = (mb >= 1)
+                    ? '${mb.toStringAsFixed(2)} MB'
+                    : '${kb.toStringAsFixed(2)} KB';
+                final args = Recording(file, filename!, size);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ViewAudio(todo: args),
+                    builder: (context) => ViewAudio(record: args),
                   ),
                 );
               }
