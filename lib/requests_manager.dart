@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 
-const address = 'http://192.168.1.85:8000';
+const address = 'http://192.168.1.4:8000';
 
 Future getTranscription(String query) async {
   http.Response response = await http.get(
@@ -10,7 +10,7 @@ Future getTranscription(String query) async {
   return response.body;
 }
 
-Future getProcessedContent(String query, bool kw, bool sm) async {
+Future getProcessedContent(List<String> query, bool kw, bool sm) async {
   http.Response response = await http.get(
       Uri.parse('$address/process?File=$query&kw=$kw&sm=$sm'));
   return response.body;

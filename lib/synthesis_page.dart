@@ -105,7 +105,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                   String file = path.split('/').last;
                   () async {
                     await sendText(path);
-                    var content = await getProcessedContent(file, keySelected, sumSelected);
+                    var content = await getProcessedContent([file, file], keySelected, sumSelected);
                     writeDocument('documents', filename, content);
                   }();
                   Navigator.pop(context);
