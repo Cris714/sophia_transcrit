@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'file_manager_s.dart';
-import 'synthesis_page.dart';
-
 
 class ViewText extends StatelessWidget {
   final String filename;

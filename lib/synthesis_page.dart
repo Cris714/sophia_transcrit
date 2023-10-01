@@ -4,8 +4,9 @@ import 'requests_manager.dart';
 import 'file_manager_s.dart';
 
 class SynthesisPage extends StatefulWidget {
-  final String path;
-  const SynthesisPage({super.key, required this.path});
+  final String folder;
+  final List<String> pathList;
+  const SynthesisPage({super.key, required this.folder, required this.pathList});
 
   @override
   State<SynthesisPage> createState() => _SynthesisPage();
@@ -13,20 +14,23 @@ class SynthesisPage extends StatefulWidget {
 
 class _SynthesisPage extends State<SynthesisPage> {
 
-  late String path;
-  late String text;
+  late String folder;
+  late List<String> pathList;
+  // late String text;
 
   @override
   void initState() {
     super.initState();
-    path = widget
-        .path; // Inicializa 'file' con el valor proporcionado en el widget
-    text = path.split('/').last.split('.').first;
+    folder = widget
+        .folder; // Inicializa 'file' con el valor proporcionado en el widget
+    pathList = widget
+        .pathList; // Inicializa 'file' con el valor proporcionado en el widget
+    // text = path.split('/').last.split('.').first;
   }
 
   Future<void> computeFuture = Future.value();
   bool keySelected = false;
-  bool sumSelected = false;
+  bool sumSelected = true;
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +56,10 @@ class _SynthesisPage extends State<SynthesisPage> {
                   style: TextStyle(fontSize: 30)
               ),
             ),
-            Center(
+            const Center(
               child: Text(
-                  'Generate your document. $text',
-                  style: TextStyle(fontSize: 17)
+                  'Generate your document.',
+                  style: const TextStyle(fontSize: 17)
               ),
             ),
             const SizedBox(height: 50),
@@ -101,14 +105,23 @@ class _SynthesisPage extends State<SynthesisPage> {
             const SizedBox(height: 380),
             ElevatedButton(
                 onPressed: () {
-                  String filename = path.split('/').last.split('.').first;
-                  String file = path.split('/').last;
-                  () async {
-                    await sendText(path);
-                    var content = await getProcessedContent([file, file], keySelected, sumSelected);
-                    writeDocument('documents', filename, content);
-                  }();
-                  Navigator.pop(context);
+                  if(sumSelected || keySelected){
+                    // String filename = path.split('/').last.split('.').first;
+                    // String file = path.split('/').last;
+
+                    () async {
+                      for (var file in pathList){
+                        await sendText('$folder/$file');
+                      }
+
+                      var content = await getProcessedContent(pathList, keySelected, sumSelected);
+                      writeDocument('documents', 'prueba', content);
+
+                      // var content = await getProcessedContent(file, keySelected, sumSelected);
+                      // writeDocument('documents', filename, content);
+                    }();
+                    Navigator.pop(context);
+                  }
                 },
                 child: const Text('Done'))
 
