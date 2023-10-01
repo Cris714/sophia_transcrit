@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 
 
-Future<String> pickFile() async {
+Future<PlatformFile?> pickFile() async {
   // opens storage to pick files and the picked file or files
   // are assigned into result and if no file is chosen result is null.
   // you can also toggle "allowMultiple" true or false depending on your need
@@ -14,12 +14,12 @@ Future<String> pickFile() async {
   );
 
   // if no file is picked
-  if (result == null) return '';
+  if (result == null) return null;
 
   // we get the file from result object
   final file = result.files.first;
 
-  return file.path ?? '';
+  return file;
 }
 
 Future<String> get _localPath async {
