@@ -40,31 +40,29 @@ class _GetAudioPage extends State<GetAudioPage> {
           icon: const Icon(Icons.drive_folder_upload),
 
         ),
-      body: Container(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
 
-              const Center(
-                child: Text(
-                    "Welcome Back",
-                    style: TextStyle(fontSize: 22)
-                ),
+            const Center(
+              child: Text(
+                  "Welcome Back",
+                  style: TextStyle(fontSize: 22)
               ),
-              const Center(
-                child: Text(
-                  "HOLLOW",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
-                ),
+            ),
+            const Center(
+              child: Text(
+                "HOLLOW",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
               ),
-              Container(
-                alignment: Alignment.bottomCenter,
-                padding: const EdgeInsets.only(top: 150),
-                child: RecordButton(),
-              ),
-            ],
-          ),
+            ),
+            Container(
+              alignment: Alignment.bottomCenter,
+              padding: const EdgeInsets.only(top: 150),
+              child: const RecordButton(),
+            ),
+          ],
         ),
       )
     );

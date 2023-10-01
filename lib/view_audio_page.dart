@@ -46,18 +46,6 @@ class ViewAudio extends StatelessWidget {
             Container(
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              // child: Text(
-              //   todo.path,
-              //   style: const TextStyle(fontSize: 17)
-              // )
-
-              // child: Column(
-              //   children: [
-              //     Text('Name:  ${todo.file.name}'),
-              //     Text('Size:  ${todo.size!}'),
-              //     Text('Extension:  ${todo.file!.extension}')
-              //   ],
-              // ),
 
               child: SizedBox(
                 height: 100,

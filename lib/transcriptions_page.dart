@@ -166,13 +166,13 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
           _showCheckboxes ?
           ElevatedButton(
               onPressed: () {
-                ListItem firstCheckedItem =
-                fileObj.firstWhere((item) => item.checked, orElse: () => ListItem('', false));
-                if(firstCheckedItem.checked == true){
-                  final text = firstCheckedItem.text;
+                Iterable<ListItem> checkedItem =
+                fileObj.where((item) => item.checked);
+                if(checkedItem.isNotEmpty){
+                  List<String> filenames = checkedItem.map((item) => item.text).toList();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SynthesisPage(path: '$folderPath/$text')),
+                    MaterialPageRoute(builder: (context) => SynthesisPage(folder: folderPath, pathList: filenames)),
                   );
                   setState(() {
                     _showCheckboxes = false;
