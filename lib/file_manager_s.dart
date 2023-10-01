@@ -10,7 +10,7 @@ Future<String> pickFile() async {
   final result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     allowMultiple: true,
-    allowedExtensions: ['mp3']
+    allowedExtensions: ['m4a', 'mp3', 'webm', 'mp4', 'mpga', 'wav', 'mpeg']
   );
 
   // if no file is picked
