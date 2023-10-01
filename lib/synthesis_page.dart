@@ -16,16 +16,29 @@ class _SynthesisPage extends State<SynthesisPage> {
 
   late String folder;
   late List<String> pathList;
-  // late String text;
+  String documentFolder = "documents";
+  late int docsLength;
 
   @override
   void initState() {
     super.initState();
     folder = widget
-        .folder; // Inicializa 'file' con el valor proporcionado en el widget
+        .folder;
     pathList = widget
-        .pathList; // Inicializa 'file' con el valor proporcionado en el widget
-    // text = path.split('/').last.split('.').first;
+        .pathList;
+
+    _getLengthDocs();
+  }
+
+  void _getLengthDocs() async {
+    final folder = await createFolderInAppDocDir(documentFolder);
+    final filenames = await getFilesInFolder(folder);
+    final docsLength = filenames.length;
+
+    setState(() {
+      this.docsLength = docsLength;
+    });
+
   }
 
   Future<void> computeFuture = Future.value();
@@ -106,19 +119,13 @@ class _SynthesisPage extends State<SynthesisPage> {
             ElevatedButton(
                 onPressed: () {
                   if(sumSelected || keySelected){
-                    // String filename = path.split('/').last.split('.').first;
-                    // String file = path.split('/').last;
-
                     () async {
                       for (var file in pathList){
                         await sendText('$folder/$file');
                       }
 
                       var content = await getProcessedContent(pathList, keySelected, sumSelected);
-                      writeDocument('documents', 'prueba', content);
-
-                      // var content = await getProcessedContent(file, keySelected, sumSelected);
-                      // writeDocument('documents', filename, content);
+                      writeDocument('documents', 'document$docsLength', content);
                     }();
                     Navigator.pop(context);
                   }
