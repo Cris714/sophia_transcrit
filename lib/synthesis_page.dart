@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
 
-import 'globals.dart' as g;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SynthesisPage extends StatefulWidget {
   final String folder;
@@ -19,15 +19,32 @@ class _SynthesisPage extends State<SynthesisPage> {
   late String folder;
   late List<String> pathList;
   String documentFolder = "documents";
-  late int docsLength = g.counter;
+  late int counter;
 
   @override
   void initState() {
+    getSharedPref();
+
+
     super.initState();
     folder = widget
         .folder;
     pathList = widget
         .pathList;
+  }
+
+  void getSharedPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      counter = (prefs.getInt('counter') ?? 0);
+    });
+  }
+
+  void _incrementCounter() async {
+    final prefs = await SharedPreferences.getInstance();
+    final c = (prefs.getInt('counter') ?? 0)+1;
+    counter = c;
+    prefs.setInt('counter', counter);
   }
 
   Future<void> computeFuture = Future.value();
@@ -115,8 +132,9 @@ class _SynthesisPage extends State<SynthesisPage> {
 
                       var content = await getProcessedContent(pathList, keySelected, sumSelected);
 
-                      var c = g.counter++;
-                      writeDocument('documents', 'document$c', content);
+                      writeDocument('documents', 'document$counter', content);
+                      // Save an integer value to 'counter' key.
+                      _incrementCounter();
 
                     }();
                     Navigator.pop(context);
