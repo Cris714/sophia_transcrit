@@ -12,10 +12,9 @@ class Recording {
   const Recording(this.file, this.path, this.size);
 }
 
-
 class ViewAudio extends StatelessWidget {
   const ViewAudio({super.key, required this.record});
-  final Recording record;
+  final List<Recording> record;
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +47,15 @@ class ViewAudio extends StatelessWidget {
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
 
               child: SizedBox(
-                height: 100,
+                height: 600,
                 child: ListView.separated(
-                  itemCount: 1,
+                  itemCount: record.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(record.file.name),
-                      subtitle: Text(record.file.extension ?? ""),
-                      trailing: Text(record.size),
+                      title: Text(record[index].file.name),
+                      subtitle: Text(record[index].file.extension ?? ""),
+                      trailing: Text(record[index].size),
 
                     );
                   },
@@ -66,20 +65,15 @@ class ViewAudio extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(elevation: 8.0),
               onPressed: () {
-                null;
-              },
-              child: const Text('Generate document'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(elevation: 8.0),
-              onPressed: () {
-                String filename = record.path.split('/').last.split('.').first;
-                String file = record.path.split('/').last;
-                () async {
-                  await sendAudio(record.path);
-                  var content = await getTranscription(file);
-                  writeDocument('transcriptions',filename, content);
-                }();
+                for (var rec in record){
+                  String filename = rec.path.split('/').last.split('.').first;
+                  String file = rec.path.split('/').last;
+                  () async {
+                    await sendAudio(rec.path);
+                    var content = await getTranscription(file);
+                    writeDocument('transcriptions',filename, content);
+                  }();
+                }
                 Navigator.pop(context);
               },
               child: const Text('Transcribe'),

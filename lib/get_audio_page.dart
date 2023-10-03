@@ -17,16 +17,19 @@ class _GetAudioPage extends State<GetAudioPage> {
     return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async{
-            var file = await pickFile();
-            if (file != null) {
+            var files = await pickFiles();
+            List<Recording> args = [];
+            if (files != null) {
               if (context.mounted) {
-                var filename = file.path;
-                final kb = file.size / 1024;
-                final mb = kb / 1024;
-                final size = (mb >= 1)
-                    ? '${mb.toStringAsFixed(2)} MB'
-                    : '${kb.toStringAsFixed(2)} KB';
-                final args = Recording(file, filename!, size);
+                for (var file in files){
+                  var filename = file.path;
+                  final kb = file.size / 1024;
+                  final mb = kb / 1024;
+                  final size = (mb >= 1)
+                      ? '${mb.toStringAsFixed(2)} MB'
+                      : '${kb.toStringAsFixed(2)} KB';
+                  args.add(Recording(file, filename!, size));
+                }
                 Navigator.push(
                   context,
                   MaterialPageRoute(

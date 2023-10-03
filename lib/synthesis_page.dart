@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class SynthesisPage extends StatefulWidget {
   final String folder;
   final List<String> pathList;
@@ -17,28 +19,32 @@ class _SynthesisPage extends State<SynthesisPage> {
   late String folder;
   late List<String> pathList;
   String documentFolder = "documents";
-  late int docsLength;
+  late int counter;
 
   @override
   void initState() {
+    getSharedPref();
+
+
     super.initState();
     folder = widget
         .folder;
     pathList = widget
         .pathList;
-
-    _getLengthDocs();
   }
 
-  void _getLengthDocs() async {
-    final folder = await createFolderInAppDocDir(documentFolder);
-    final filenames = await getFilesInFolder(folder);
-    final docsLength = filenames.length;
-
+  void getSharedPref() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      this.docsLength = docsLength;
+      counter = (prefs.getInt('counter') ?? 0);
     });
+  }
 
+  void _incrementCounter() async {
+    final prefs = await SharedPreferences.getInstance();
+    final c = (prefs.getInt('counter') ?? 0)+1;
+    counter = c;
+    prefs.setInt('counter', counter);
   }
 
   Future<void> computeFuture = Future.value();
@@ -72,7 +78,7 @@ class _SynthesisPage extends State<SynthesisPage> {
             const Center(
               child: Text(
                   'Generate your document.',
-                  style: const TextStyle(fontSize: 17)
+                  style: TextStyle(fontSize: 17)
               ),
             ),
             const SizedBox(height: 50),
@@ -125,7 +131,11 @@ class _SynthesisPage extends State<SynthesisPage> {
                       }
 
                       var content = await getProcessedContent(pathList, keySelected, sumSelected);
-                      writeDocument('documents', 'document$docsLength', content);
+
+                      writeDocument('documents', 'document$counter', content);
+                      // Save an integer value to 'counter' key.
+                      _incrementCounter();
+
                     }();
                     Navigator.pop(context);
                   }
