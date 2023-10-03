@@ -52,13 +52,14 @@ class ViewText extends StatelessWidget {
               child: FutureBuilder<String>(
                 future: readDocument(folder, filename),
                 builder: (context, snapshot) {
-                  return Column(
-                    children: <Widget>[
-                      Text(
-                      snapshot.data ?? "Loading...",
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height - 140,
+                    child: SingleChildScrollView(
+                      child: Text(
+                          snapshot.data ?? "Loading...",
                           style: const TextStyle(fontSize: 17)
                       ),
-                    ],
+                    )
                   );
                 },
               ),

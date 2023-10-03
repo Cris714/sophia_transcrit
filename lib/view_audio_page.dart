@@ -47,7 +47,7 @@ class ViewAudio extends StatelessWidget {
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
 
               child: SizedBox(
-                height: 600,
+                height: 200,
                 child: ListView.separated(
                   itemCount: record.length,
                   separatorBuilder: (context, index) => const Divider(),
