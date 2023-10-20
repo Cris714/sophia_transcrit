@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'synthesis_page.dart';
 import 'view_text_page.dart';
@@ -74,6 +75,16 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                             'Selected ${fileObj.where((item) => item.checked).length} files',
                             style: const TextStyle(fontSize: 20)
                         ),
+                      ),
+                      IconButton(
+                          onPressed: () async {
+                            List<ListItem> checkedItems = fileObj.where((item) => item.checked).toList();
+                            if(checkedItems.isNotEmpty){
+                              Share.shareXFiles(checkedItems.map((file) => XFile('$folderPath/${file.text}')).toList(),
+                                      text: "Check out this transcription I've made!");
+                            }
+                          },
+                          icon: const Icon(Icons.share, size: 35)
                       ),
                       IconButton(
                           onPressed: () {

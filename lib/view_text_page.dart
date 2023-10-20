@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'file_manager_s.dart';
 
@@ -32,14 +33,9 @@ class ViewText extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                      onPressed: () {
-                        Navigator.pop(context); // cambiar esto
-                      },
-                      icon: const Icon(Icons.import_export, size: 35)
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pop(context); // cambiar esto
+                      onPressed: () async {
+                        Share.shareXFiles([XFile('$folder/$filename')],
+                              text: "Check out this transcription I've made!");
                       },
                       icon: const Icon(Icons.share, size: 35)
                   ),
