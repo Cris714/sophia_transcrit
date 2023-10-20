@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/documents_page.dart';
 
+import 'home.dart';
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
 
@@ -20,17 +23,18 @@ class _SynthesisPage extends State<SynthesisPage> {
   late List<String> pathList;
   String documentFolder = "documents";
   late int counter;
+  late AppProvider _appProvider;
 
   @override
   void initState() {
     getSharedPref();
-
 
     super.initState();
     folder = widget
         .folder;
     pathList = widget
         .pathList;
+    _appProvider = Provider.of<AppProvider>(context, listen: false);
   }
 
   void getSharedPref() async {
@@ -138,6 +142,7 @@ class _SynthesisPage extends State<SynthesisPage> {
 
                     }();
                     Navigator.pop(context);
+                    _appProvider.setScreen(DocumentsPage(), 2);
                   }
                 },
                 child: const Text('Done'))

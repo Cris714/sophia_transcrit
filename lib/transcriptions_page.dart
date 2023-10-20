@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/get_audio_page.dart';
 
+import 'home.dart';
 import 'synthesis_page.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
@@ -27,13 +30,20 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
 
   bool _showCheckboxes = false;
 
+  late AppProvider _appProvider;
+
   @override
   void initState() {
     super.initState();
     _getFiles();
+    _appProvider = Provider.of<AppProvider>(context, listen: false);
   }
 
-  void _getFiles() async {
+  void updateScreen() {
+    _appProvider.setScreen(GetAudioPage(),1);
+  }
+
+  Future<void> _getFiles() async {
     final folder = await createFolderInAppDocDir(transcriptFolder);
     final filenames = await getFilesInFolder(folder);
 
@@ -101,10 +111,10 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                     ]
                 ),
               )
-            : const Row(
+            : Row(
                 children: [
                   IconButton(
-                      onPressed: null,
+                      onPressed: updateScreen,
                       icon: Icon(Icons.logout, size: 35)
                   ),
                   SizedBox(width: 20),
@@ -122,44 +132,47 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
 
           // Lista de archivos transcritos
           Expanded(
-            child: ListView.separated(
-              itemCount: fileObj.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final file = fileObj[index];
+            child: RefreshIndicator(
+              onRefresh: _getFiles,
+              child: ListView.separated(
+                itemCount: fileObj.length,
+                separatorBuilder: (context, index) => const Divider(),
+                itemBuilder: (context, index) {
+                  final file = fileObj[index];
 
-                return GestureDetector(
-                  onLongPress: () {
-                    setState(() {
-                      _showCheckboxes = true;
+                  return GestureDetector(
+                    onLongPress: () {
                       setState(() {
-                        file.checked = !file.checked;
+                        _showCheckboxes = true;
+                        setState(() {
+                          file.checked = !file.checked;
+                        });
                       });
-                    });
-                  },
-                  child: ListTile(
-                    leading: _showCheckboxes
-                        ? Checkbox(
-                        value: file.checked,
-                        onChanged: (value) {
-                          setState(() {
-                            file.checked = !file.checked;
-                          });
-                        })
-                        : const Icon(Icons.file_present_rounded),
-                    title: Text(file.text),
-                    onTap: () {
-                      // Navegar al visualizador de archivos cuando se presiona un elemento
-                      if(!_showCheckboxes){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folderPath)),
-                        );
-                      }
                     },
-                  ),
-                );
-              },
+                    child: ListTile(
+                      leading: _showCheckboxes
+                          ? Checkbox(
+                          value: file.checked,
+                          onChanged: (value) {
+                            setState(() {
+                              file.checked = !file.checked;
+                            });
+                          })
+                          : const Icon(Icons.file_present_rounded),
+                      title: Text(file.text),
+                      onTap: () {
+                        // Navegar al visualizador de archivos cuando se presiona un elemento
+                        if(!_showCheckboxes){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folderPath)),
+                          );
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
           ),
 
