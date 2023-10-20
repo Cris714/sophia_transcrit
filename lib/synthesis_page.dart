@@ -69,7 +69,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(Icons.home, size: 35)
+                      icon: const Icon(Icons.arrow_back, size: 35)
                   ),
                 ]
             ),
