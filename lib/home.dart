@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sophia_transcrit2/transcriptions_page.dart';
 import 'package:sophia_transcrit2/get_audio_page.dart';
 import 'package:sophia_transcrit2/documents_page.dart';
 import 'package:sophia_transcrit2/colors.dart';
+
+class AppProvider extends ChangeNotifier { // create a common file for data
+  Widget _currentScreen = GetAudioPage();
+  int _currentTab = 1;
+
+  Widget get currentScreen => _currentScreen;
+  int get currentTab => _currentTab;
+
+  void setScreen(Widget newScreen, int newTab) {
+    _currentScreen = newScreen;
+    _currentTab = newTab;
+    notifyListeners();
+  }
+}
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,7 +28,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  int currentTab = 1;
   final List<Widget> screens = [
     TranscriptionsPage(),
     GetAudioPage(),
@@ -21,24 +35,20 @@ class _HomeState extends State<Home> {
   ];
 
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = GetAudioPage();
 
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context);
+    Widget currentScreen = appProvider.currentScreen;
+    int currentTab = appProvider.currentTab;
+
     return Scaffold(
       appBar: AppBar(title: Text('Sophia Transcrit')),
       body: PageStorage(
           bucket: bucket,
           child: currentScreen,
       ),
-/*      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Add your onPressed code here!
-        },
-        label: const Text('Import Audio'),
-        icon: Icon(Icons.drive_folder_upload),
 
-      ),*/
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
         color: primary,
@@ -58,6 +68,7 @@ class _HomeState extends State<Home> {
                       setState(() {
                         currentScreen = TranscriptionsPage();
                         currentTab = 0;
+                        appProvider.setScreen(TranscriptionsPage(), 0);
                       });
                       },
                       child: Column(
@@ -82,6 +93,7 @@ class _HomeState extends State<Home> {
                         setState(() {
                           currentScreen = GetAudioPage();
                           currentTab = 1;
+                          appProvider.setScreen(GetAudioPage(), 1);
                         });
                       },
                       child: Column(
@@ -106,6 +118,7 @@ class _HomeState extends State<Home> {
                         setState(() {
                           currentScreen = DocumentsPage();
                           currentTab = 2;
+                          appProvider.setScreen(DocumentsPage(), 2);
                         });
                       },
                       child: Column(

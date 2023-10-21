@@ -1,6 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/transcriptions_page.dart';
 
+import 'home.dart';
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
 import 'notification_service.dart';
@@ -44,6 +47,7 @@ class _ViewAudio extends State<ViewAudio> {
 
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context);
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
@@ -110,6 +114,7 @@ class _ViewAudio extends State<ViewAudio> {
                   }
                 }();
                 Navigator.pop(context);
+                appProvider.setScreen(TranscriptionsPage(), 0);
               },
               child: const Text('Transcribe'),
             ),

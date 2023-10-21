@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/get_audio_page.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'home.dart';
 import 'synthesis_page.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
@@ -26,15 +29,22 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
   String folderPath = "";
   String transcriptFolder = "transcriptions";
 
-  bool _showCheckboxes = false;
+  bool _showOptions = false;
+
+  late AppProvider _appProvider;
 
   @override
   void initState() {
     super.initState();
     _getFiles();
+    _appProvider = Provider.of<AppProvider>(context, listen: false);
   }
 
-  void _getFiles() async {
+  void updateScreen() {
+    _appProvider.setScreen(GetAudioPage(),1);
+  }
+
+  Future<void> _getFiles() async {
     final folder = await createFolderInAppDocDir(transcriptFolder);
     final filenames = await getFilesInFolder(folder);
 
@@ -52,7 +62,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
         children: [
           Row(
             children: [
-              _showCheckboxes ?
+              _showOptions ?
               SizedBox(
                 width: MediaQuery.of(context).size.width-50,
 
@@ -62,7 +72,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                       IconButton(
                           onPressed: () {
                             setState(() {
-                              _showCheckboxes = false;
+                              _showOptions = false;
                               for (var f in fileObj) {
                                 f.checked = false;
                               }
@@ -71,10 +81,10 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                           icon: const Icon(Icons.arrow_back, size: 35)
                       ),
                       Center(
-                        child: Text(
+                        child: fileObj.where((item) => item.checked).toList().isNotEmpty ? Text(
                             'Selected ${fileObj.where((item) => item.checked).length} files',
                             style: const TextStyle(fontSize: 20)
-                        ),
+                        ) : const Text('Select files', style: TextStyle(fontSize: 20)),
                       ),
                       IconButton(
                           onPressed: () async {
@@ -112,10 +122,10 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                     ]
                 ),
               )
-            : const Row(
+            : Row(
                 children: [
                   IconButton(
-                      onPressed: null,
+                      onPressed: updateScreen,
                       icon: Icon(Icons.logout, size: 35)
                   ),
                   SizedBox(width: 20),
@@ -133,48 +143,45 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
 
           // Lista de archivos transcritos
           Expanded(
-            child: ListView.separated(
-              itemCount: fileObj.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final file = fileObj[index];
+            child: RefreshIndicator(
+              onRefresh: _getFiles,
+              child: ListView.separated(
+                itemCount: fileObj.length,
+                separatorBuilder: (context, index) => const Divider(),
+                itemBuilder: (context, index) {
+                  final file = fileObj[index];
 
-                return GestureDetector(
-                  onLongPress: () {
-                    setState(() {
-                      _showCheckboxes = true;
-                      setState(() {
-                        file.checked = !file.checked;
-                      });
-                    });
-                  },
-                  child: ListTile(
-                    leading: _showCheckboxes
-                        ? Checkbox(
+                  return ListTile(
+                    leading: Checkbox(
                         value: file.checked,
                         onChanged: (value) {
                           setState(() {
                             file.checked = !file.checked;
+                            if (fileObj.where((item) => item.checked).isNotEmpty){
+                              setState(() {
+                                _showOptions = true;
+                              });
+                            }
                           });
-                        })
-                        : const Icon(Icons.file_present_rounded),
+                        }),
+                        // : const Icon(Icons.file_present_rounded),
                     title: Text(file.text),
                     onTap: () {
                       // Navegar al visualizador de archivos cuando se presiona un elemento
-                      if(!_showCheckboxes){
+                      if(!_showOptions){
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folderPath)),
                         );
                       }
                     },
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
 
-          _showCheckboxes ?
+          fileObj.where((item) => item.checked).toList().isNotEmpty ?
           ElevatedButton(
               onPressed: () {
                 Iterable<ListItem> checkedItem =
@@ -186,18 +193,17 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                     MaterialPageRoute(builder: (context) => SynthesisPage(folder: folderPath, pathList: filenames)),
                   );
                   setState(() {
-                    _showCheckboxes = false;
+                    _showOptions = false;
                     for (var f in fileObj) {
                       f.checked = false;
                     }
                   });
                 }
                 },
-              child: const Text('Process')
+              child: const Text('Process files')
           ) : const ElevatedButton(
               onPressed: null,
-              child: Text('Select Files to Process'))
-
+              child: Text('Check Files to Process'))
         ],
       ),
     );
