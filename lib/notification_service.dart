@@ -39,9 +39,9 @@ class NotificationService {
       'channel name',
       groupKey: 'com.example.flutter_push_notifications',
       channelDescription: 'channel description',
-      importance: Importance.max,
-      priority: Priority.max,
-      playSound: true,
+      importance: Importance.low,
+      priority: Priority.low,
+      playSound: false,
       ticker: 'ticker',
       color: Color(0xff2196f3),
     );

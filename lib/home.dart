@@ -4,6 +4,7 @@ import 'package:sophia_transcrit2/transcriptions_page.dart';
 import 'package:sophia_transcrit2/get_audio_page.dart';
 import 'package:sophia_transcrit2/documents_page.dart';
 import 'package:sophia_transcrit2/colors.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AppProvider extends ChangeNotifier { // create a common file for data
   Widget _currentScreen = GetAudioPage();
@@ -38,6 +39,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    Permission.notification.request();
     final appProvider = Provider.of<AppProvider>(context);
     Widget currentScreen = appProvider.currentScreen;
     int currentTab = appProvider.currentTab;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:sophia_transcrit2/colors.dart';
 import 'package:sophia_transcrit2/home.dart';
 
@@ -29,12 +30,8 @@ class SophiaTranscritMain extends StatelessWidget {
         fontFamily: 'Merriweather',
       ),
 
-
       darkTheme: ThemeData.light(),
       home: Home(),
-
-
-
 
     );
   }

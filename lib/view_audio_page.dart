@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sophia_transcrit2/transcriptions_page.dart';
+import 'dart:isolate';
 
 import 'home.dart';
 import 'requests_manager.dart';
@@ -27,14 +28,15 @@ class ViewAudio extends StatefulWidget {
 class _ViewAudio extends State<ViewAudio> {
   late List<Recording> record;
   late final NotificationService notificationService;
+  final ReceivePort _port = ReceivePort();
 
   @override
   void initState() {
     notificationService = NotificationService();
     listenToNotificationStream();
     notificationService.initializePlatformNotifications();
-    record = widget.record;
     super.initState();
+    record = widget.record;
   }
 
   void listenToNotificationStream() =>
@@ -95,26 +97,9 @@ class _ViewAudio extends State<ViewAudio> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(elevation: 8.0),
               onPressed: () {
-                var i = 0;
-                () async {
-                  for (var rec in record){
-                    String filename = rec.path.split('/').last.split('.').first;
-                    String file = rec.path.split('/').last;
-
-                    await sendAudio(rec.path);
-                    var content = await getTranscription(file);
-                    writeDocument('transcriptions',filename, content);
-                    // await Future.delayed(const Duration(seconds: 5));
-                    await notificationService.showLocalNotification(
-                        id: i++,
-                        title: "Transcription done!",
-                        body: "$file has been transcribed correctly.",
-                        payload: ""
-                    );
-                  }
-                }();
+                _startBackgroundTask();
                 Navigator.pop(context);
-                appProvider.setScreen(TranscriptionsPage(), 0);
+                appProvider.setScreen(const TranscriptionsPage(), 0);
               },
               child: const Text('Transcribe'),
             ),
@@ -122,6 +107,55 @@ class _ViewAudio extends State<ViewAudio> {
         ),
       ),
     );
+  }
+
+  void _startBackgroundTask() async {
+    await Isolate.spawn(_backgroundTask, [_port.sendPort, record]);
+    _port.listen((message) {
+      // Handle background task completion
+      if (message[0] != record.length) {
+        notificationService.showLocalNotification(
+            id: 0,
+            title: "Transcribing files...",
+            body: "${message[0]}/${record.length} done.",
+            payload: ""
+        );
+      }
+      else{
+        notificationService.showLocalNotification(
+            id: 0,
+            title: "Your transcriptions are ready!",
+            body: "${message[0]}/${record.length} done. Tap to continue.",
+            payload: ""
+        );
+      }
+      writeDocument('transcriptions',message[1], message[2]);
+    });
+    notificationService.showLocalNotification(
+        id: 0,
+        title: "Transcribing files...",
+        body: "0/${record.length} done.",
+        payload: ""
+    );
+  }
+
+  static void _backgroundTask(List<dynamic> args) {
+    var i = 1;
+    SendPort sendPort = args[0];
+    List<Recording> record = args[1];
+    () async {
+      for (var rec in record){
+        String filename = rec.path.split('/').last.split('.').first;
+        String file = rec.path.split('/').last;
+
+        await sendAudio(rec.path);
+        var content = await getTranscription(file);
+        // writeDocument('transcriptions',filename, content);
+        // await Future.delayed(const Duration(seconds: 5));
+        // Send result back to the main UI isolate
+        sendPort.send([i++, filename, content]);
+      }
+    }();
   }
 }
 
