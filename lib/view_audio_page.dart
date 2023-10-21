@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
+import 'notification_service.dart';
 
 class Recording {
   final PlatformFile file;
@@ -12,9 +13,34 @@ class Recording {
   const Recording(this.file, this.path, this.size);
 }
 
-class ViewAudio extends StatelessWidget {
+class ViewAudio extends StatefulWidget {
   const ViewAudio({super.key, required this.record});
   final List<Recording> record;
+
+  @override
+  State<ViewAudio> createState() => _ViewAudio();
+}
+
+class _ViewAudio extends State<ViewAudio> {
+  late List<Recording> record;
+  late final NotificationService notificationService;
+
+  @override
+  void initState() {
+    notificationService = NotificationService();
+    listenToNotificationStream();
+    notificationService.initializePlatformNotifications();
+    record = widget.record;
+    super.initState();
+  }
+
+  void listenToNotificationStream() =>
+      notificationService.behaviorSubject.listen((payload) {
+        /*Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const TranscriptionsPage()));*/
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -65,15 +91,24 @@ class ViewAudio extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(elevation: 8.0),
               onPressed: () {
-                for (var rec in record){
-                  String filename = rec.path.split('/').last.split('.').first;
-                  String file = rec.path.split('/').last;
-                  () async {
+                var i = 0;
+                () async {
+                  for (var rec in record){
+                    String filename = rec.path.split('/').last.split('.').first;
+                    String file = rec.path.split('/').last;
+
                     await sendAudio(rec.path);
                     var content = await getTranscription(file);
                     writeDocument('transcriptions',filename, content);
-                  }();
-                }
+                    // await Future.delayed(const Duration(seconds: 5));
+                    await notificationService.showLocalNotification(
+                        id: i++,
+                        title: "Transcription done!",
+                        body: "$file has been transcribed correctly.",
+                        payload: ""
+                    );
+                  }
+                }();
                 Navigator.pop(context);
               },
               child: const Text('Transcribe'),

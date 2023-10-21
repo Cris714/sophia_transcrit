@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sophia_transcrit2/colors.dart';
 import 'package:sophia_transcrit2/home.dart';
 
-import 'dart:async';
-import 'dart:convert';
-
 void main() {
   runApp(const SophiaTranscritMain());
 }
@@ -12,6 +9,7 @@ void main() {
 
 class SophiaTranscritMain extends StatelessWidget {
   const SophiaTranscritMain({super.key});
+
 
 
 

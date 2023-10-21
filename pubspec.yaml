@@ -39,12 +39,14 @@ dependencies:
   http_parser:
   open_file_manager: ^0.0.2
   file_picker: ^5.5.0
+  flutter_local_notifications: ^9.7.0
   open_file: ^3.3.2
   path_provider: ^2.1.1
   flutter_media_metadata: ^1.0.0+1
   xml: ^6.3.0
   shared_preferences: ^2.2.1
   share_plus: 7.0.2
+  rxdart:
 
 dev_dependencies:
   flutter_test:
