@@ -126,10 +126,10 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                 children: [
                   IconButton(
                       onPressed: updateScreen,
-                      icon: Icon(Icons.logout, size: 35)
+                      icon: const Icon(Icons.logout, size: 35)
                   ),
-                  SizedBox(width: 20),
-                  Center(
+                  const SizedBox(width: 20),
+                  const Center(
                     child: Text(
                         "My Transcriptions",
                         style: TextStyle(fontSize: 20)

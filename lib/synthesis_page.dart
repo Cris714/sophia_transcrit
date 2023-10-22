@@ -23,12 +23,16 @@ class _SynthesisPage extends State<SynthesisPage> {
 
   late String folder;
   late List<String> pathList;
-  String documentFolder = "documents";
   late int counter;
   late AppProvider _appProvider;
   late final NotificationService notificationService;
   final ReceivePort _port = ReceivePort();
+  late TextEditingController myController;
+
   Future<void> computeFuture = Future.value();
+  List<String> reqList = [];
+  String documentFolder = "documents";
+  String newReq = "";
   bool keySelected = false;
   bool sumSelected = true;
 
@@ -38,7 +42,6 @@ class _SynthesisPage extends State<SynthesisPage> {
     notificationService = NotificationService();
     listenToNotificationStream();
     notificationService.initializePlatformNotifications();
-    super.initState();
 
     super.initState();
     folder = widget
@@ -46,6 +49,9 @@ class _SynthesisPage extends State<SynthesisPage> {
     pathList = widget
         .pathList;
     _appProvider = Provider.of<AppProvider>(context, listen: false);
+    myController = TextEditingController();
+
+    reqList = ['Dame las palabras clave del texto', 'Dame el resumen del texto.'];
   }
 
   void listenToNotificationStream() =>
@@ -65,6 +71,13 @@ class _SynthesisPage extends State<SynthesisPage> {
     final c = (prefs.getInt('counter') ?? 0)+1;
     counter = c;
     prefs.setInt('counter', counter);
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
   }
 
   @override
@@ -98,7 +111,7 @@ class _SynthesisPage extends State<SynthesisPage> {
               ),
             ),
             const SizedBox(height: 50),
-            Row(
+            /*Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
@@ -136,22 +149,73 @@ class _SynthesisPage extends State<SynthesisPage> {
                     },
                   ),
                 ]
+            ),*/
+            FloatingActionButton.extended(
+              onPressed: () async {
+                final req = await openDialog();
+                if (req == null || req.isEmpty) return;
+                setState(() { reqList.add(req); });
+              },
+              label: const Text('New request'),
+              icon: const Icon(Icons.add),
             ),
-            const SizedBox(height: 380),
-            ElevatedButton(
-                onPressed: () {
-                  if(sumSelected || keySelected){
-                    _startBackgroundTask();
-                    Navigator.pop(context);
-                    _appProvider.setScreen(const DocumentsPage(), 2);
-                  }
+            SizedBox(
+              height: 400,
+              child: ListView.builder(
+                itemCount: reqList.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  return Card(
+                      child: ListTile(
+                        title: Text(reqList[index]),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.highlight_remove),
+                          onPressed: () => setState(() { reqList.removeAt(index); }),
+                        ),
+                      )
+                  );
                 },
-                child: const Text('Done'))
-
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if(sumSelected || keySelected){
+                  _startBackgroundTask();
+                  Navigator.pop(context);
+                  _appProvider.setScreen(const DocumentsPage(), 2);
+                }
+              },
+              child: const Text('Done')
+            )
           ],
         ),
       ),
     );
+  }
+
+  Future<String?> openDialog() => showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('New Request'),
+      content: TextField(
+        autofocus: true,
+        decoration: const InputDecoration(
+          hintText: 'Enter a new request'
+        ),
+        controller: myController
+      ),
+      actions: [
+        TextButton(
+          onPressed: submitRequest,
+          child: const Text('SUBMIT'),
+        )
+      ]
+    ),
+  );
+
+  void submitRequest(){
+    Navigator.of(context).pop(myController.text);
+    myController.clear();
   }
 
   void _startBackgroundTask() async {
