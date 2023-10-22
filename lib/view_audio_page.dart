@@ -29,27 +29,26 @@ class _ViewAudio extends State<ViewAudio> {
   late List<Recording> record;
   late final NotificationService notificationService;
   final ReceivePort _port = ReceivePort();
+  late AppProvider _appProvider;
 
   @override
   void initState() {
     notificationService = NotificationService();
     listenToNotificationStream();
     notificationService.initializePlatformNotifications();
-    super.initState();
     record = widget.record;
+
+    super.initState();
   }
 
   void listenToNotificationStream() =>
       notificationService.behaviorSubject.listen((payload) {
-        /*Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const TranscriptionsPage()));*/
+        _appProvider.setScreen(const TranscriptionsPage(), 0);
       });
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
+    _appProvider = Provider.of<AppProvider>(context);
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
@@ -99,7 +98,7 @@ class _ViewAudio extends State<ViewAudio> {
               onPressed: () {
                 _startBackgroundTask();
                 Navigator.pop(context);
-                appProvider.setScreen(const TranscriptionsPage(), 0);
+                _appProvider.setScreen(const TranscriptionsPage(), 0);
               },
               child: const Text('Transcribe'),
             ),

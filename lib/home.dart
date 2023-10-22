@@ -40,6 +40,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     Permission.notification.request();
+    Permission.storage.request();
+    Permission.microphone.request();
+
     final appProvider = Provider.of<AppProvider>(context);
     Widget currentScreen = appProvider.currentScreen;
     int currentTab = appProvider.currentTab;

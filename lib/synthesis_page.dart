@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sophia_transcrit2/documents_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:isolate';
 
 import 'home.dart';
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
+import 'notification_service.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SynthesisPage extends StatefulWidget {
   final String folder;
@@ -24,10 +26,19 @@ class _SynthesisPage extends State<SynthesisPage> {
   String documentFolder = "documents";
   late int counter;
   late AppProvider _appProvider;
+  late final NotificationService notificationService;
+  final ReceivePort _port = ReceivePort();
+  Future<void> computeFuture = Future.value();
+  bool keySelected = false;
+  bool sumSelected = true;
 
   @override
   void initState() {
     getSharedPref();
+    notificationService = NotificationService();
+    listenToNotificationStream();
+    notificationService.initializePlatformNotifications();
+    super.initState();
 
     super.initState();
     folder = widget
@@ -36,6 +47,11 @@ class _SynthesisPage extends State<SynthesisPage> {
         .pathList;
     _appProvider = Provider.of<AppProvider>(context, listen: false);
   }
+
+  void listenToNotificationStream() =>
+      notificationService.behaviorSubject.listen((payload) {
+        _appProvider.setScreen(const DocumentsPage(), 2);
+      });
 
   void getSharedPref() async {
     final prefs = await SharedPreferences.getInstance();
@@ -50,10 +66,6 @@ class _SynthesisPage extends State<SynthesisPage> {
     counter = c;
     prefs.setInt('counter', counter);
   }
-
-  Future<void> computeFuture = Future.value();
-  bool keySelected = false;
-  bool sumSelected = true;
 
   @override
   Widget build(BuildContext context) {
@@ -129,20 +141,9 @@ class _SynthesisPage extends State<SynthesisPage> {
             ElevatedButton(
                 onPressed: () {
                   if(sumSelected || keySelected){
-                    () async {
-                      for (var file in pathList){
-                        await sendText('$folder/$file');
-                      }
-
-                      var content = await getProcessedContent(pathList, keySelected, sumSelected);
-
-                      writeDocument('documents', 'document$counter', content);
-                      // Save an integer value to 'counter' key.
-                      _incrementCounter();
-
-                    }();
+                    _startBackgroundTask();
                     Navigator.pop(context);
-                    _appProvider.setScreen(DocumentsPage(), 2);
+                    _appProvider.setScreen(const DocumentsPage(), 2);
                   }
                 },
                 child: const Text('Done'))
@@ -151,5 +152,46 @@ class _SynthesisPage extends State<SynthesisPage> {
         ),
       ),
     );
+  }
+
+  void _startBackgroundTask() async {
+    await Isolate.spawn(_backgroundTask, [_port.sendPort, folder, pathList, keySelected, sumSelected]);
+    _port.listen((message) {
+      // Handle background task completion
+      writeDocument('documents', 'document$counter', message);
+
+      // Save an integer value to 'counter' key.
+      _incrementCounter();
+
+      notificationService.showLocalNotification(
+          id: 0,
+          title: "Your document is ready!",
+          body: "Tap to continue.",
+          payload: ""
+      );
+    });
+    notificationService.showLocalNotification(
+        id: 0,
+        title: "Text processing in progress...",
+        body: "",
+        payload: ""
+    );
+  }
+
+  static void _backgroundTask(List<dynamic> args) {
+    SendPort sendPort = args[0];
+    String folder = args[1];
+    List<String> pathList = args[2];
+    bool keySelected = args[3];
+    bool sumSelected = args[4];
+
+    () async {
+      for (var file in pathList){
+        await sendText('$folder/$file');
+      }
+      var content = await getProcessedContent(pathList, keySelected, sumSelected);
+
+      sendPort.send(content);
+    }();
   }
 }
