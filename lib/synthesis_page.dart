@@ -32,7 +32,6 @@ class _SynthesisPage extends State<SynthesisPage> {
   Future<void> computeFuture = Future.value();
   List<String> reqList = [];
   String documentFolder = "documents";
-  String newReq = "";
   bool keySelected = false;
   bool sumSelected = true;
 
@@ -111,45 +110,6 @@ class _SynthesisPage extends State<SynthesisPage> {
               ),
             ),
             const SizedBox(height: 50),
-            /*Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                      "Key words",
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)
-                  ),
-                  const SizedBox(width: 30),
-                  Switch(
-                    value: keySelected,
-                    onChanged: (value) {
-                      setState(() {
-                        keySelected = value;
-                      });
-                    },
-                  ),
-                ]
-            ),
-            const SizedBox(height: 20),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                      "Summary",
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)
-                  ),
-                  const SizedBox(width: 30),
-                  Switch(
-                    value: sumSelected,
-                    onChanged: (value) {
-                      setState(() {
-                        sumSelected = value;
-                      });
-                    },
-                  ),
-                ]
-            ),*/
             FloatingActionButton.extended(
               onPressed: () async {
                 final req = await openDialog();
@@ -179,7 +139,7 @@ class _SynthesisPage extends State<SynthesisPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                if(sumSelected || keySelected){
+                if(reqList.isNotEmpty){
                   _startBackgroundTask();
                   Navigator.pop(context);
                   _appProvider.setScreen(const DocumentsPage(), 2);
@@ -219,7 +179,7 @@ class _SynthesisPage extends State<SynthesisPage> {
   }
 
   void _startBackgroundTask() async {
-    await Isolate.spawn(_backgroundTask, [_port.sendPort, folder, pathList, keySelected, sumSelected]);
+    await Isolate.spawn(_backgroundTask, [_port.sendPort, folder, pathList, reqList]);
     _port.listen((message) {
       // Handle background task completion
       writeDocument('documents', 'document$counter', message);
@@ -247,14 +207,13 @@ class _SynthesisPage extends State<SynthesisPage> {
     SendPort sendPort = args[0];
     String folder = args[1];
     List<String> pathList = args[2];
-    bool keySelected = args[3];
-    bool sumSelected = args[4];
+    List<String> reqList = args[3];
 
     () async {
       for (var file in pathList){
         await sendText('$folder/$file');
       }
-      var content = await getProcessedContent(pathList, keySelected, sumSelected);
+      var content = await getProcessedContent(pathList, reqList);
 
       sendPort.send(content);
     }();

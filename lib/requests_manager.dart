@@ -10,9 +10,9 @@ Future getTranscription(String query) async {
   return response.body;
 }
 
-Future getProcessedContent(List<String> query, bool kw, bool sm) async {
+Future getProcessedContent(List<String> query, List<String> req) async {
   http.Response response = await http.get(
-      Uri.parse('$address/process?File=$query&kw=$kw&sm=$sm'));
+      Uri.parse('$address/process?File=$query&Req=${req.join(",,,")}'));
   return response.body;
 }
 

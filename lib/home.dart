@@ -6,6 +6,8 @@ import 'package:sophia_transcrit2/documents_page.dart';
 import 'package:sophia_transcrit2/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'file_manager_s.dart';
+
 class ListItem {
   String text;
   bool checked;
@@ -17,12 +19,16 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   Widget _currentScreen = GetAudioPage();
   int _currentTab = 1;
   List<ListItem> _fileTrans = [];
+  String _folderTrans = "";
   List<ListItem> _fileDocs = [];
+  String _folderDocs = "";
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
   List<ListItem> get fileTrans => _fileTrans;
+  String get folderTrans => _folderTrans;
   List<ListItem> get fileDocs => _fileDocs;
+  String get folderDocs => _folderDocs;
 
   void setScreen(Widget newScreen, int newTab) {
     _currentScreen = newScreen;
@@ -49,6 +55,27 @@ class AppProvider extends ChangeNotifier { // create a common file for data
     _fileDocs.insert(0, ListItem(text, false));
     notifyListeners(); // Notifica a los oyentes que la lista ha cambiado
   }
+
+  Future<void> getTranscriptions() async {
+    _folderTrans = await createFolderInAppDocDir("transcriptions");
+    final filenames = await getFilesInFolder(_folderTrans);
+    final files = filenames.map((text) => ListItem(text, false)).toList();
+    setTranscriptions(files);
+    notifyListeners();
+  }
+
+  Future<void> getDocuments() async {
+    _folderDocs = await createFolderInAppDocDir("documents");
+    final filenames = await getFilesInFolder(_folderDocs);
+    final files = filenames.map((text) => ListItem(text, false)).toList();
+    setDocuments(files);
+    notifyListeners();
+  }
+
+  AppProvider() {
+    getTranscriptions();
+    getDocuments();
+  }
 }
 
 class Home extends StatefulWidget {
@@ -70,9 +97,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    Permission.notification.request();
-    Permission.storage.request();
-    Permission.microphone.request();
+    () async {
+      Permission.notification.request();
+      Permission.storage.request();
+      Permission.microphone.request();
+    } ();
 
     final appProvider = Provider.of<AppProvider>(context);
     Widget currentScreen = appProvider.currentScreen;
