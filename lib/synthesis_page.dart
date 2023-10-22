@@ -223,6 +223,7 @@ class _SynthesisPage extends State<SynthesisPage> {
     _port.listen((message) {
       // Handle background task completion
       writeDocument('documents', 'document$counter', message);
+      _appProvider.addDocument('document$counter.txt');
 
       // Save an integer value to 'counter' key.
       _incrementCounter();

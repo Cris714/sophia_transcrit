@@ -129,6 +129,7 @@ class _ViewAudio extends State<ViewAudio> {
         );
       }
       writeDocument('transcriptions',message[1], message[2]);
+      _appProvider.addTranscription('${message[1]}.txt');
     });
     notificationService.showLocalNotification(
         id: 0,
