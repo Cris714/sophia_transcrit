@@ -28,6 +28,7 @@ class _SynthesisPage extends State<SynthesisPage> {
   late final NotificationService notificationService;
   final ReceivePort _port = ReceivePort();
   late TextEditingController myController;
+  late TextEditingController nameController = TextEditingController(text: 'document$counter');
 
   Future<void> computeFuture = Future.value();
   List<String> reqList = [];
@@ -82,72 +83,82 @@ class _SynthesisPage extends State<SynthesisPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.arrow_back, size: 35)
-                  ),
-                ]
-            ),
-            const Center(
-              child: Text(
-                  "What's next?",
-                  style: TextStyle(fontSize: 30)
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back, size: 35)
+                    ),
+                  ]
               ),
-            ),
-            const Center(
-              child: Text(
-                  'Generate your document.',
-                  style: TextStyle(fontSize: 17)
+              const Center(
+                child: Text(
+                    "What's next?",
+                    style: TextStyle(fontSize: 30)
+                ),
               ),
-            ),
-            const SizedBox(height: 50),
-            FloatingActionButton.extended(
-              onPressed: () async {
-                final req = await openDialog();
-                if (req == null || req.isEmpty) return;
-                setState(() { reqList.add(req); });
-              },
-              label: const Text('New request'),
-              icon: const Icon(Icons.add),
-            ),
-            SizedBox(
-              height: 400,
-              child: ListView.builder(
-                itemCount: reqList.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) {
-                  return Card(
-                      child: ListTile(
-                        title: Text(reqList[index]),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.highlight_remove),
-                          onPressed: () => setState(() { reqList.removeAt(index); }),
-                        ),
-                      )
-                  );
+              const Center(
+                child: Text(
+                    'Generate your document.',
+                    style: TextStyle(fontSize: 17)
+                ),
+              ),
+              const SizedBox(height: 50),
+              FloatingActionButton.extended(
+                onPressed: () async {
+                  final req = await openDialog();
+                  if (req == null || req.isEmpty) return;
+                  setState(() { reqList.add(req); });
                 },
+                label: const Text('New request'),
+                icon: const Icon(Icons.add),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if(reqList.isNotEmpty){
-                  _startBackgroundTask();
-                  Navigator.pop(context);
-                  _appProvider.setScreen(const DocumentsPage(), 2);
-                }
-              },
-              child: const Text('Done')
-            )
-          ],
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
+                child: ListView.builder(
+                  itemCount: reqList.length,
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (context, index) {
+                    return Card(
+                        child: ListTile(
+                          title: Text(reqList[index]),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.highlight_remove),
+                            onPressed: () => setState(() { reqList.removeAt(index); }),
+                          ),
+                        )
+                    );
+                  },
+                ),
+              ),
+              TextField(
+                  autofocus: false,
+                  decoration: const InputDecoration(
+                      labelText: 'Document Name',
+                  ),
+                  controller: nameController
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  if(reqList.isNotEmpty){
+                    _startBackgroundTask();
+                    Navigator.pop(context);
+                    _appProvider.setScreen(const DocumentsPage(), 2);
+                  }
+                },
+                child: const Text('Done')
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -182,8 +193,8 @@ class _SynthesisPage extends State<SynthesisPage> {
     await Isolate.spawn(_backgroundTask, [_port.sendPort, folder, pathList, reqList]);
     _port.listen((message) {
       // Handle background task completion
-      writeDocument('documents', 'document$counter', message);
-      _appProvider.addDocument('document$counter.txt');
+      writeDocument('documents', nameController.text, message);
+      _appProvider.addDocument('${nameController.text}.txt');
 
       // Save an integer value to 'counter' key.
       _incrementCounter();
