@@ -8,13 +8,6 @@ import 'view_text_page.dart';
 import 'file_manager_s.dart';
 import 'delete_popup.dart';
 
-class ListItem {
-  String text;
-  bool checked;
-
-  ListItem(this.text, this.checked);
-}
-
 class DocumentsPage extends StatefulWidget {
   const DocumentsPage({super.key});
 
@@ -24,19 +17,23 @@ class DocumentsPage extends StatefulWidget {
 
 class _DocumentsPage extends State<DocumentsPage> {
   Future<void> computeFuture = Future.value();
-  List<ListItem> fileObj = [];
-  String folderPath = "";
 
   String documentFolder = "documents";
   bool _showOptions = false;
-
+  late String folder;
   late AppProvider _appProvider;
 
   @override
   void initState() {
     super.initState();
-    _getFiles();
-    _appProvider = Provider.of<AppProvider>(context, listen: false);
+    setFolder();
+  }
+
+  void setFolder() async {
+    final f = await createFolderInAppDocDir(documentFolder);
+    setState(() {
+      folder = f;
+    });
   }
 
   void updateScreen() {
@@ -44,17 +41,15 @@ class _DocumentsPage extends State<DocumentsPage> {
   }
 
   Future<void> _getFiles() async {
-    final folder = await createFolderInAppDocDir(documentFolder);
     final filenames = await getFilesInFolder(folder);
+    final files = filenames.map((text) => ListItem(text, false)).toList();
 
-    setState(() {
-      fileObj = filenames.map((text) => ListItem(text, false)).toList();
-      folderPath = folder;
-    });
+    _appProvider.setDocuments(files);
   }
 
   @override
   Widget build(BuildContext context) {
+    _appProvider = Provider.of<AppProvider>(context, listen: true);
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
@@ -72,7 +67,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                             onPressed: () {
                               setState(() {
                                 _showOptions = false;
-                                for (var f in fileObj) {
+                                for (var f in _appProvider.fileDocs) {
                                   f.checked = false;
                                 }
                               });
@@ -80,16 +75,16 @@ class _DocumentsPage extends State<DocumentsPage> {
                             icon: const Icon(Icons.arrow_back, size: 35)
                         ),
                         Center(
-                          child: fileObj.where((item) => item.checked).toList().isNotEmpty ? Text(
-                              'Selected ${fileObj.where((item) => item.checked).length} files',
+                          child: Text(
+                              'Selected ${_appProvider.fileDocs.where((item) => item.checked).length} files',
                               style: const TextStyle(fontSize: 20)
-                          ) : const Text('Select files', style: TextStyle(fontSize: 20)),
+                          )
                         ),
                         IconButton(
                             onPressed: () async {
-                              List<ListItem> checkedItems = fileObj.where((item) => item.checked).toList();
+                              List<ListItem> checkedItems = _appProvider.fileDocs.where((item) => item.checked).toList();
                               if(checkedItems.isNotEmpty){
-                                Share.shareXFiles(checkedItems.map((file) => XFile('$folderPath/${file.text}')).toList(),
+                                Share.shareXFiles(checkedItems.map((file) => XFile('${folder}/${file.text}')).toList(),
                                     text: "Check out this transcription I've made!");
                               }
                             },
@@ -98,7 +93,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                         IconButton(
                             onPressed: () {
                               setState(() {
-                                List<ListItem> checkedItems = fileObj.where((item) => item.checked).toList();
+                                List<ListItem> checkedItems = _appProvider.fileDocs.where((item) => item.checked).toList();
                                 if(checkedItems.isNotEmpty){
                                   showDialog(
                                     context: context,
@@ -107,7 +102,8 @@ class _DocumentsPage extends State<DocumentsPage> {
                                         onConfirm: () {
                                           deleteFiles(documentFolder,checkedItems.map((file) => file.text).toList()); //Elimina un archivo de la carpeta
                                           setState(() {
-                                            fileObj.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
+                                            _appProvider.fileDocs.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
+                                            _showOptions = false;
                                           });
                                         },
                                       );
@@ -145,10 +141,10 @@ class _DocumentsPage extends State<DocumentsPage> {
             child: RefreshIndicator(
               onRefresh: _getFiles,
               child: ListView.separated(
-                itemCount: fileObj.length,
+                itemCount: _appProvider.fileDocs.length,
                 separatorBuilder: (context, index) => const Divider(),
                 itemBuilder: (context, index) {
-                  final file = fileObj[index];
+                  final file = _appProvider.fileDocs[index];
 
                   return ListTile(
                     leading: Checkbox(
@@ -156,9 +152,13 @@ class _DocumentsPage extends State<DocumentsPage> {
                         onChanged: (value) {
                           setState(() {
                             file.checked = !file.checked;
-                            if (fileObj.where((item) => item.checked).isNotEmpty){
+                            if (_appProvider.fileDocs.where((item) => item.checked).isNotEmpty){
                               setState(() {
                                 _showOptions = true;
+                              });
+                            } else {
+                              setState(() {
+                                _showOptions = false;
                               });
                             }
                           });
@@ -169,7 +169,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                       if(!_showOptions){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folderPath)),
+                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folder)),
                         );
                       }
                     },

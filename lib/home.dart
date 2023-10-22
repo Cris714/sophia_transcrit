@@ -6,17 +6,48 @@ import 'package:sophia_transcrit2/documents_page.dart';
 import 'package:sophia_transcrit2/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+class ListItem {
+  String text;
+  bool checked;
+
+  ListItem(this.text, this.checked);
+}
+
 class AppProvider extends ChangeNotifier { // create a common file for data
   Widget _currentScreen = GetAudioPage();
   int _currentTab = 1;
+  List<ListItem> _fileTrans = [];
+  List<ListItem> _fileDocs = [];
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
+  List<ListItem> get fileTrans => _fileTrans;
+  List<ListItem> get fileDocs => _fileDocs;
 
   void setScreen(Widget newScreen, int newTab) {
     _currentScreen = newScreen;
     _currentTab = newTab;
     notifyListeners();
+  }
+
+  void setTranscriptions(newFileObj) {
+    _fileTrans = newFileObj;
+    notifyListeners();
+  }
+
+  void setDocuments(newFileObj) {
+    _fileDocs = newFileObj;
+    notifyListeners();
+  }
+
+  void addTranscription(String text) {
+    _fileTrans.insert(0, ListItem(text, false));
+    notifyListeners(); // Notifica a los oyentes que la lista ha cambiado
+  }
+
+  void addDocument(String text) {
+    _fileDocs.insert(0, ListItem(text, false));
+    notifyListeners(); // Notifica a los oyentes que la lista ha cambiado
   }
 }
 

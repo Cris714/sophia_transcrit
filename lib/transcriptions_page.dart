@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sophia_transcrit2/get_audio_page.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'home.dart';
@@ -8,13 +7,7 @@ import 'synthesis_page.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
 import 'delete_popup.dart';
-
-class ListItem {
-  String text;
-  bool checked;
-
-  ListItem(this.text, this.checked);
-}
+import 'get_audio_page.dart';
 
 class TranscriptionsPage extends StatefulWidget {
   const TranscriptionsPage({super.key});
@@ -24,38 +17,39 @@ class TranscriptionsPage extends StatefulWidget {
 }
 
 class _TranscriptionsPage extends State<TranscriptionsPage> {
-  List<ListItem> fileObj = [];
-
-  String folderPath = "";
   String transcriptFolder = "transcriptions";
-
   bool _showOptions = false;
-
+  late String folder;
   late AppProvider _appProvider;
 
   @override
   void initState() {
     super.initState();
-    _getFiles();
-    _appProvider = Provider.of<AppProvider>(context, listen: false);
+    setFolder();
   }
 
   void updateScreen() {
     _appProvider.setScreen(GetAudioPage(),1);
   }
 
-  Future<void> _getFiles() async {
-    final folder = await createFolderInAppDocDir(transcriptFolder);
-    final filenames = await getFilesInFolder(folder);
-
+  void setFolder() async {
+    final f = await createFolderInAppDocDir(transcriptFolder);
     setState(() {
-      folderPath = folder;
-      fileObj = filenames.map((text) => ListItem(text, false)).toList();
+      folder = f;
     });
+  }
+
+  Future<void> _getFiles() async {
+    final filenames = await getFilesInFolder(folder);
+    final files = filenames.map((text) => ListItem(text, false)).toList();
+
+    _appProvider.setTranscriptions(files);
   }
 
   @override
   Widget build(BuildContext context) {
+    _appProvider = Provider.of<AppProvider>(context, listen: true);
+
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
@@ -73,7 +67,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                           onPressed: () {
                             setState(() {
                               _showOptions = false;
-                              for (var f in fileObj) {
+                              for (var f in _appProvider.fileTrans) {
                                 f.checked = false;
                               }
                             });
@@ -81,16 +75,16 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                           icon: const Icon(Icons.arrow_back, size: 35)
                       ),
                       Center(
-                        child: fileObj.where((item) => item.checked).toList().isNotEmpty ? Text(
-                            'Selected ${fileObj.where((item) => item.checked).length} files',
+                        child: Text(
+                            'Selected ${_appProvider.fileTrans.where((item) => item.checked).length} files',
                             style: const TextStyle(fontSize: 20)
-                        ) : const Text('Select files', style: TextStyle(fontSize: 20)),
+                        )
                       ),
                       IconButton(
                           onPressed: () async {
-                            List<ListItem> checkedItems = fileObj.where((item) => item.checked).toList();
+                            List<ListItem> checkedItems = _appProvider.fileTrans.where((item) => item.checked).toList();
                             if(checkedItems.isNotEmpty){
-                              Share.shareXFiles(checkedItems.map((file) => XFile('$folderPath/${file.text}')).toList(),
+                              Share.shareXFiles(checkedItems.map((file) => XFile('${folder}/${file.text}')).toList(),
                                       text: "Check out this transcription I've made!");
                             }
                           },
@@ -99,17 +93,18 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                       IconButton(
                           onPressed: () {
                             setState(() {
-                              List<ListItem> checkedItems = fileObj.where((item) => item.checked).toList();
+                              List<ListItem> checkedItems = _appProvider.fileTrans.where((item) => item.checked).toList();
                               if(checkedItems.isNotEmpty){
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return DeleteConfirmationDialog(
                                       onConfirm: () {
-                                        deleteFiles(transcriptFolder,checkedItems.map((file) => file.text).toList()); //Elimina un archivo de la carpeta
+                                        deleteFiles(transcriptFolder,checkedItems.map((file) => file.text).toList());
                                         setState(() {
-                                          fileObj.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
-                                        });
+                                          _appProvider.fileTrans.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
+                                          _showOptions = false;
+                                        });//Elimina un archivo de la carpeta
                                       },
                                     );
                                   },
@@ -146,10 +141,10 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             child: RefreshIndicator(
               onRefresh: _getFiles,
               child: ListView.separated(
-                itemCount: fileObj.length,
+                itemCount: _appProvider.fileTrans.length,
                 separatorBuilder: (context, index) => const Divider(),
                 itemBuilder: (context, index) {
-                  final file = fileObj[index];
+                  final file = _appProvider.fileTrans[index];
 
                   return ListTile(
                     leading: Checkbox(
@@ -157,9 +152,13 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                         onChanged: (value) {
                           setState(() {
                             file.checked = !file.checked;
-                            if (fileObj.where((item) => item.checked).isNotEmpty){
+                            if (_appProvider.fileTrans.where((item) => item.checked).isNotEmpty){
                               setState(() {
                                 _showOptions = true;
+                              });
+                            } else {
+                              setState(() {
+                                _showOptions = false;
                               });
                             }
                           });
@@ -171,7 +170,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                       if(!_showOptions){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folderPath)),
+                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folder)),
                         );
                       }
                     },
@@ -181,20 +180,20 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             ),
           ),
 
-          fileObj.where((item) => item.checked).toList().isNotEmpty ?
+          _showOptions ?
           ElevatedButton(
               onPressed: () {
                 Iterable<ListItem> checkedItem =
-                fileObj.where((item) => item.checked);
+                _appProvider.fileTrans.where((item) => item.checked);
                 if(checkedItem.isNotEmpty){
                   List<String> filenames = checkedItem.map((item) => item.text).toList();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SynthesisPage(folder: folderPath, pathList: filenames)),
+                    MaterialPageRoute(builder: (context) => SynthesisPage(folder: folder, pathList: filenames)),
                   );
                   setState(() {
                     _showOptions = false;
-                    for (var f in fileObj) {
+                    for (var f in _appProvider.fileTrans) {
                       f.checked = false;
                     }
                   });
