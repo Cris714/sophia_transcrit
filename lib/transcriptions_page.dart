@@ -169,6 +169,35 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             ),
           ),
 
+
+          _appProvider.showErrors ? AlertDialog(
+            title: const Text('Errors found'),
+            content: SingleChildScrollView(
+                child:SizedBox(
+                  height: 200,
+                    child: ListView.separated(
+                    itemCount: _appProvider.errors.length,
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(_appProvider.errors[index]),
+                      );
+                    }
+                    )
+                )
+            ),
+              contentPadding: EdgeInsets.all(10),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                  _appProvider.setShowErrors(false);
+                  _appProvider.clearErrors();
+                  },
+                  child: const Text('Close'),
+                )
+              ]
+          ) : const Text(""),
+
         AnimatedOpacity(
           duration: const Duration(seconds: 2),
           opacity: _appProvider.showCardTrans ? 1.0 : 0.0, // Controla la opacidad

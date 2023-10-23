@@ -35,6 +35,7 @@ class _SynthesisPage extends State<SynthesisPage> {
   String documentFolder = "documents";
   bool keySelected = false;
   bool sumSelected = true;
+  int countError = 0;
 
   @override
   void initState() {
@@ -196,18 +197,29 @@ class _SynthesisPage extends State<SynthesisPage> {
     await Isolate.spawn(_backgroundTask, [_port.sendPort, folder, pathList, reqList]);
     _port.listen((message) {
       // Handle background task completion
-      writeDocument('documents', nameController.text, message);
-      _appProvider.addDocument('${nameController.text}.txt');
-
-      // Save an integer value to 'counter' key.
-      _incrementCounter();
+      var msg = "";
+      if(message[1] == 200){
+        msg = "Your document is ready!";
+        writeDocument('documents', nameController.text, message[0]);
+        _appProvider.addDocument('${nameController.text}.txt');
+        // Save an integer value to 'counter' key.
+        _incrementCounter();
+      } else {
+        countError = countError + 1;
+        _appProvider.addDocsError("${nameController.text}.txt");
+        msg = "$countError error found processing your document.";
+      }
 
       notificationService.showLocalNotification(
           id: 0,
-          title: "Your document is ready!",
+          title: msg,
           body: "Tap to continue.",
           payload: ""
       );
+      if(countError != 0){
+        _appProvider.setShowDocsErrors(true);
+      }
+      countError = 0;
     });
     notificationService.showLocalNotification(
         id: 0,
@@ -227,9 +239,10 @@ class _SynthesisPage extends State<SynthesisPage> {
       for (var file in pathList){
         await sendText('$folder/$file');
       }
-      var content = await getProcessedContent(pathList, reqList);
+      var response = await getProcessedContent(pathList, reqList);
+      var content = response.body;
 
-      sendPort.send(content);
+      sendPort.send([content, response.statusCode]);
     }();
   }
 }

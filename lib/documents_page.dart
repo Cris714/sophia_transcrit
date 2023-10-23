@@ -168,6 +168,34 @@ class _DocumentsPage extends State<DocumentsPage> {
             )
           ),
 
+          _appProvider.showDocsErrors ? AlertDialog(
+              title: const Text('Errors found'),
+              content: SingleChildScrollView(
+                  child:SizedBox(
+                      height: 200,
+                      child: ListView.separated(
+                          itemCount: _appProvider.docsErrors.length,
+                          separatorBuilder: (context, index) => const Divider(),
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(_appProvider.docsErrors[index]),
+                            );
+                          }
+                      )
+                  )
+              ),
+              contentPadding: EdgeInsets.all(10),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _appProvider.setShowDocsErrors(false);
+                    _appProvider.clearDocsErrors();
+                  },
+                  child: const Text('Close'),
+                )
+              ]
+          ) : const Text(""),
+
           AnimatedOpacity(
             duration: const Duration(seconds: 2),
             opacity: _appProvider.showCardDocs ? 1.0 : 0.0, // Controla la opacidad

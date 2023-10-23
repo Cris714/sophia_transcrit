@@ -4,16 +4,18 @@ import 'dart:io';
 
 const address = 'http://146.83.216.166/api2';
 
+// const address = 'http://172.17.42.49:5006';
+
 Future getTranscription(String query) async {
   http.Response response = await http.get(
       Uri.parse('$address/transcript?File=$query'));
-  return response.body;
+  return response;
 }
 
 Future getProcessedContent(List<String> query, List<String> req) async {
   http.Response response = await http.get(
       Uri.parse('$address/process?File=$query&Req=${req.join(",,,")}'));
-  return response.body;
+  return response;
 }
 
 

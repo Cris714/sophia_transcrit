@@ -21,9 +21,13 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   List<ListItem> _fileTrans = [];
   String _folderTrans = "";
   bool _showCardTrans = false;
+  bool _showErrors = false;
   List<ListItem> _fileDocs = [];
   String _folderDocs = "";
   bool _showCardDocs = false;
+  List<String> _errors = [];
+  bool _showDocsErrors = false;
+  List<String> _docsErrors = [];
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
@@ -32,7 +36,41 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   List<ListItem> get fileDocs => _fileDocs;
   String get folderDocs => _folderDocs;
   bool get showCardTrans => _showCardTrans;
+  bool get showErrors => _showErrors;
   bool get showCardDocs => _showCardDocs;
+  bool get showDocsErrors => _showDocsErrors;
+  List<String> get errors => _errors;
+  List<String> get docsErrors => _docsErrors;
+
+  void clearErrors(){
+    _errors.clear();
+    notifyListeners();
+  }
+
+  void clearDocsErrors(){
+    _docsErrors.clear();
+    notifyListeners();
+  }
+
+  void addDocsError(String newError){
+    _docsErrors.add(newError);
+    notifyListeners();
+  }
+
+  void addError(String newError){
+    _errors.add(newError);
+    notifyListeners();
+  }
+
+  void setShowDocsErrors(newBool) {
+    _showDocsErrors = newBool;
+    notifyListeners();
+  }
+
+  void setShowErrors(newBool) {
+    _showErrors = newBool;
+    notifyListeners();
+  }
 
   void setShowCardTrans(newBool) {
     _showCardTrans = newBool;
@@ -225,3 +263,7 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
+//bug addTranscription (puede agregarse el mismo archivo), luego se borra al recargar
+//agregar popup con errores
+//tareas grabación
