@@ -147,6 +147,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                   controller: nameController
               ),
               const SizedBox(height: 30),
+              reqList.isNotEmpty ?
               ElevatedButton(
                 onPressed: () {
                   if(reqList.isNotEmpty){
@@ -158,6 +159,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                 },
                 child: const Text('Done')
               )
+                  : const ElevatedButton(onPressed: null, child: Text('Make a request'))
             ],
           ),
         ),
