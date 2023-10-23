@@ -153,6 +153,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                     _startBackgroundTask();
                     Navigator.pop(context);
                     _appProvider.setScreen(const DocumentsPage(), 2);
+                    _appProvider.setShowCardDocs(true);
                   }
                 },
                 child: const Text('Done')

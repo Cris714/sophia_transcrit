@@ -20,8 +20,10 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   int _currentTab = 1;
   List<ListItem> _fileTrans = [];
   String _folderTrans = "";
+  bool _showCardTrans = false;
   List<ListItem> _fileDocs = [];
   String _folderDocs = "";
+  bool _showCardDocs = false;
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
@@ -29,6 +31,18 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   String get folderTrans => _folderTrans;
   List<ListItem> get fileDocs => _fileDocs;
   String get folderDocs => _folderDocs;
+  bool get showCardTrans => _showCardTrans;
+  bool get showCardDocs => _showCardDocs;
+
+  void setShowCardTrans(newBool) {
+    _showCardTrans = newBool;
+    notifyListeners();
+  }
+
+  void setShowCardDocs(newBool) {
+    _showCardDocs = newBool;
+    notifyListeners();
+  }
 
   void setScreen(Widget newScreen, int newTab) {
     _currentScreen = newScreen;

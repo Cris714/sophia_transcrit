@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -32,6 +34,11 @@ class _DocumentsPage extends State<DocumentsPage> {
   @override
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context, listen: true);
+    if(_appProvider.showCardDocs){
+      Timer(const Duration(seconds: 1), () {
+        _appProvider.setShowCardDocs(false);
+      });
+    }
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
@@ -160,6 +167,25 @@ class _DocumentsPage extends State<DocumentsPage> {
               ),
             )
           ),
+
+          AnimatedOpacity(
+            duration: const Duration(seconds: 2),
+            opacity: _appProvider.showCardDocs ? 1.0 : 0.0, // Controla la opacidad
+            child: const Card(
+              elevation: 4,
+              margin: EdgeInsets.all(16),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  'Document has been processed correctly',
+                  style: TextStyle(
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
         ],
       ),
     );

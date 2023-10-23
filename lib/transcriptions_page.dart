@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -32,6 +34,11 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
   @override
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context, listen: true);
+    if(_appProvider.showCardTrans){
+      Timer(const Duration(seconds: 1), () {
+        _appProvider.setShowCardTrans(false);
+      });
+    }
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
@@ -161,6 +168,24 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
               ),
             ),
           ),
+
+        AnimatedOpacity(
+          duration: const Duration(seconds: 2),
+          opacity: _appProvider.showCardTrans ? 1.0 : 0.0, // Controla la opacidad
+          child: const Card(
+            elevation: 4,
+            margin: EdgeInsets.all(16),
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'Transcription has been performed correctly',
+                style: TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+        ),
 
           _showOptions ?
           ElevatedButton(

@@ -99,6 +99,7 @@ class _ViewAudio extends State<ViewAudio> {
                 _startBackgroundTask();
                 Navigator.pop(context);
                 _appProvider.setScreen(const TranscriptionsPage(), 0);
+                _appProvider.setShowCardTrans(true);
               },
               child: const Text('Transcribe'),
             ),
