@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -17,39 +19,26 @@ class TranscriptionsPage extends StatefulWidget {
 }
 
 class _TranscriptionsPage extends State<TranscriptionsPage> {
-  String transcriptFolder = "transcriptions";
   bool _showOptions = false;
-  late String folder;
   late AppProvider _appProvider;
 
   @override
   void initState() {
     super.initState();
-    setFolder();
   }
 
   void updateScreen() {
     _appProvider.setScreen(GetAudioPage(),1);
   }
 
-  void setFolder() async {
-    final f = await createFolderInAppDocDir(transcriptFolder);
-    setState(() {
-      folder = f;
-    });
-  }
-
-  Future<void> _getFiles() async {
-    final filenames = await getFilesInFolder(folder);
-    final files = filenames.map((text) => ListItem(text, false)).toList();
-
-    _appProvider.setTranscriptions(files);
-  }
-
   @override
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context, listen: true);
-
+    if(_appProvider.showCardTrans){
+      Timer(const Duration(seconds: 1), () {
+        _appProvider.setShowCardTrans(false);
+      });
+    }
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
@@ -84,7 +73,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                           onPressed: () async {
                             List<ListItem> checkedItems = _appProvider.fileTrans.where((item) => item.checked).toList();
                             if(checkedItems.isNotEmpty){
-                              Share.shareXFiles(checkedItems.map((file) => XFile('${folder}/${file.text}')).toList(),
+                              Share.shareXFiles(checkedItems.map((file) => XFile('${_appProvider.folderTrans}/${file.text}')).toList(),
                                       text: "Check out this transcription I've made!");
                             }
                           },
@@ -100,7 +89,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                                   builder: (BuildContext context) {
                                     return DeleteConfirmationDialog(
                                       onConfirm: () {
-                                        deleteFiles(transcriptFolder,checkedItems.map((file) => file.text).toList());
+                                        deleteFiles("transcriptions",checkedItems.map((file) => file.text).toList());
                                         setState(() {
                                           _appProvider.fileTrans.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
                                           _showOptions = false;
@@ -139,7 +128,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
           // Lista de archivos transcritos
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _getFiles,
+              onRefresh: _appProvider.getTranscriptions,
               child: ListView.separated(
                 itemCount: _appProvider.fileTrans.length,
                 separatorBuilder: (context, index) => const Divider(),
@@ -170,7 +159,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                       if(!_showOptions){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folder)),
+                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: _appProvider.folderTrans)),
                         );
                       }
                     },
@@ -179,6 +168,53 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
               ),
             ),
           ),
+
+
+          _appProvider.showErrors ? AlertDialog(
+            title: const Text('Errors found'),
+            content: SingleChildScrollView(
+                child:SizedBox(
+                  height: 200,
+                    child: ListView.separated(
+                    itemCount: _appProvider.errors.length,
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(_appProvider.errors[index]),
+                      );
+                    }
+                    )
+                )
+            ),
+              contentPadding: EdgeInsets.all(10),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                  _appProvider.setShowErrors(false);
+                  _appProvider.clearErrors();
+                  },
+                  child: const Text('Close'),
+                )
+              ]
+          ) : const Text(""),
+
+        AnimatedOpacity(
+          duration: const Duration(seconds: 2),
+          opacity: _appProvider.showCardTrans ? 1.0 : 0.0, // Controla la opacidad
+          child: const Card(
+            elevation: 4,
+            margin: EdgeInsets.all(16),
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'Transcription has been performed correctly',
+                style: TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+        ),
 
           _showOptions ?
           ElevatedButton(
@@ -189,7 +225,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                   List<String> filenames = checkedItem.map((item) => item.text).toList();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SynthesisPage(folder: folder, pathList: filenames)),
+                    MaterialPageRoute(builder: (context) => SynthesisPage(folder: _appProvider.folderTrans, pathList: filenames)),
                   );
                   setState(() {
                     _showOptions = false;

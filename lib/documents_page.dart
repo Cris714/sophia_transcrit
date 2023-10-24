@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -17,39 +19,26 @@ class DocumentsPage extends StatefulWidget {
 
 class _DocumentsPage extends State<DocumentsPage> {
   Future<void> computeFuture = Future.value();
-
-  String documentFolder = "documents";
   bool _showOptions = false;
-  late String folder;
   late AppProvider _appProvider;
 
   @override
   void initState() {
     super.initState();
-    setFolder();
-  }
-
-  void setFolder() async {
-    final f = await createFolderInAppDocDir(documentFolder);
-    setState(() {
-      folder = f;
-    });
   }
 
   void updateScreen() {
     _appProvider.setScreen(GetAudioPage(),1);
   }
 
-  Future<void> _getFiles() async {
-    final filenames = await getFilesInFolder(folder);
-    final files = filenames.map((text) => ListItem(text, false)).toList();
-
-    _appProvider.setDocuments(files);
-  }
-
   @override
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context, listen: true);
+    if(_appProvider.showCardDocs){
+      Timer(const Duration(seconds: 1), () {
+        _appProvider.setShowCardDocs(false);
+      });
+    }
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
@@ -84,7 +73,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                             onPressed: () async {
                               List<ListItem> checkedItems = _appProvider.fileDocs.where((item) => item.checked).toList();
                               if(checkedItems.isNotEmpty){
-                                Share.shareXFiles(checkedItems.map((file) => XFile('${folder}/${file.text}')).toList(),
+                                Share.shareXFiles(checkedItems.map((file) => XFile('${_appProvider.folderDocs}/${file.text}')).toList(),
                                     text: "Check out this transcription I've made!");
                               }
                             },
@@ -100,7 +89,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                                     builder: (BuildContext context) {
                                       return DeleteConfirmationDialog(
                                         onConfirm: () {
-                                          deleteFiles(documentFolder,checkedItems.map((file) => file.text).toList()); //Elimina un archivo de la carpeta
+                                          deleteFiles("documents",checkedItems.map((file) => file.text).toList()); //Elimina un archivo de la carpeta
                                           setState(() {
                                             _appProvider.fileDocs.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
                                             _showOptions = false;
@@ -139,7 +128,7 @@ class _DocumentsPage extends State<DocumentsPage> {
           // Lista de archivos transcritos
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _getFiles,
+              onRefresh: _appProvider.getDocuments,
               child: ListView.separated(
                 itemCount: _appProvider.fileDocs.length,
                 separatorBuilder: (context, index) => const Divider(),
@@ -169,7 +158,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                       if(!_showOptions){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: folder)),
+                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: _appProvider.folderDocs)),
                         );
                       }
                     },
@@ -178,6 +167,53 @@ class _DocumentsPage extends State<DocumentsPage> {
               ),
             )
           ),
+
+          _appProvider.showDocsErrors ? AlertDialog(
+              title: const Text('Errors found'),
+              content: SingleChildScrollView(
+                  child:SizedBox(
+                      height: 200,
+                      child: ListView.separated(
+                          itemCount: _appProvider.docsErrors.length,
+                          separatorBuilder: (context, index) => const Divider(),
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(_appProvider.docsErrors[index]),
+                            );
+                          }
+                      )
+                  )
+              ),
+              contentPadding: EdgeInsets.all(10),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _appProvider.setShowDocsErrors(false);
+                    _appProvider.clearDocsErrors();
+                  },
+                  child: const Text('Close'),
+                )
+              ]
+          ) : const Text(""),
+
+          AnimatedOpacity(
+            duration: const Duration(seconds: 2),
+            opacity: _appProvider.showCardDocs ? 1.0 : 0.0, // Controla la opacidad
+            child: const Card(
+              elevation: 4,
+              margin: EdgeInsets.all(16),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  'Document has been processed correctly',
+                  style: TextStyle(
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
         ],
       ),
     );

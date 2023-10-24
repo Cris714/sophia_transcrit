@@ -30,6 +30,7 @@ class _ViewAudio extends State<ViewAudio> {
   late final NotificationService notificationService;
   final ReceivePort _port = ReceivePort();
   late AppProvider _appProvider;
+  int countError = 0;
 
   @override
   void initState() {
@@ -99,6 +100,7 @@ class _ViewAudio extends State<ViewAudio> {
                 _startBackgroundTask();
                 Navigator.pop(context);
                 _appProvider.setScreen(const TranscriptionsPage(), 0);
+                _appProvider.setShowCardTrans(true);
               },
               child: const Text('Transcribe'),
             ),
@@ -111,12 +113,24 @@ class _ViewAudio extends State<ViewAudio> {
   void _startBackgroundTask() async {
     await Isolate.spawn(_backgroundTask, [_port.sendPort, record]);
     _port.listen((message) {
+      var msg;
+      if(message[3] == 200){
+        msg = "${message[0]}/${record.length} done.";
+      } else {
+        countError = countError + 1;
+        _appProvider.addError("${message[1]}.txt");
+        if(countError == 1) {
+          msg = "${message[0]}/${record.length} done. $countError error found.";
+        } else {
+          msg = "${message[0]}/${record.length} done. $countError errors found.";
+        }
+      }
       // Handle background task completion
       if (message[0] != record.length) {
         notificationService.showLocalNotification(
             id: 0,
             title: "Transcribing files...",
-            body: "${message[0]}/${record.length} done.",
+            body: msg,
             payload: ""
         );
       }
@@ -124,9 +138,13 @@ class _ViewAudio extends State<ViewAudio> {
         notificationService.showLocalNotification(
             id: 0,
             title: "Your transcriptions are ready!",
-            body: "${message[0]}/${record.length} done. Tap to continue.",
+            body: msg,
             payload: ""
         );
+        if(countError != 0){
+          _appProvider.setShowErrors(true);
+        }
+        countError = 0;
       }
       writeDocument('transcriptions',message[1], message[2]);
       _appProvider.addTranscription('${message[1]}.txt');
@@ -149,11 +167,12 @@ class _ViewAudio extends State<ViewAudio> {
         String file = rec.path.split('/').last;
 
         await sendAudio(rec.path);
-        var content = await getTranscription(file);
+        var response = await getTranscription(file);
+        var content = response.body;
         // writeDocument('transcriptions',filename, content);
         // await Future.delayed(const Duration(seconds: 5));
         // Send result back to the main UI isolate
-        sendPort.send([i++, filename, content]);
+        sendPort.send([i++, filename, content, response.statusCode]);
       }
     }();
   }
