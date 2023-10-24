@@ -118,7 +118,7 @@ class _ViewAudio extends State<ViewAudio> {
         msg = "${message[0]}/${record.length} done.";
       } else {
         countError = countError + 1;
-        _appProvider.addError("${message[1]}.txt");
+        _appProvider.addError(errorItem("${message[1]}.txt", message[3]));
         if(countError == 1) {
           msg = "${message[0]}/${record.length} done. $countError error found.";
         } else {
@@ -147,7 +147,7 @@ class _ViewAudio extends State<ViewAudio> {
         countError = 0;
       }
       writeDocument('transcriptions',message[1], message[2]);
-      _appProvider.addTranscription('${message[1]}.txt');
+      _appProvider.getTranscriptions();
     });
     notificationService.showLocalNotification(
         id: 0,
@@ -172,7 +172,7 @@ class _ViewAudio extends State<ViewAudio> {
         // writeDocument('transcriptions',filename, content);
         // await Future.delayed(const Duration(seconds: 5));
         // Send result back to the main UI isolate
-        sendPort.send([i++, filename, content, response.statusCode]);
+        sendPort.send([i++, filename, content, 404]);
       }
     }();
   }

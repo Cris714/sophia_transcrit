@@ -15,6 +15,13 @@ class ListItem {
   ListItem(this.text, this.checked);
 }
 
+class errorItem {
+  String text;
+  int statusCode;
+
+  errorItem(this.text, this.statusCode);
+}
+
 class AppProvider extends ChangeNotifier { // create a common file for data
   Widget _currentScreen = GetAudioPage();
   int _currentTab = 1;
@@ -25,9 +32,9 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   List<ListItem> _fileDocs = [];
   String _folderDocs = "";
   bool _showCardDocs = false;
-  List<String> _errors = [];
+  List<errorItem> _errors = [];
   bool _showDocsErrors = false;
-  List<String> _docsErrors = [];
+  List<errorItem> _docsErrors = [];
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
@@ -39,8 +46,8 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   bool get showErrors => _showErrors;
   bool get showCardDocs => _showCardDocs;
   bool get showDocsErrors => _showDocsErrors;
-  List<String> get errors => _errors;
-  List<String> get docsErrors => _docsErrors;
+  List<errorItem> get errors => _errors;
+  List<errorItem> get docsErrors => _docsErrors;
 
   void clearErrors(){
     _errors.clear();
@@ -52,12 +59,12 @@ class AppProvider extends ChangeNotifier { // create a common file for data
     notifyListeners();
   }
 
-  void addDocsError(String newError){
+  void addDocsError(errorItem newError){
     _docsErrors.add(newError);
     notifyListeners();
   }
 
-  void addError(String newError){
+  void addError(errorItem newError){
     _errors.add(newError);
     notifyListeners();
   }
@@ -96,16 +103,6 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   void setDocuments(newFileObj) {
     _fileDocs = newFileObj;
     notifyListeners();
-  }
-
-  void addTranscription(String text) {
-    _fileTrans.insert(0, ListItem(text, false));
-    notifyListeners(); // Notifica a los oyentes que la lista ha cambiado
-  }
-
-  void addDocument(String text) {
-    _fileDocs.insert(0, ListItem(text, false));
-    notifyListeners(); // Notifica a los oyentes que la lista ha cambiado
   }
 
   Future<void> getTranscriptions() async {
@@ -263,7 +260,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
-//bug addTranscription (puede agregarse el mismo archivo), luego se borra al recargar
-//agregar popup con errores
-//tareas grabación

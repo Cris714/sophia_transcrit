@@ -174,11 +174,16 @@ class _DocumentsPage extends State<DocumentsPage> {
                   child:SizedBox(
                       height: 200,
                       child: ListView.separated(
-                          itemCount: _appProvider.docsErrors.length,
+                          itemCount: _appProvider.docsErrors.length+1,
                           separatorBuilder: (context, index) => const Divider(),
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(_appProvider.docsErrors[index]),
+                            return index == 0 ? const ListTile(
+                                title: Text("File"),
+                                trailing: Text("Status Code"),
+                              ) :
+                            ListTile(
+                                title: Text(_appProvider.docsErrors[index-1].text),
+                                trailing: Text("${_appProvider.docsErrors[index-1].statusCode}")
                             );
                           }
                       )
