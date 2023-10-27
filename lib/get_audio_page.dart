@@ -60,9 +60,10 @@ class _GetAudioPage extends State<GetAudioPage> {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
               ),
             ),
+            const SizedBox(height: 30),
             Container(
               alignment: Alignment.bottomCenter,
-              padding: const EdgeInsets.only(top: 150),
+              // padding: const EdgeInsets.only(top: 150),
               child: const RecordButton(),
             ),
           ],
