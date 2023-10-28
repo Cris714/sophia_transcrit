@@ -35,6 +35,7 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   List<errorItem> _errors = [];
   bool _showDocsErrors = false;
   List<errorItem> _docsErrors = [];
+  bool _showCardAudio = false;
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
@@ -48,6 +49,7 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   bool get showDocsErrors => _showDocsErrors;
   List<errorItem> get errors => _errors;
   List<errorItem> get docsErrors => _docsErrors;
+  bool get showCardAudio => _showCardAudio;
 
   void clearErrors(){
     _errors.clear();
@@ -86,6 +88,11 @@ class AppProvider extends ChangeNotifier { // create a common file for data
 
   void setShowCardDocs(newBool) {
     _showCardDocs = newBool;
+    notifyListeners();
+  }
+
+  void setShowCardAudio(newBool) {
+    _showCardAudio = newBool;
     notifyListeners();
   }
 
@@ -148,7 +155,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     () async {
       await Permission.notification.request();
-      await Permission.storage.request();
     } ();
 
     final appProvider = Provider.of<AppProvider>(context);

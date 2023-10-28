@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:file_picker/src/platform_file.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sophia_transcrit2/record_waves.dart';
@@ -36,7 +40,6 @@ class _RecordButtonState extends State<RecordButton> {
     setState(() {
       counter = (prefs.getInt('audioCounter') ?? 0);
       dirPath = (prefs.getString('dirPath') ?? "");
-      nameController = TextEditingController(text: 'audio$counter');
     });
   }
 
@@ -64,7 +67,6 @@ class _RecordButtonState extends State<RecordButton> {
 
   @override
   void dispose(){
-    audioPlayer.dispose();
     record.dispose();
     super.dispose();
   }
@@ -72,9 +74,9 @@ class _RecordButtonState extends State<RecordButton> {
   void startRecording() async {
     try {
       if (await record.hasPermission()) {
-        var path = await createFolderInAppDocDir("recordings");
-
-        await record.start(const RecordConfig(), path: '$path/audio.m4a');
+        nameController = TextEditingController(text: 'audio$counter');
+        var dir = await createFolderInAppDocDir("recordings");
+        await record.start(const RecordConfig(), path: '$dir/audio.m4a');
         setState(() {
           isRecording = true;
         });
@@ -109,6 +111,13 @@ class _RecordButtonState extends State<RecordButton> {
   void stopRecording() async {
     try {
       final path = await record.stop();
+      print("PATH: $path");
+      File sourceFile = File(path!);
+      if(await sourceFile.exists()) {
+        print("ARCHIVO EXISTE");
+      } else {
+        print("ARCHIVO NO GUARDADO");
+      }
       setState(() {
         isRecording = false;
         pause = false;
@@ -120,19 +129,15 @@ class _RecordButtonState extends State<RecordButton> {
     }
   }
 
-  Future<void> playRecording() async {
-    try {
-      Source urlSource = UrlSource(audioPath);
-      await audioPlayer.play(urlSource);
-    } catch(e) {
-      print("Error playing record: $e");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width * 0.5;
-    _appProvider = Provider.of<AppProvider>(context, listen: false);
+    _appProvider = Provider.of<AppProvider>(context, listen: true);
+    if(_appProvider.showCardAudio){
+      Timer(const Duration(seconds: 1), () {
+        _appProvider.setShowCardAudio(false);
+      });
+    }
 
     return Column(
       children: [
@@ -172,11 +177,21 @@ class _RecordButtonState extends State<RecordButton> {
                     ),
                     const SizedBox(height: 10),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Text("ruta/del/archivo"),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width/2, // Establece un ancho máximo para el contenedor
+                          child: Text(
+                            dirPath,
+                            maxLines: 5, // Establece un máximo de 1 línea
+                            overflow: TextOverflow.ellipsis, // Agrega puntos suspensivos en caso de desbordamiento
+                            style: TextStyle(
+                              fontSize: 13, // Establece el tamaño de fuente a 20 puntos
+                            ),
+                          ),
+                        ),
                         IconButton(
-                            onPressed: playRecording,
+                            onPressed: setDirPath,
                             icon: const Icon(Icons.file_present_rounded, size: 35)
                         ),
                       ],
@@ -194,29 +209,34 @@ class _RecordButtonState extends State<RecordButton> {
                   child: const Text('Discard'),
                 ),
                 TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isSaving = false;
+                  onPressed: () async{
+                    var status = await Permission.manageExternalStorage.request();
+                    if(status.isGranted) {
                       if(dirPath == "") {
                         setDirPath();
                       }
-                      saveAudioFile(dirPath, audioPath);
+                      saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
+                      _appProvider.setShowCardAudio(true);
+                    }
+                    setState(() {
+                      isSaving = false;
                     });
                   },
                   child: const Text('Save'),
                 ),
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async{
+                    var status = await Permission.manageExternalStorage.request();
+                    if(status.isGranted) {
+                      if(dirPath == "") {
+                        setDirPath();
+                      }
+                      saveAudioFile(dirPath, nameController.text, audioPath);
+                      _incrementCounter();
+                    }
                     setState(() {
                       isSaving = false;
-                      // _appProvider.setScreen(const TranscriptionsPage(),0);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ViewAudio(record: [Recording(PlatformFile(path: audioPath, name: 'audioPrueba.m4a', size: 300), audioPath, "300 MB")]),
-                        ),
-                      );
                     });
                   },
                   child: const Text('Save & transcript'),
@@ -239,7 +259,25 @@ class _RecordButtonState extends State<RecordButton> {
                 icon: const Icon(Icons.stop, size: 35)
             ),
           ],
-        )
+        ),
+
+        AnimatedOpacity(
+          duration: const Duration(seconds: 2),
+          opacity: _appProvider.showCardAudio ? 1.0 : 0.0, // Controla la opacidad
+          child: const Card(
+            elevation: 4,
+            margin: EdgeInsets.all(16),
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'Audio file copied successfully',
+                style: TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+        ),
 
       ],
     );
@@ -278,3 +316,4 @@ class _RecordButtonState extends State<RecordButton> {
       ),
   );
 }
+
