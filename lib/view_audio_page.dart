@@ -116,6 +116,7 @@ class _ViewAudio extends State<ViewAudio> {
       var msg;
       if(message[3] == 200){
         msg = "${message[0]}/${record.length} done.";
+        writeDocument('transcriptions',message[1], message[2]);
       } else {
         countError = countError + 1;
         _appProvider.addError(errorItem("${message[1]}.txt", message[3]));
@@ -146,7 +147,6 @@ class _ViewAudio extends State<ViewAudio> {
         }
         countError = 0;
       }
-      writeDocument('transcriptions',message[1], message[2]);
       _appProvider.getTranscriptions();
     });
     notificationService.showLocalNotification(

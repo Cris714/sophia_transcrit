@@ -149,7 +149,6 @@ class _HomeState extends State<Home> {
     () async {
       await Permission.notification.request();
       await Permission.storage.request();
-      await Permission.microphone.request();
     } ();
 
     final appProvider = Provider.of<AppProvider>(context);

@@ -1,6 +1,57 @@
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as path;
+
+Future<String?> selectExternalDirectory() async {
+  try {
+    // Muestra el selector de directorios
+    final result = await FilePicker.platform.getDirectoryPath();
+
+    if (result != null) {
+      // El usuario seleccionó un directorio
+      return result;
+    } else {
+      // El usuario canceló la selección
+      return null;
+    }
+  } catch (e) {
+    print('Error selecting external directory: $e');
+    return null;
+  }
+}
+
+// Future<void> saveAudioFile(externalDir, String audioPath) async {
+//   try {
+//     if(await File(audioPath).exists()) {
+//       String filename = audioPath.split("/").last;
+//       String destinationPath = '${externalDir}/$filename';
+//       File file = File(audioPath);
+//       File destinationFile = File(destinationPath);
+//       await file.copy(destinationFile.path);
+//
+//       print('Audio file saved to: $destinationPath');
+//     }
+//   } catch (e) {
+//     print('Error saving audio file: $e');
+//   }
+// }
+
+Future<void> saveAudioFile(externalDir, String audioPath) async {
+  File sourceFile = File(audioPath);
+  if (await sourceFile.exists()) {
+    String filename = path.basename(audioPath);
+    File destinationFile = File(path.join(externalDir, filename));
+    try {
+      await sourceFile.copy(destinationFile.path);
+      print('Archivo de audio copiado con éxito.');
+    } catch (e) {
+      print('Error al copiar el archivo de audio: $e');
+    }
+  } else {
+    print('El archivo de audio de origen no existe.');
+  }
+}
 
 
 Future<List<PlatformFile>?> pickFiles() async {
@@ -113,7 +164,7 @@ Future<String> createFolderInAppDocDir(String folderName) async {
   final Directory appDocDir = await getApplicationDocumentsDirectory();
   //App Document Directory + folder name
   final Directory appDocDirFolder =
-  Directory('${appDocDir.path}/$folderName/');
+  Directory('${appDocDir.path}/$folderName');
 
   if (await appDocDirFolder.exists()) {
     //if folder already exists return path
