@@ -218,7 +218,7 @@ class _ViewAudio extends State<ViewAudio> {
         // writeDocument('transcriptions',filename, content);
         // await Future.delayed(const Duration(seconds: 5));
         // Send result back to the main UI isolate
-        sendPort.send([i++, filename, content, 404]);
+        sendPort.send([i++, filename, content, response.statusCode]);
       }
     }();
   }

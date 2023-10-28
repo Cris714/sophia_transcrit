@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:file_picker/src/platform_file.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +9,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sophia_transcrit2/record_waves.dart';
 import 'package:record/record.dart';
+import 'package:sophia_transcrit2/requests_manager.dart';
+import 'package:sophia_transcrit2/transcriptions_page.dart';
 import 'package:sophia_transcrit2/view_audio_page.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'file_manager_s.dart';
 import 'home.dart';
+import 'notification_service.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({super.key});
@@ -24,6 +28,8 @@ class RecordButton extends StatefulWidget {
 class _RecordButtonState extends State<RecordButton> {
   final duration = const Duration(milliseconds: 300);
 
+  late final NotificationService notificationService;
+  final ReceivePort _port = ReceivePort();
   var isRecording = false;
   var isSaving = false;
   var pause = false;
@@ -34,6 +40,7 @@ class _RecordButtonState extends State<RecordButton> {
   final record = AudioRecorder();
   final audioPlayer = AudioPlayer();
   String audioPath = "";
+  int countError = 0;
 
   void getSharedPref() async {
     final prefs = await SharedPreferences.getInstance();
@@ -63,7 +70,15 @@ class _RecordButtonState extends State<RecordButton> {
   void initState() {
     super.initState();
     getSharedPref();
+    notificationService = NotificationService();
+    listenToNotificationStream();
+    notificationService.initializePlatformNotifications();
   }
+
+  void listenToNotificationStream() =>
+      notificationService.behaviorSubject.listen((payload) {
+        _appProvider.setScreen(const TranscriptionsPage(), 0);
+      });
 
   @override
   void dispose(){
@@ -238,6 +253,9 @@ class _RecordButtonState extends State<RecordButton> {
                     setState(() {
                       isSaving = false;
                     });
+                    _startBackgroundTask();
+                    _appProvider.setShowCardTrans(true);
+                    _appProvider.setScreen(const TranscriptionsPage(), 0);
                   },
                   child: const Text('Save & transcript'),
                 ),
@@ -315,5 +333,55 @@ class _RecordButtonState extends State<RecordButton> {
         ),
       ),
   );
-}
 
+  void _startBackgroundTask() async {
+    await Isolate.spawn(_backgroundTask, [_port.sendPort, dirPath, nameController.text]);
+    _port.listen((message) {
+      var msg;
+      if(message[3] == 200){
+        msg = "Tap to continue.";
+        writeDocument('transcriptions',message[1], message[2]);
+      } else {
+        countError = countError + 1;
+        _appProvider.addError(errorItem("${message[1]}.txt", message[3]));
+        msg = "$countError error found.";
+      }
+      // Handle background task completion
+      if (message[0] == 1) {
+        notificationService.showLocalNotification(
+            id: 0,
+            title: "Your transcription is ready!",
+            payload: "", body: msg,
+        );
+        if(countError != 0){
+          _appProvider.setShowErrors(true);
+        }
+        countError = 0;
+      }
+      _appProvider.getTranscriptions();
+    });
+    notificationService.showLocalNotification(
+        id: 0,
+        title: "Transcribing file...",
+        payload: "", body: '',
+    );
+  }
+
+  static void _backgroundTask(List<dynamic> args) {
+    var i = 1;
+    SendPort sendPort = args[0];
+    String dir = args[1];
+    String filename = args[2];
+    String file = "$filename.m4a";
+    () async {
+      await sendAudio("$dir/$file");
+      var response = await getTranscription(file);
+      var content = response.body;
+      // writeDocument('transcriptions',filename, content);
+      // await Future.delayed(const Duration(seconds: 5));
+      // Send result back to the main UI isolate
+      sendPort.send([i++, filename, content, response.statusCode]);
+    }();
+  }
+
+}
