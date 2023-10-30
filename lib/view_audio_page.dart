@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,8 @@ class _ViewAudio extends State<ViewAudio> {
   final ReceivePort _port = ReceivePort();
   late AppProvider _appProvider;
   int countError = 0;
+  final audioPlayer = AudioPlayer();
+  int playIndex = -1;
 
   @override
   void initState() {
@@ -40,6 +43,43 @@ class _ViewAudio extends State<ViewAudio> {
     record = widget.record;
 
     super.initState();
+  }
+
+  @override
+  void dispose(){
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> playRecording(audioPath) async {
+    try {
+      Source urlSource = UrlSource(audioPath);
+      await audioPlayer.play(urlSource);
+    } catch(e) {
+      print("Error playing record: $e");
+    }
+  }
+
+  Future<void> stopRecording() async {
+    try {
+      await audioPlayer.stop();
+    } catch(e) {
+      print("Error stopping record: $e");
+    }
+  }
+
+  void togglePlay(int index) {
+    if (index == playIndex) {
+      stopRecording();
+      setState(() {
+        playIndex = -1;
+      });
+    } else {
+      playRecording(record[index].file.path);
+      setState(() {
+        playIndex = index;
+      });
+    }
   }
 
   void listenToNotificationStream() =>
@@ -84,11 +124,17 @@ class _ViewAudio extends State<ViewAudio> {
                   itemCount: record.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
+                    var play = false;
                     return ListTile(
                       title: Text(record[index].file.name),
                       subtitle: Text(record[index].file.extension ?? ""),
+                      leading: IconButton(
+                            onPressed: () {
+                              togglePlay(index);
+                            },
+                            icon: playIndex != index ? const Icon(Icons.play_arrow, size: 35) : const Icon(Icons.pause, size: 35)
+                        ),
                       trailing: Text(record[index].size),
-
                     );
                   },
                 ),
@@ -116,9 +162,10 @@ class _ViewAudio extends State<ViewAudio> {
       var msg;
       if(message[3] == 200){
         msg = "${message[0]}/${record.length} done.";
+        writeDocument('transcriptions',message[1], message[2]);
       } else {
         countError = countError + 1;
-        _appProvider.addError("${message[1]}.txt");
+        _appProvider.addError(errorItem("${message[1]}.txt", message[3]));
         if(countError == 1) {
           msg = "${message[0]}/${record.length} done. $countError error found.";
         } else {
@@ -146,8 +193,7 @@ class _ViewAudio extends State<ViewAudio> {
         }
         countError = 0;
       }
-      writeDocument('transcriptions',message[1], message[2]);
-      _appProvider.addTranscription('${message[1]}.txt');
+      _appProvider.getTranscriptions();
     });
     notificationService.showLocalNotification(
         id: 0,

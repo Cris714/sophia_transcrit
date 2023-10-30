@@ -49,6 +49,9 @@ dependencies:
   share_plus: 7.0.2
   rxdart:
   permission_handler: ^11.0.1
+  record: ^5.0.1
+  audioplayers: ^5.2.0
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:

@@ -171,16 +171,21 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
 
 
           _appProvider.showErrors ? AlertDialog(
-            title: const Text('Errors found'),
+            title: const Text('Oops! Something went wrong...'),
             content: SingleChildScrollView(
                 child:SizedBox(
                   height: 200,
                     child: ListView.separated(
-                    itemCount: _appProvider.errors.length,
+                    itemCount: _appProvider.errors.length+1,
                     separatorBuilder: (context, index) => const Divider(),
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(_appProvider.errors[index]),
+                      return index == 0 ? const ListTile(
+                        title: Text("File"),
+                        trailing: Text("Status Code"),
+                      ) :
+                      ListTile(
+                        title: Text(_appProvider.errors[index-1].text),
+                        trailing: Text("${_appProvider.errors[index-1].statusCode}"),
                       );
                     }
                     )

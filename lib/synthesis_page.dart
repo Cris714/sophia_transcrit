@@ -201,12 +201,12 @@ class _SynthesisPage extends State<SynthesisPage> {
       if(message[1] == 200){
         msg = "Your document is ready!";
         writeDocument('documents', nameController.text, message[0]);
-        _appProvider.addDocument('${nameController.text}.txt');
+        _appProvider.getDocuments();
         // Save an integer value to 'counter' key.
         _incrementCounter();
       } else {
         countError = countError + 1;
-        _appProvider.addDocsError("${nameController.text}.txt");
+        _appProvider.addDocsError(errorItem("${nameController.text}.txt", message[1]));
         msg = "$countError error found processing your document.";
       }
 
