@@ -170,7 +170,7 @@ class _HomeState extends State<Home> {
 
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
-        color: primary,
+        color: sophiaprimary,
         shape: CircularNotchedRectangle(),
         notchMargin: 10,
         child: Container(
@@ -195,12 +195,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.storage,
-                            color: currentTab == 0 ? Colors.white: primary[300],
+                            color: currentTab == 0 ? Colors.white: sophiaprimary[300],
                           ),
                           Text(
                             'Transcriptions',
                             style: TextStyle(
-                              color: currentTab == 0 ? Colors.white: primary[300],
+                              color: currentTab == 0 ? Colors.white: sophiaprimary[300],
                             ),
                           )
                         ],
@@ -220,12 +220,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.add,
-                            color: currentTab == 1 ? Colors.white: primary[300],
+                            color: currentTab == 1 ? Colors.white: sophiaprimary[300],
                           ),
                           Text(
                             'Get audio',
                             style: TextStyle(
-                              color: currentTab == 1 ? Colors.white: primary[300],
+                              color: currentTab == 1 ? Colors.white: sophiaprimary[300],
                             ),
                           )
                         ],
@@ -245,12 +245,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.article,
-                            color: currentTab == 2 ? Colors.white: primary[300],
+                            color: currentTab == 2 ? Colors.white: sophiaprimary[300],
                           ),
                           Text(
                             'Documents',
                             style: TextStyle(
-                              color: currentTab == 2 ? Colors.white: primary[300],
+                              color: currentTab == 2 ? Colors.white: sophiaprimary[300],
                             ),
                           )
                         ],

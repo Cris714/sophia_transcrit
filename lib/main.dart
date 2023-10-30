@@ -26,8 +26,8 @@ class SophiaTranscritMain extends StatelessWidget {
     return MaterialApp(
       title: 'Sophia Transcrit',
       theme: ThemeData(
-        primarySwatch: primary,
-        fontFamily: 'Merriweather',
+        primarySwatch: sophiaprimary,
+        fontFamily: 'MuktaVaani',
       ),
 
       darkTheme: ThemeData.light(),
