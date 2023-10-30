@@ -236,13 +236,18 @@ class _SynthesisPage extends State<SynthesisPage> {
     List<String> reqList = args[3];
 
     () async {
-      for (var file in pathList){
-        await sendText('$folder/$file');
-      }
-      var response = await getProcessedContent(pathList, reqList);
-      var content = response.body;
+      try {
+        for (var file in pathList) {
+          await sendText('$folder/$file');
+        }
+        var response = await getProcessedContent(pathList, reqList);
+        var content = response.body;
 
-      sendPort.send([content, response.statusCode]);
+        sendPort.send([content, response.statusCode]);
+      }
+      catch (e) {
+        sendPort.send(["Error", 0]);
+      }
     }();
   }
 }

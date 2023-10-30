@@ -149,14 +149,20 @@ class _HomeState extends State<Home> {
     DocumentsPage(),
   ];
 
+  @override
+  void initState() {
+    () async {
+      await Permission.notification.request();
+      await Permission.storage.request();
+      await Permission.manageExternalStorage.request();
+    } ();
+    super.initState();
+  }
+
   final PageStorageBucket bucket = PageStorageBucket();
 
   @override
   Widget build(BuildContext context) {
-    () async {
-      await Permission.notification.request();
-    } ();
-
     final appProvider = Provider.of<AppProvider>(context);
     Widget currentScreen = appProvider.currentScreen;
     int currentTab = appProvider.currentTab;
