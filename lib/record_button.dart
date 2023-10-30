@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:file_picker/src/platform_file.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ import 'package:sophia_transcrit2/record_waves.dart';
 import 'package:record/record.dart';
 import 'package:sophia_transcrit2/requests_manager.dart';
 import 'package:sophia_transcrit2/transcriptions_page.dart';
-import 'package:sophia_transcrit2/view_audio_page.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'file_manager_s.dart';
@@ -126,12 +124,8 @@ class _RecordButtonState extends State<RecordButton> {
   void stopRecording() async {
     try {
       final path = await record.stop();
-      print("PATH: $path");
-      File sourceFile = File(path!);
-      if(await sourceFile.exists()) {
-        print("ARCHIVO EXISTE");
-      } else {
-        print("ARCHIVO NO GUARDADO");
+      if(dirPath == "") {
+        setDirPath();
       }
       setState(() {
         isRecording = false;
@@ -200,7 +194,7 @@ class _RecordButtonState extends State<RecordButton> {
                             dirPath,
                             maxLines: 5, // Establece un máximo de 1 línea
                             overflow: TextOverflow.ellipsis, // Agrega puntos suspensivos en caso de desbordamiento
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 13, // Establece el tamaño de fuente a 20 puntos
                             ),
                           ),
@@ -226,36 +220,36 @@ class _RecordButtonState extends State<RecordButton> {
                 TextButton(
                   onPressed: () async{
                     var status = await Permission.manageExternalStorage.request();
-                    if(status.isGranted) {
-                      if(dirPath == "") {
-                        setDirPath();
-                      }
+                    if(dirPath == "") {
+                      setDirPath();
+                    }
+                    if(status.isGranted && dirPath != ""){
                       saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
                       _appProvider.setShowCardAudio(true);
+                      setState(() {
+                        isSaving = false;
+                      });
                     }
-                    setState(() {
-                      isSaving = false;
-                    });
                   },
                   child: const Text('Save'),
                 ),
                 TextButton(
                   onPressed: () async{
                     var status = await Permission.manageExternalStorage.request();
-                    if(status.isGranted) {
-                      if(dirPath == "") {
-                        setDirPath();
-                      }
+                    if(dirPath == "") {
+                      setDirPath();
+                    }
+                    if(status.isGranted && dirPath != ""){
                       saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
+                      _startBackgroundTask();
+                      _appProvider.setShowCardTrans(true);
+                      _appProvider.setScreen(const TranscriptionsPage(), 0);
+                      setState(() {
+                        isSaving = false;
+                      });
                     }
-                    setState(() {
-                      isSaving = false;
-                    });
-                    _startBackgroundTask();
-                    _appProvider.setShowCardTrans(true);
-                    _appProvider.setScreen(const TranscriptionsPage(), 0);
                   },
                   child: const Text('Save & transcript'),
                 ),
@@ -374,13 +368,17 @@ class _RecordButtonState extends State<RecordButton> {
     String filename = args[2];
     String file = "$filename.m4a";
     () async {
-      await sendAudio("$dir/$file");
-      var response = await getTranscription(file);
-      var content = response.body;
-      // writeDocument('transcriptions',filename, content);
-      // await Future.delayed(const Duration(seconds: 5));
-      // Send result back to the main UI isolate
-      sendPort.send([i++, filename, content, response.statusCode]);
+      try {
+        await sendAudio("$dir/$file");
+        var response = await getTranscription(file);
+        var content = response.body;
+        // writeDocument('transcriptions',filename, content);
+        // await Future.delayed(const Duration(seconds: 5));
+        // Send result back to the main UI isolate
+        sendPort.send([i++, filename, content, response.statusCode]);
+      } catch (e) {
+        sendPort.send([i++, filename, "error", 0]);
+      }
     }();
   }
 

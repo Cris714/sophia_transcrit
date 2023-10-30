@@ -90,6 +90,11 @@ class _ViewAudio extends State<ViewAudio> {
   @override
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context);
+    audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        playIndex = -1;
+      });
+    });
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
@@ -211,14 +216,18 @@ class _ViewAudio extends State<ViewAudio> {
       for (var rec in record){
         String filename = rec.path.split('/').last.split('.').first;
         String file = rec.path.split('/').last;
-
-        await sendAudio(rec.path);
-        var response = await getTranscription(file);
-        var content = response.body;
-        // writeDocument('transcriptions',filename, content);
-        // await Future.delayed(const Duration(seconds: 5));
-        // Send result back to the main UI isolate
-        sendPort.send([i++, filename, content, response.statusCode]);
+        try {
+          await sendAudio(rec.path);
+          var response = await getTranscription(file);
+          var content = response.body;
+          // writeDocument('transcriptions',filename, content);
+          // await Future.delayed(const Duration(seconds: 5));
+          // Send result back to the main UI isolate
+          sendPort.send([i++, filename, content, response.statusCode]);
+        }
+        catch (e) {
+          sendPort.send([i++, filename, 'error', 0]);
+        }
       }
     }();
   }
