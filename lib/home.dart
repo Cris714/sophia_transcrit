@@ -202,12 +202,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.storage,
-                            color: currentTab == 0 ? sophiasecondarygreen[200] : Colors.white,
+                            color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
                           ),
                           Text(
                             'Transcriptions',
                             style: TextStyle(
-                              color: currentTab == 0 ? sophiasecondarygreen[200] : Colors.white,
+                              color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
                             ),
                           )
                         ],
@@ -227,12 +227,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.add,
-                            color: currentTab == 1 ? sophiasecondarygreen[200] : Colors.white,
+                            color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
                           ),
                           Text(
                             'Get audio',
                             style: TextStyle(
-                              color: currentTab == 1 ? sophiasecondarygreen[200] : Colors.white,
+                              color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
                             ),
                           )
                         ],
@@ -252,12 +252,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.article,
-                            color: currentTab == 2 ? sophiasecondarygreen[200] : Colors.white,
+                            color: currentTab == 2 ? Colors.white : sophiasecondarygreen[200],
                           ),
                           Text(
                             'Documents',
                             style: TextStyle(
-                              color: currentTab == 2 ? sophiasecondarygreen[200] : Colors.white,
+                              color: currentTab == 2 ? Colors.white : sophiasecondarygreen[200],
                             ),
                           )
                         ],
