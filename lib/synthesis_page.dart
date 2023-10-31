@@ -151,7 +151,7 @@ class _SynthesisPage extends State<SynthesisPage> {
               reqList.isNotEmpty ?
               ElevatedButton(
                 onPressed: () {
-                  if(reqList.isNotEmpty){
+                  if(reqList.isNotEmpty && nameController.text != ""){
                     _startBackgroundTask();
                     Navigator.pop(context);
                     _appProvider.setScreen(const DocumentsPage(), 2);

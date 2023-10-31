@@ -224,7 +224,7 @@ class _RecordButtonState extends State<RecordButton> {
                     if(dirPath == "") {
                       setDirPath();
                     }
-                    if(status.isGranted && dirPath != ""){
+                    if(status.isGranted && dirPath != "" && nameController.text != ""){
                       saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
                       _appProvider.setShowCardAudio(true);
@@ -241,7 +241,7 @@ class _RecordButtonState extends State<RecordButton> {
                     if(dirPath == "") {
                       setDirPath();
                     }
-                    if(status.isGranted && dirPath != ""){
+                    if(status.isGranted && dirPath != "" && nameController.text != ""){
                       saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
                       _startBackgroundTask();
