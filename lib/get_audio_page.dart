@@ -44,6 +44,8 @@ class _GetAudioPage extends State<GetAudioPage> {
 
         ),
       body: Center(
+        child: SingleChildScrollView(
+
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -66,8 +68,10 @@ class _GetAudioPage extends State<GetAudioPage> {
               // padding: const EdgeInsets.only(top: 150),
               child: const RecordButton(),
             ),
+
           ],
         ),
+        )
       )
     );
   }

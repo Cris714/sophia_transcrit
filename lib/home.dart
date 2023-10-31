@@ -161,6 +161,7 @@ class _HomeState extends State<Home> {
     Widget currentScreen = appProvider.currentScreen;
     int currentTab = appProvider.currentTab;
 
+
     return Scaffold(
       appBar: AppBar(title: Text('Sophia Transcrit')),
       body: PageStorage(
@@ -195,12 +196,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.storage,
-                            color: currentTab == 0 ? Colors.white: sophiaprimary[300],
+                            color: currentTab == 0 ? sophiasecondarygreen[200] : Colors.white,
                           ),
                           Text(
                             'Transcriptions',
                             style: TextStyle(
-                              color: currentTab == 0 ? Colors.white: sophiaprimary[300],
+                              color: currentTab == 0 ? sophiasecondarygreen[200] : Colors.white,
                             ),
                           )
                         ],
@@ -220,12 +221,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.add,
-                            color: currentTab == 1 ? Colors.white: sophiaprimary[300],
+                            color: currentTab == 1 ? sophiasecondarygreen[200] : Colors.white,
                           ),
                           Text(
                             'Get audio',
                             style: TextStyle(
-                              color: currentTab == 1 ? Colors.white: sophiaprimary[300],
+                              color: currentTab == 1 ? sophiasecondarygreen[200] : Colors.white,
                             ),
                           )
                         ],
@@ -245,12 +246,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.article,
-                            color: currentTab == 2 ? Colors.white: sophiaprimary[300],
+                            color: currentTab == 2 ? sophiasecondarygreen[200] : Colors.white,
                           ),
                           Text(
                             'Documents',
                             style: TextStyle(
-                              color: currentTab == 2 ? Colors.white: sophiaprimary[300],
+                              color: currentTab == 2 ? sophiasecondarygreen[200] : Colors.white,
                             ),
                           )
                         ],
