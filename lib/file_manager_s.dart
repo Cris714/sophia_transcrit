@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
 
-Future<String?> selectExternalDirectory() async {
+Future<String> selectExternalDirectory() async {
   try {
     // Muestra el selector de directorios
     final result = await FilePicker.platform.getDirectoryPath();
@@ -13,11 +13,11 @@ Future<String?> selectExternalDirectory() async {
       return result;
     } else {
       // El usuario canceló la selección
-      return null;
+      return "";
     }
   } catch (e) {
     print('Error selecting external directory: $e');
-    return null;
+    return "";
   }
 }
 
