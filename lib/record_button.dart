@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sophia_transcrit2/colors.dart';
 import 'package:sophia_transcrit2/record_waves.dart';
 import 'package:record/record.dart';
 import 'package:sophia_transcrit2/requests_manager.dart';
@@ -163,7 +164,7 @@ class _RecordButtonState extends State<RecordButton> {
               duration: duration,
               decoration: BoxDecoration(
                   border: Border.all(
-                    color: isRecording ? Colors.red : Colors.grey,
+                    color: isRecording ? sophiasecondaryred : Colors.grey,
                     width: isRecording ? 4 : 1,
                   ),
                   borderRadius: BorderRadius.circular(width)
@@ -223,7 +224,7 @@ class _RecordButtonState extends State<RecordButton> {
                     if(dirPath == "") {
                       setDirPath();
                     }
-                    if(status.isGranted && dirPath != ""){
+                    if(status.isGranted && dirPath != "" && nameController.text != ""){
                       saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
                       _appProvider.setShowCardAudio(true);
@@ -240,7 +241,7 @@ class _RecordButtonState extends State<RecordButton> {
                     if(dirPath == "") {
                       setDirPath();
                     }
-                    if(status.isGranted && dirPath != ""){
+                    if(status.isGranted && dirPath != "" && nameController.text != ""){
                       saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
                       _startBackgroundTask();
@@ -311,13 +312,13 @@ class _RecordButtonState extends State<RecordButton> {
               color: Colors.white.withOpacity(0.2),
               width: isRecording ? 4 : 8,
             ),
-            color: Colors.red,
+            color: sophiasecondaryred,
             borderRadius: BorderRadius.circular(
               isRecording ? 20 : 80,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.red.withOpacity(0.4),
+                color: sophiasecondaryred.withOpacity(0.4),
                 blurRadius: isRecording ? 17.5 : 40.0,
                 spreadRadius: isRecording ? 7.5 : 20.0,
               )

@@ -167,6 +167,7 @@ class _HomeState extends State<Home> {
     Widget currentScreen = appProvider.currentScreen;
     int currentTab = appProvider.currentTab;
 
+
     return Scaffold(
       appBar: AppBar(title: Text('Sophia Transcrit')),
       body: PageStorage(
@@ -176,7 +177,7 @@ class _HomeState extends State<Home> {
 
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
-        color: primary,
+        color: sophiaprimary,
         shape: CircularNotchedRectangle(),
         notchMargin: 10,
         child: Container(
@@ -201,12 +202,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.storage,
-                            color: currentTab == 0 ? Colors.white: primary[300],
+                            color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
                           ),
                           Text(
                             'Transcriptions',
                             style: TextStyle(
-                              color: currentTab == 0 ? Colors.white: primary[300],
+                              color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
                             ),
                           )
                         ],
@@ -226,12 +227,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.add,
-                            color: currentTab == 1 ? Colors.white: primary[300],
+                            color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
                           ),
                           Text(
                             'Get audio',
                             style: TextStyle(
-                              color: currentTab == 1 ? Colors.white: primary[300],
+                              color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
                             ),
                           )
                         ],
@@ -251,12 +252,12 @@ class _HomeState extends State<Home> {
                         children: [
                           Icon(
                             Icons.article,
-                            color: currentTab == 2 ? Colors.white: primary[300],
+                            color: currentTab == 2 ? Colors.white : sophiasecondarygreen[200],
                           ),
                           Text(
                             'Documents',
                             style: TextStyle(
-                              color: currentTab == 2 ? Colors.white: primary[300],
+                              color: currentTab == 2 ? Colors.white : sophiasecondarygreen[200],
                             ),
                           )
                         ],

@@ -9,6 +9,9 @@ version:
 
 project_type: app
 
+android:name="com.google.firebase.messaging.default_notification_icon"
+android:resource="@mipmap/ic_stat_ic_notification" />
+
 # Tracks metadata for the flutter migrate command
 migration:
   platforms:

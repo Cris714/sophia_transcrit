@@ -44,30 +44,34 @@ class _GetAudioPage extends State<GetAudioPage> {
 
         ),
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        child: SingleChildScrollView(
 
-            const Center(
-              child: Text(
-                  "Welcome Back",
-                  style: TextStyle(fontSize: 22)
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              const Center(
+                child: Text(
+                    "Welcome Back",
+                    style: TextStyle(fontSize: 22)
+                ),
               ),
-            ),
-            const Center(
-              child: Text(
-                "HOLLOW",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
+              const Center(
+                child: Text(
+                  "HOLLOW",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
+                ),
               ),
-            ),
-            const SizedBox(height: 30),
-            Container(
-              alignment: Alignment.bottomCenter,
-              // padding: const EdgeInsets.only(top: 150),
-              child: const RecordButton(),
-            ),
-          ],
-        ),
+              const SizedBox(height: 30),
+              Container(
+                alignment: Alignment.bottomCenter,
+                // padding: const EdgeInsets.only(top: 150),
+                child: const RecordButton(),
+              ),
+
+            ],
+          ),
+        )
       )
     );
   }
