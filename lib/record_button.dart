@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
@@ -58,7 +57,7 @@ class _RecordButtonState extends State<RecordButton> {
 
   void setDirPath() async {
     final prefs = await SharedPreferences.getInstance();
-    var dir = (await selectExternalDirectory())!;
+    var dir = await selectExternalDirectory();
     setState(() {
       dirPath = dir;
     });
@@ -225,7 +224,7 @@ class _RecordButtonState extends State<RecordButton> {
                       setDirPath();
                     }
                     if(status.isGranted && dirPath != "" && nameController.text != ""){
-                      saveAudioFile(dirPath, nameController.text, audioPath);
+                      await saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
                       _appProvider.setShowCardAudio(true);
                       setState(() {
@@ -242,7 +241,7 @@ class _RecordButtonState extends State<RecordButton> {
                       setDirPath();
                     }
                     if(status.isGranted && dirPath != "" && nameController.text != ""){
-                      saveAudioFile(dirPath, nameController.text, audioPath);
+                      await saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
                       _startBackgroundTask();
                       _appProvider.setShowCardTrans(true);
