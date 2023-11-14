@@ -99,6 +99,17 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   void setScreen(Widget newScreen, int newTab) {
     _currentScreen = newScreen;
     _currentTab = newTab;
+
+    if(newTab != 0) {
+      for (var f in _fileTrans) {
+        f.checked = false;
+      }
+    } else if(newTab != 2) {
+      for (var f in _fileDocs) {
+        f.checked = false;
+      }
+    }
+
     notifyListeners();
   }
 

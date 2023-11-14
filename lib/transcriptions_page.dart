@@ -156,12 +156,10 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                     title: Text(file.text),
                     onTap: () {
                       // Navegar al visualizador de archivos cuando se presiona un elemento
-                      if(!_showOptions){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: _appProvider.folderTrans)),
-                        );
-                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ViewText(filename: file.text, folder: _appProvider.folderTrans)),
+                      );
                     },
                   );
                 },
