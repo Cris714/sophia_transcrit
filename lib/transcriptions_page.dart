@@ -21,6 +21,8 @@ class TranscriptionsPage extends StatefulWidget {
 class _TranscriptionsPage extends State<TranscriptionsPage> {
   bool _showOptions = false;
   late AppProvider _appProvider;
+  final ScrollController _horizontal = ScrollController(),
+      _vertical = ScrollController();
 
   @override
   void initState() {
@@ -167,39 +169,60 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             ),
           ),
 
-
-          _appProvider.showErrors ? AlertDialog(
-            title: const Text('Oops! Something went wrong...'),
-            content: SingleChildScrollView(
-                child:SizedBox(
-                  height: 200,
-                    child: ListView.separated(
-                    itemCount: _appProvider.errors.length+1,
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemBuilder: (context, index) {
-                      return index == 0 ? const ListTile(
-                        title: Text("File"),
-                        trailing: Text("Status Code"),
-                      ) :
-                      ListTile(
-                        title: Text(_appProvider.errors[index-1].text),
-                        trailing: Text("${_appProvider.errors[index-1].statusCode}"),
-                      );
-                    }
-                    )
-                )
+    if(_appProvider.showErrors) AlertDialog(
+        title: const Text('Oops! Something went wrong...'),
+        content: SizedBox(
+          height: MediaQuery.of(context).size.height / 4,
+          width: MediaQuery.of(context).size.width,
+          child: Scrollbar(
+            controller: _vertical,
+            thumbVisibility: true,
+            trackVisibility: true,
+            child: Scrollbar(
+              controller: _horizontal,
+              thumbVisibility: true,
+              trackVisibility: true,
+              notificationPredicate: (notif) => notif.depth == 1,
+              child: SingleChildScrollView(
+                controller: _vertical,
+                child: SingleChildScrollView(
+                  controller: _horizontal,
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: const <DataColumn>[
+                      DataColumn(label: Text('File')),
+                      DataColumn(label: Text('StatusCode')),
+                    ],
+                    rows: [
+                      for (var error in _appProvider.errors)
+                        DataRow(
+                          cells: [
+                            DataCell(Text(error.text)),
+                            DataCell(
+                                statusError[error.statusCode] == null ?
+                                Text('Code error ${error.statusCode}')
+                                    : Text('${error.statusCode}: ${statusError[error.statusCode]}')
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-              contentPadding: EdgeInsets.all(10),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                  _appProvider.setShowErrors(false);
-                  _appProvider.clearErrors();
-                  },
-                  child: const Text('Close'),
-                )
-              ]
-          ) : const Text(""),
+          ),
+        ),
+        contentPadding: const EdgeInsets.all(10),
+        actions: [
+          TextButton(
+            onPressed: () {
+            _appProvider.setShowErrors(false);
+            _appProvider.clearErrors();
+            },
+            child: const Text('Close'),
+          )
+        ]
+      ),
 
         AnimatedOpacity(
           duration: const Duration(seconds: 2),

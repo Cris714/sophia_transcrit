@@ -6,7 +6,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sophia_transcrit2/colors.dart';
-import 'package:sophia_transcrit2/record_waves.dart';
 import 'package:record/record.dart';
 import 'package:sophia_transcrit2/requests_manager.dart';
 import 'package:sophia_transcrit2/transcriptions_page.dart';
@@ -25,6 +24,9 @@ class RecordButton extends StatefulWidget {
 
 class _RecordButtonState extends State<RecordButton> {
   final duration = const Duration(milliseconds: 300);
+  String recordingTime = '00:00';
+  int time = 0;
+  Timer? timer;
 
   late final NotificationService notificationService;
   final ReceivePort _port = ReceivePort();
@@ -84,9 +86,30 @@ class _RecordButtonState extends State<RecordButton> {
     super.dispose();
   }
 
+  void recordTime() {
+    // var startTime = DateTime.now();
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      // var diff = DateTime.now().difference(startTime);
+      time++;
+      recordingTime = '${(time / 3600).floor() == 0 ? '' : '${(time / 3600).floor().toString().padLeft(2,
+          "0")}:'}${((time / 60).floor() % 60).toString().padLeft(2,
+          "0")}:${(time % 60).toString().padLeft(2, '0')}';
+      // recordingTime =
+      // '${diff.inHours == 0 ? '' : diff.inHours.toString().padLeft(2,
+      //     "0") + ':'}${(diff.inMinutes % 60).floor().toString().padLeft(2,
+      //     "0")}:${(diff.inSeconds % 60).floor().toString().padLeft(2, '0')}';
+      setState(() {});
+    });
+  }
+
+  void stopTime() {
+    timer?.cancel();
+  }
+
   void startRecording() async {
     try {
       if (await record.hasPermission()) {
+        recordTime();
         nameController = TextEditingController(text: 'audio$counter');
         var dir = await createFolderInAppDocDir("recordings");
         await record.start(const RecordConfig(), path: '$dir/audio.m4a');
@@ -102,6 +125,7 @@ class _RecordButtonState extends State<RecordButton> {
   void pauseRecording() async {
     try {
       await record.pause();
+      stopTime();
       setState(() {
         pause = true;
       });
@@ -113,6 +137,7 @@ class _RecordButtonState extends State<RecordButton> {
   void resumeRecording() async {
     try {
       await record.resume();
+      recordTime();
       setState(() {
         pause = false;
       });
@@ -124,6 +149,7 @@ class _RecordButtonState extends State<RecordButton> {
   void stopRecording() async {
     try {
       final path = await record.stop();
+      stopTime();
       if(dirPath == "") {
         setDirPath();
       }
@@ -132,6 +158,8 @@ class _RecordButtonState extends State<RecordButton> {
         pause = false;
         isSaving = true;
         audioPath = path!;
+        recordingTime = '00:00';
+        time = 0;
       });
     } catch(e) {
       print("Error stopping record: $e");
@@ -153,10 +181,10 @@ class _RecordButtonState extends State<RecordButton> {
         Stack(
           alignment: Alignment.center,
           children: [
-            if(isRecording && !pause) RecordWaves(
-              duration: duration,
-              size: width,
-            ),
+            // if(isRecording && !pause) RecordWaves(
+            //   duration: duration,
+            //   size: width,
+            // ),
             AnimatedContainer(
               width: width,
               height: width,
@@ -170,6 +198,7 @@ class _RecordButtonState extends State<RecordButton> {
               ),
               child: tapButton(width),
             ),
+            if(isRecording) Text(recordingTime),
 
             if(isSaving) AlertDialog(
               title: const Text("Save Recording"),

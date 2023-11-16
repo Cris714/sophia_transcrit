@@ -129,7 +129,6 @@ class _ViewAudio extends State<ViewAudio> {
                   itemCount: record.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
-                    var play = false;
                     return ListTile(
                       title: Text(record[index].file.name),
                       subtitle: Text(record[index].file.extension ?? ""),
@@ -220,10 +219,9 @@ class _ViewAudio extends State<ViewAudio> {
           await sendAudio(rec.path);
           var response = await getTranscription(file);
           var content = response.body;
-          // writeDocument('transcriptions',filename, content);
-          // await Future.delayed(const Duration(seconds: 5));
           // Send result back to the main UI isolate
           sendPort.send([i++, filename, content, response.statusCode]);
+          // sendPort.send([i++, filename, 'error', 0]);
         }
         catch (e) {
           sendPort.send([i++, filename, 'error', 0]);

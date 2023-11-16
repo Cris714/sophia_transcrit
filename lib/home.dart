@@ -8,6 +8,12 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'file_manager_s.dart';
 
+Map<int, String> statusError = {
+  0: 'Connexion Timeout. Connect to internet',
+  504: 'Server not responding. Try again later.',
+  404: 'File not found'
+};
+
 class ListItem {
   String text;
   bool checked;

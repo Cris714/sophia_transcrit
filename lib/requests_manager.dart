@@ -3,7 +3,7 @@ import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 
 const address = 'http://146.83.216.166/api2';
-// const address = 'http://';
+// const address = 'http://192.168.156.108:5006';
 
 Future getTranscription(String query) async {
   http.Response response = await http.get(

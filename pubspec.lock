@@ -145,6 +145,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.3+6"
+  cross_scroll:
+    dependency: "direct main"
+    description:
+      name: cross_scroll
+      sha256: "50d2006d51c0640887928200c8561c6833a6f98d576f6fcb62f4f2f5916d0056"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.76"
   crypto:
     dependency: transitive
     description:
