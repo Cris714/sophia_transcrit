@@ -11,8 +11,8 @@ import 'package:sophia_transcrit2/requests_manager.dart';
 import 'package:sophia_transcrit2/transcriptions_page.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+import 'app_provider.dart';
 import 'file_manager_s.dart';
-import 'home.dart';
 import 'notification_service.dart';
 
 class RecordButton extends StatefulWidget {

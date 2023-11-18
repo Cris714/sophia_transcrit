@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sophia_transcrit2/login.dart';
 
-import 'home.dart';
+import 'app_provider.dart';
 import 'synthesis_page.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
@@ -111,7 +112,11 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             : Row(
                 children: [
                   IconButton(
-                      onPressed: updateScreen,
+                      onPressed: () async {
+                        await GoogleSignInApi.logout();
+
+                        Navigator.of(context).pop();
+                      },
                       icon: const Icon(Icons.logout, size: 35)
                   ),
                   const SizedBox(width: 20),

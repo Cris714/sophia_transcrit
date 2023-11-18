@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sophia_transcrit2/colors.dart';
-import 'package:sophia_transcrit2/home.dart';
+
+import 'app_provider.dart';
+import 'home.dart';
+import 'login.dart';
 
 void main() {
   runApp(
@@ -31,7 +34,8 @@ class SophiaTranscritMain extends StatelessWidget {
       ),
 
       darkTheme: ThemeData.light(),
-      home: Home(),
+      home: LoginScreen(),
+      // home: Home(),
 
     );
   }

@@ -4,7 +4,7 @@ import 'package:sophia_transcrit2/documents_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:isolate';
 
-import 'home.dart';
+import 'app_provider.dart';
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
 import 'notification_service.dart';

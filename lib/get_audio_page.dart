@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sophia_transcrit2/view_audio_page.dart';
 import 'package:sophia_transcrit2/record_button.dart';
 
+import 'app_provider.dart';
 import 'file_manager_s.dart';
 
 class GetAudioPage extends StatefulWidget {
@@ -12,8 +14,12 @@ class GetAudioPage extends StatefulWidget {
 }
 
 class _GetAudioPage extends State<GetAudioPage> {
+  // late AppProvider _appProvider;
+
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context, listen: true);
+
     return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async{
@@ -56,10 +62,10 @@ class _GetAudioPage extends State<GetAudioPage> {
                     style: TextStyle(fontSize: 22)
                 ),
               ),
-              const Center(
+              Center(
                 child: Text(
-                  "HOLLOW",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
+                    appProvider.user == null ? 'HOLLOW' : '${appProvider.user!.displayName}',
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
                 ),
               ),
               const SizedBox(height: 30),
