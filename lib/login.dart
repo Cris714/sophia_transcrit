@@ -29,7 +29,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Future signIn() async {
     final user = await GoogleSignInApi.login();
     if(user == null){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign In Failed'),backgroundColor: Colors.red,));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign In Failed'),
+            backgroundColor: Colors.red,)
+      );
     } else {
       appProvider.setUser(user);
       Navigator.push(
@@ -43,17 +46,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
+        const Text(
           'Email',
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
           height: 60.0,
-          child: TextField(
+          child: const TextField(
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
-              color: Colors.white,
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
@@ -61,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.email,
-                color: Colors.white,
+                color: Color(0xFF4C29C9),
               ),
               hintText: 'Enter your Email',
             ),
@@ -75,17 +77,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
+        const Text(
           'Password',
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
           height: 60.0,
-          child: TextField(
+          child: const TextField(
             obscureText: true,
             style: TextStyle(
-              color: Colors.white,
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
@@ -93,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Colors.white,
+                color: Color(0xFF4C29C9),
               ),
               hintText: 'Enter your Password',
             ),
@@ -108,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () => print('Forgot Password Button Pressed'),
-        child: Text(
+        child: const Text(
           'Forgot Password?',
         ),
       ),
@@ -116,16 +117,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildRememberMeCheckbox() {
-    return Container(
+    return SizedBox(
       height: 20.0,
       child: Row(
         children: <Widget>[
           Theme(
-            data: ThemeData(unselectedWidgetColor: Colors.white),
+            data: ThemeData(unselectedWidgetColor: Colors.black26),
             child: Checkbox(
               value: _rememberMe,
-              checkColor: Colors.green,
-              activeColor: Colors.white,
+              // checkColor: Colors.green,
+              // activeColor: Colors.white,
               onChanged: (value) {
                 setState(() {
                   _rememberMe = value!;
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
           ),
-          Text(
+          const Text(
             'Remember me',
           ),
         ],
@@ -143,14 +144,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildLoginBtn() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0),
+      padding: const EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () => print('Login Button Pressed'),
-        child: Text(
-          'LOGIN',
+        child: const Text(
+          'Sign In',
           style: TextStyle(
-            color: Color(0xFF527DAA),
             letterSpacing: 1.5,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -161,68 +161,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignInWithText() {
-    return Column(
-      children: <Widget>[
-        Text(
-          '- OR -',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        SizedBox(height: 20.0),
-        Text(
-          'Sign in with',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialBtn(Function onTap, AssetImage logo) {
-    return GestureDetector(
-      onTap: onTap(),
-      child: Container(
-        height: 60.0,
-        width: 60.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-              blurRadius: 6.0,
-            ),
-          ],
-          image: DecorationImage(
-            image: logo,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildSocialBtnRow() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 30.0),
-      child: Row(
+    // return Padding(
+    //   padding: const EdgeInsets.symmetric(vertical: 30.0),
+      return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          // _buildSocialBtn(
-          //       () => print('Login with Facebook'),
-          //   AssetImage(
-          //     'assets/logos/facebook.jpg',
-          //   ),
-          // ),
-          // _buildSocialBtn(
-          //       _handleSignIn,
-          //   AssetImage(
-          //     'assets/logos/google.jpg',
-          //   ),
-          // ),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 25.0),
+            padding: const EdgeInsets.symmetric(vertical: 25.0),
             width: 200,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -239,29 +185,29 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           )
         ],
-      ),
-    );
+      );
+    // );
   }
 
   Widget _buildSignupBtn() {
     return GestureDetector(
       onTap: () => print('Sign Up Button Pressed'),
       child: RichText(
-        text: TextSpan(
+        text: const TextSpan(
           children: [
             TextSpan(
               text: 'Don\'t have an Account? ',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w400,
+                color: Colors.black,
+                // fontSize: 18.0,
+                // fontWeight: FontWeight.w400,
               ),
             ),
             TextSpan(
-              text: 'Sign Up',
+              text: 'Register Now',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
+                // fontSize: 18.0,
+                color: Colors.blue,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -282,55 +228,31 @@ class _LoginScreenState extends State<LoginScreen> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: Stack(
             children: <Widget>[
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF73AEF5),
-                      Color(0xFF61A4F1),
-                      Color(0xFF478DE0),
-                      Color(0xFF398AE5),
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
-                ),
-              ),
-              Container(
-                height: double.infinity,
+              SizedBox(
+                height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
                     horizontal: 40.0,
-                    vertical: 120.0,
+                    // vertical: 60.0,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      const SizedBox(height: 120.0),
+                      const Image(
+                          image: AssetImage('assets/logo.png'),
+                        height: 100,
                       ),
-                      SizedBox(height: 30.0),
+                      const SizedBox(height: 30.0),
                       _buildEmailTF(),
-                      SizedBox(
-                        height: 30.0,
-                      ),
+                      const SizedBox(height: 30.0),
                       _buildPasswordTF(),
                       _buildForgotPasswordBtn(),
                       _buildRememberMeCheckbox(),
                       _buildLoginBtn(),
-                      _buildSignInWithText(),
-                      _buildSocialBtnRow(),
                       _buildSignupBtn(),
+                      _buildSocialBtnRow(),
                     ],
                   ),
                 ),
