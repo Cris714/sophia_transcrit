@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sophia_transcrit2/get_audio_page.dart';
@@ -39,7 +40,7 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   bool _showDocsErrors = false;
   List<errorItem> _docsErrors = [];
   bool _showCardAudio = false;
-  GoogleSignInAccount? _user;
+  User? _user;
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
@@ -54,9 +55,9 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   List<errorItem> get errors => _errors;
   List<errorItem> get docsErrors => _docsErrors;
   bool get showCardAudio => _showCardAudio;
-  GoogleSignInAccount? get user => _user;
+  User? get user => _user;
 
-  void setUser(GoogleSignInAccount newUser) {
+  void setUser(User? newUser) {
     _user = newUser;
     notifyListeners();
   }

@@ -7,19 +7,19 @@ import 'package:provider/provider.dart';
 import 'app_provider.dart';
 import 'google_auth_service.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function()? onTap;
-  const LoginScreen({super.key, required this.onTap});
+  const RegisterPage({super.key, required this.onTap});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  bool _rememberMe = false;
+class _RegisterPageState extends State<RegisterPage> {
   late AppProvider appProvider;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
     return ScaffoldMessenger.of(context).showSnackBar(
@@ -28,35 +28,26 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Future signIn() async {
-  //   final user = await GoogleSignInApi.login();
-  //   if(user == null){
-  //     showMessage('Sign In Failed');
-  //   } else {
-  //     // appProvider.setUser(user);
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => Home()),
-  //     );
-  //   }
-  // }
-
-  void signUserIn() async {
+  void signUserUp() async {
     showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
     );
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-      appProvider.setUser(FirebaseAuth.instance.currentUser);
+      if(passwordController.text == confirmPasswordController.text) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+        appProvider.setUser(FirebaseAuth.instance.currentUser);
+      } else {
+        showMessage('Passwords don\'t match!');
+      }
     } on FirebaseAuthException catch(e) {
       if(e.code == 'user-not-found') {
         showMessage('No user found for that email');
@@ -104,9 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text(
-          'Password',
-        ),
+        Text('Password'),
         const SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -132,41 +121,33 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildForgotPasswordBtn() {
-    return Container(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: () => print('Forgot Password Button Pressed'),
-        child: const Text(
-          'Forgot Password?',
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRememberMeCheckbox() {
-    return SizedBox(
-      height: 20.0,
-      child: Row(
-        children: <Widget>[
-          Theme(
-            data: ThemeData(unselectedWidgetColor: Colors.black26),
-            child: Checkbox(
-              value: _rememberMe,
-              // checkColor: Colors.green,
-              // activeColor: Colors.white,
-              onChanged: (value) {
-                setState(() {
-                  _rememberMe = value!;
-                });
-              },
+  Widget _buildConfirmPasswordTF() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Confirm Password'),
+        const SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          height: 60.0,
+          child: TextField(
+            obscureText: true,
+            style: const TextStyle(
+              fontFamily: 'OpenSans',
             ),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.lock,
+                color: Color(0xFF4C29C9),
+              ),
+              hintText: 'Confirm your Password',
+            ),
+            controller: confirmPasswordController,
           ),
-          const Text(
-            'Remember me',
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -175,9 +156,9 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: const EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: signUserIn,
+        onPressed: signUserUp,
         child: const Text(
-          'Sign In',
+          'Sign Up',
           style: TextStyle(
             letterSpacing: 1.5,
             fontSize: 18.0,
@@ -192,46 +173,46 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildSocialBtnRow() {
     // return Padding(
     //   padding: const EdgeInsets.symmetric(vertical: 30.0),
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 25.0),
-            width: 200,
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              icon: const FaIcon(
-                FontAwesomeIcons.google,
-                color: Colors.red,
-              ),
-              onPressed: GoogleServiceApi.signInWithGoogle,
-              label: const Text('Sign Up with Google'),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 25.0),
+          width: 200,
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 50),
             ),
-          )
-        ],
-      );
+            icon: const FaIcon(
+              FontAwesomeIcons.google,
+              color: Colors.red,
+            ),
+            onPressed: GoogleServiceApi.signInWithGoogle,
+            label: const Text('Sign Up with Google'),
+          ),
+        )
+      ],
+    );
     // );
   }
 
-  Widget _buildSignupBtn() {
+  Widget _buildSigninBtn() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text(
-            'Don\'t have an Account? ',
-            style: TextStyle(
-              color: Colors.black,
-            ),
+          'Already have an Account? ',
+          style: TextStyle(
+            color: Colors.black,
+          ),
         ),
         const SizedBox(width: 4),
         GestureDetector(
           onTap: widget.onTap,
           child: const Text(
-              'Register Now',
+            'Login Now',
             style: TextStyle(
               color: Colors.blue,
               fontWeight: FontWeight.bold,
@@ -240,32 +221,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ],
     );
-    // return GestureDetector(
-    //   // onTap: null,
-    //   onTap: widget.onTap,
-    //   child: RichText(
-    //     text: const TextSpan(
-    //       children: [
-    //         TextSpan(
-    //           text: 'Don\'t have an Account? ',
-    //           style: TextStyle(
-    //             color: Colors.black,
-    //             // fontSize: 18.0,
-    //             // fontWeight: FontWeight.w400,
-    //           ),
-    //         ),
-    //         TextSpan(
-    //           text: 'Register Now',
-    //           style: TextStyle(
-    //             // fontSize: 18.0,
-    //             color: Colors.blue,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   @override
@@ -292,22 +247,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
                       const SizedBox(height: 120.0),
                       const Image(
-                          image: AssetImage('assets/logo.png'),
+                        image: AssetImage('assets/logo.png'),
                         height: 100,
                       ),
                       const Text(
-                        'Welcome to Sophia Transcrit',
+                          'Let\'s create an account!',
                         style: TextStyle(
-                            fontSize: 18.0
+                          fontSize: 18.0
                         ),
                       ),
                       const SizedBox(height: 30.0),
                       _buildEmailTF(),
                       _buildPasswordTF(),
-                      _buildForgotPasswordBtn(),
-                      _buildRememberMeCheckbox(),
+                      _buildConfirmPasswordTF(),
                       _buildLoginBtn(),
-                      _buildSignupBtn(),
+                      _buildSigninBtn(),
                       _buildSocialBtnRow(),
                     ],
                   ),
