@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -28,6 +29,10 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  void signUserOut() {
+    FirebaseAuth.instance.signOut();
   }
 
   void updateScreen() {
@@ -112,11 +117,12 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
             : Row(
                 children: [
                   IconButton(
-                      onPressed: () async {
-                        await GoogleSignInApi.logout();
-
-                        Navigator.of(context).pop();
-                      },
+                    onPressed: signUserOut,
+                      // onPressed: () async {
+                      //   await GoogleSignInApi.logout();
+                      //
+                      //   Navigator.of(context).pop();
+                      // },
                       icon: const Icon(Icons.logout, size: 35)
                   ),
                   const SizedBox(width: 20),

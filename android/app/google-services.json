@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "889827346403",
+    "project_id": "sophia-transcrit-405518",
+    "storage_bucket": "sophia-transcrit-405518.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889827346403:android:634d04fc6e6e3a51de82d6",
+        "android_client_info": {
+          "package_name": "com.example.sophia_transcrit2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889827346403-82sca2up3ggdq1186gmp69i7vspcg9ti.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sophia_transcrit2",
+            "certificate_hash": "a8e9e0628ec39d05eacd00f155cb43c6532ad7dd"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAil0zebiGLg9zA08gDaML34SdAn7OLkok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

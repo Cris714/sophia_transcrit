@@ -64,7 +64,7 @@ class _GetAudioPage extends State<GetAudioPage> {
               ),
               Center(
                 child: Text(
-                    appProvider.user == null ? 'HOLLOW' : '${appProvider.user!.displayName}',
+                    appProvider.user == null ? 'HOLLOW' : '${appProvider.user!.email}',
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
                 ),
               ),

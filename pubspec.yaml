@@ -53,6 +53,8 @@ dependencies:
   path: ^1.8.3
   google_sign_in: ^6.1.6
   font_awesome_flutter: ^10.6.0
+  firebase_core: ^2.22.0
+  firebase_auth: ^4.14.0
 
 dev_dependencies:
   flutter_test:
