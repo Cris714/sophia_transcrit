@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'app_provider.dart';
 import 'get_audio_page.dart';
-import 'home.dart';
+import 'login.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
 import 'delete_popup.dart';
@@ -109,7 +110,11 @@ class _DocumentsPage extends State<DocumentsPage> {
                     : Row(
                   children: [
                     IconButton(
-                        onPressed: updateScreen,
+                        onPressed: () async {
+                          await GoogleSignInApi.logout();
+
+                          Navigator.of(context).pop();
+                          },
                         icon: Icon(Icons.logout, size: 35)
                     ),
                     SizedBox(width: 20),

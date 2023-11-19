@@ -4,10 +4,12 @@ import 'package:sophia_transcrit2/documents_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:isolate';
 
-import 'home.dart';
+import 'app_provider.dart';
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
 import 'notification_service.dart';
+
+// modificar texto
 
 
 class SynthesisPage extends StatefulWidget {
@@ -28,7 +30,8 @@ class _SynthesisPage extends State<SynthesisPage> {
   late final NotificationService notificationService;
   final ReceivePort _port = ReceivePort();
   late TextEditingController myController;
-  late TextEditingController nameController = TextEditingController(text: 'document$counter');
+  late TextEditingController nameController;
+  late TextEditingController modifyController;
 
   Future<void> computeFuture = Future.value();
   List<String> reqList = [];
@@ -51,6 +54,7 @@ class _SynthesisPage extends State<SynthesisPage> {
         .pathList;
     _appProvider = Provider.of<AppProvider>(context, listen: false);
     myController = TextEditingController();
+    nameController = TextEditingController();
 
     reqList = ['Dame las palabras clave del texto', 'Dame el resumen del texto.'];
   }
@@ -64,6 +68,7 @@ class _SynthesisPage extends State<SynthesisPage> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       counter = (prefs.getInt('counter') ?? 0);
+      nameController.text = 'document$counter';
     });
   }
 
@@ -130,6 +135,12 @@ class _SynthesisPage extends State<SynthesisPage> {
                   itemBuilder: (context, index) {
                     return Card(
                         child: ListTile(
+                          onTap: () async {
+                            modifyController = TextEditingController(text: reqList[index]);
+                            final req = await modifyDialog();
+                            if (req == null || req.isEmpty) return;
+                            setState(() { reqList[index] = req; });
+                          },
                           title: Text(reqList[index]),
                           trailing: IconButton(
                             icon: const Icon(Icons.highlight_remove),
@@ -181,6 +192,10 @@ class _SynthesisPage extends State<SynthesisPage> {
       ),
       actions: [
         TextButton(
+          onPressed: () {Navigator.of(context).pop();},
+          child: const Text('CANCEL'),
+        ),
+        TextButton(
           onPressed: submitRequest,
           child: const Text('SUBMIT'),
         )
@@ -188,66 +203,95 @@ class _SynthesisPage extends State<SynthesisPage> {
     ),
   );
 
-  void submitRequest(){
-    Navigator.of(context).pop(myController.text);
-    myController.clear();
+  Future<String?> modifyDialog() => showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+        title: const Text('Modify Request'),
+        content: TextField(
+            autofocus: true,
+            decoration: const InputDecoration(
+                hintText: 'Enter your request'
+            ),
+            controller: modifyController
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {Navigator.of(context).pop();},
+            child: const Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: modifyRequest,
+            child: const Text('SUBMIT'),
+          )
+        ]
+    ),
+  );
+
+  void modifyRequest(){
+    Navigator.of(context).pop(modifyController.text);
+    modifyController.clear();
   }
 
-  void _startBackgroundTask() async {
-    await Isolate.spawn(_backgroundTask, [_port.sendPort, folder, pathList, reqList]);
-    _port.listen((message) {
-      // Handle background task completion
-      var msg = "";
-      if(message[1] == 200){
-        msg = "Your document is ready!";
-        writeDocument('documents', nameController.text, message[0]);
-        _appProvider.getDocuments();
-        // Save an integer value to 'counter' key.
-        _incrementCounter();
-      } else {
-        countError = countError + 1;
-        _appProvider.addDocsError(errorItem("${nameController.text}.txt", message[1]));
-        msg = "$countError error found processing your document.";
-      }
+    void submitRequest(){
+      Navigator.of(context).pop(myController.text);
+      myController.clear();
+    }
 
+    void _startBackgroundTask() async {
+      await Isolate.spawn(_backgroundTask, [_port.sendPort, folder, pathList, reqList]);
+      _port.listen((message) {
+        // Handle background task completion
+        var msg = "";
+        if(message[1] == 200){
+          msg = "Your document is ready!";
+          writeDocument('documents', nameController.text, message[0]);
+          _appProvider.getDocuments();
+          // Save an integer value to 'counter' key.
+          _incrementCounter();
+        } else {
+          countError = countError + 1;
+          _appProvider.addDocsError(errorItem("${nameController.text}.txt", message[1]));
+          msg = "$countError error found processing your document.";
+        }
+
+        notificationService.showLocalNotification(
+            id: 0,
+            title: msg,
+            body: "Tap to continue.",
+            payload: ""
+        );
+        if(countError != 0){
+          _appProvider.setShowDocsErrors(true);
+        }
+        countError = 0;
+      });
       notificationService.showLocalNotification(
           id: 0,
-          title: msg,
-          body: "Tap to continue.",
+          title: "Text processing in progress...",
+          body: "",
           payload: ""
       );
-      if(countError != 0){
-        _appProvider.setShowDocsErrors(true);
-      }
-      countError = 0;
-    });
-    notificationService.showLocalNotification(
-        id: 0,
-        title: "Text processing in progress...",
-        body: "",
-        payload: ""
-    );
-  }
+    }
 
-  static void _backgroundTask(List<dynamic> args) {
-    SendPort sendPort = args[0];
-    String folder = args[1];
-    List<String> pathList = args[2];
-    List<String> reqList = args[3];
+    static void _backgroundTask(List<dynamic> args) {
+      SendPort sendPort = args[0];
+      String folder = args[1];
+      List<String> pathList = args[2];
+      List<String> reqList = args[3];
 
-    () async {
-      try {
-        for (var file in pathList) {
-          await sendText('$folder/$file');
+      () async {
+        try {
+          for (var file in pathList) {
+            await sendText('$folder/$file');
+          }
+          var response = await getProcessedContent(pathList, reqList);
+          var content = response.body;
+
+          sendPort.send([content, response.statusCode]);
         }
-        var response = await getProcessedContent(pathList, reqList);
-        var content = response.body;
-
-        sendPort.send([content, response.statusCode]);
-      }
-      catch (e) {
-        sendPort.send(["Error", 0]);
-      }
-    }();
+        catch (e) {
+          sendPort.send(["Error", 0]);
+        }
+      }();
+    }
   }
-}

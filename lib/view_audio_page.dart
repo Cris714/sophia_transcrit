@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sophia_transcrit2/transcriptions_page.dart';
 import 'dart:isolate';
 
-import 'home.dart';
+import 'app_provider.dart';
 import 'requests_manager.dart';
 import 'file_manager_s.dart';
 import 'notification_service.dart';
@@ -129,7 +129,6 @@ class _ViewAudio extends State<ViewAudio> {
                   itemCount: record.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
-                    var play = false;
                     return ListTile(
                       title: Text(record[index].file.name),
                       subtitle: Text(record[index].file.extension ?? ""),
@@ -220,10 +219,9 @@ class _ViewAudio extends State<ViewAudio> {
           await sendAudio(rec.path);
           var response = await getTranscription(file);
           var content = response.body;
-          // writeDocument('transcriptions',filename, content);
-          // await Future.delayed(const Duration(seconds: 5));
           // Send result back to the main UI isolate
           sendPort.send([i++, filename, content, response.statusCode]);
+          // sendPort.send([i++, filename, 'error', 0]);
         }
         catch (e) {
           sendPort.send([i++, filename, 'error', 0]);
