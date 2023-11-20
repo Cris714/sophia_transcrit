@@ -5,7 +5,7 @@ import 'package:sophia_transcrit2/get_audio_page.dart';
 import 'file_manager_s.dart';
 
 Map<int, String> statusError = {
-  0: 'Connexion Timeout. Connect to internet',
+  0: 'Connection Timeout. Check your internet connection.',
   504: 'Server not responding. Try again later.',
   404: 'File not found.',
   500: 'Internal server error.',

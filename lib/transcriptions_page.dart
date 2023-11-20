@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sophia_transcrit2/login.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'app_provider.dart';
 import 'synthesis_page.dart';
@@ -36,7 +36,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
   }
 
   void updateScreen() {
-    _appProvider.setScreen(GetAudioPage(),1);
+    _appProvider.setScreen(const GetAudioPage(), 1);
   }
 
   @override

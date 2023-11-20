@@ -1,20 +1,26 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'auth_page.dart';
-import 'firebase_options.dart';
 
 import 'package:sophia_transcrit2/colors.dart';
 
 import 'app_provider.dart';
-import 'home.dart';
-import 'login.dart';
+import 'firebase_options.dart';
+import 'notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  print("a\na\na\na\na\na\na\na\na\na\na\na\na\na\n");
+  print(fcmToken);
+  print("\n");
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppProvider(), // Debes crear una instancia de tu AppProvider
@@ -26,9 +32,6 @@ void main() async {
 
 class SophiaTranscritMain extends StatelessWidget {
   const SophiaTranscritMain({super.key});
-
-
-
 
   // This widget is the root of your application.
   @override
@@ -43,7 +46,7 @@ class SophiaTranscritMain extends StatelessWidget {
       darkTheme: ThemeData.light(),
       // home: LoginScreen(),
       // home: Home(),
-      home: AuthPage(),
+      home: const AuthPage(),
 
     );
   }
