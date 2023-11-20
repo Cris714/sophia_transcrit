@@ -116,15 +116,6 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
               )
             : Row(
                 children: [
-                  IconButton(
-                    onPressed: signUserOut,
-                      // onPressed: () async {
-                      //   await GoogleSignInApi.logout();
-                      //
-                      //   Navigator.of(context).pop();
-                      // },
-                      icon: const Icon(Icons.logout, size: 35)
-                  ),
                   const SizedBox(width: 20),
                   const Center(
                     child: Text(

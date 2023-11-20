@@ -114,15 +114,6 @@ class _DocumentsPage extends State<DocumentsPage> {
                 )
                     : Row(
                   children: [
-                    IconButton(
-                      onPressed: signUserOut,
-                        // onPressed: () async {
-                        //   await GoogleSignInApi.logout();
-                        //
-                        //   Navigator.of(context).pop();
-                        //   },
-                        icon: Icon(Icons.logout, size: 35)
-                    ),
                     SizedBox(width: 20),
                     Center(
                       child: Text(

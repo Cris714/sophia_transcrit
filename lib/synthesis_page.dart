@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/colors.dart';
 import 'package:sophia_transcrit2/documents_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:isolate';
@@ -56,7 +57,7 @@ class _SynthesisPage extends State<SynthesisPage> {
     myController = TextEditingController();
     nameController = TextEditingController();
 
-    reqList = ['Dame las palabras clave del texto', 'Dame el resumen del texto.'];
+    reqList = ['Dame las palabras clave del texto','Dame las palabras clave del texto','Dame las palabras clave del texto','Dame las palabras clave del texto','Dame las palabras clave del texto', 'Dame el resumen del texto.'];
   }
 
   void listenToNotificationStream() =>
@@ -127,38 +128,52 @@ class _SynthesisPage extends State<SynthesisPage> {
                 label: const Text('New request'),
                 icon: const Icon(Icons.add),
               ),
+              SizedBox(height: 10),
               SizedBox(
-                height: MediaQuery.of(context).size.height / 3,
-                child: ListView.builder(
-                  itemCount: reqList.length,
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (context, index) {
-                    return Card(
-                        child: ListTile(
-                          onTap: () async {
-                            modifyController = TextEditingController(text: reqList[index]);
-                            final req = await modifyDialog();
-                            if (req == null || req.isEmpty) return;
-                            setState(() { reqList[index] = req; });
-                          },
-                          title: Text(reqList[index]),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.highlight_remove),
-                            onPressed: () => setState(() { reqList.removeAt(index); }),
-                          ),
-                        )
-                    );
-                  },
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 3 - 11,
+                  //color: primary[100],
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey, width: 4),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))
+                  ),
+                  child: Scrollbar(
+                    child: ListView.builder(
+                      itemCount: reqList.length,
+                      scrollDirection: Axis.vertical,
+                      padding: EdgeInsets.only(top: 5),
+                      itemBuilder: (context, index) {
+                        return Card(
+                            child: ListTile(
+                              onTap: () async {
+                                modifyController = TextEditingController(text: reqList[index]);
+                                final req = await modifyDialog();
+                                if (req == null || req.isEmpty) return;
+                                setState(() { reqList[index] = req; });
+                              },
+                              title: Text(reqList[index]),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.highlight_remove),
+                                onPressed: () => setState(() { reqList.removeAt(index); }),
+                              ),
+                            )
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
+              const SizedBox(height: 30),
               TextField(
+                  obscureText: false,
                   autofocus: false,
-                  decoration: const InputDecoration(
-                      labelText: 'Document Name',
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Document Name',
                   ),
                   controller: nameController
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 30, width: 10),
               reqList.isNotEmpty ?
               ElevatedButton(
                 onPressed: () {
@@ -169,7 +184,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                     _appProvider.setShowCardDocs(true);
                   }
                 },
-                child: const Text('Done')
+                child: const Text('Generate document')
               )
                   : const ElevatedButton(onPressed: null, child: Text('Make a request'))
             ],
