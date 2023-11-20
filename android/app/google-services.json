@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "889827346403-82sca2up3ggdq1186gmp69i7vspcg9ti.apps.googleusercontent.com",
+          "client_id": "889827346403-5pnjb4p2abqp6m90c4kom1q8nvn6e3au.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.sophia_transcrit2",
-            "certificate_hash": "a8e9e0628ec39d05eacd00f155cb43c6532ad7dd"
+            "certificate_hash": "6267acf48f376e3b46fce0748644e82c40f82706"
           }
         }
       ],

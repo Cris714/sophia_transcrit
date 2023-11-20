@@ -190,7 +190,7 @@ class _RegisterPageState extends State<RegisterPage> {
               color: Colors.red,
             ),
             onPressed: GoogleServiceApi.signInWithGoogle,
-            label: const Text('Sign Up with Google'),
+            label: const Text('Sign In with Google'),
           ),
         )
       ],

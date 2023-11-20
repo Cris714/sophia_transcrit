@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +15,11 @@ class AuthPage extends StatelessWidget {
         builder: (context, snapshot) {
             //user log in
           if(snapshot.hasData) {
-            return Home();
+            return const Home();
           }
           //user not log in
           else {
-            return LoginOrRegisterPage();
+            return const LoginOrRegisterPage();
           }
         },
       ),

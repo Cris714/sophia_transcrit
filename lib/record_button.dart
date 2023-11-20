@@ -86,6 +86,16 @@ class _RecordButtonState extends State<RecordButton> {
     super.dispose();
   }
 
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 60),
+        )
+    );
+  }
+
   void recordTime() {
     // var startTime = DateTime.now();
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
@@ -170,11 +180,11 @@ class _RecordButtonState extends State<RecordButton> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width * 0.5;
     _appProvider = Provider.of<AppProvider>(context, listen: true);
-    if(_appProvider.showCardAudio){
-      Timer(const Duration(seconds: 1), () {
-        _appProvider.setShowCardAudio(false);
-      });
-    }
+    // if(_appProvider.showCardAudio){
+    //   Timer(const Duration(seconds: 1), () {
+    //     _appProvider.setShowCardAudio(false);
+    //   });
+    // }
 
     return Column(
       children: [
@@ -256,6 +266,7 @@ class _RecordButtonState extends State<RecordButton> {
                       await saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
                       _appProvider.setShowCardAudio(true);
+                      showMessage('Audio file saved successfully');
                       setState(() {
                         isSaving = false;
                       });
@@ -302,23 +313,23 @@ class _RecordButtonState extends State<RecordButton> {
           ],
         ),
 
-        AnimatedOpacity(
-          duration: const Duration(seconds: 2),
-          opacity: _appProvider.showCardAudio ? 1.0 : 0.0, // Controla la opacidad
-          child: const Card(
-            elevation: 4,
-            margin: EdgeInsets.all(16),
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                'Audio file copied successfully',
-                style: TextStyle(
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ),
-        ),
+        // AnimatedOpacity(
+        //   duration: const Duration(seconds: 2),
+        //   opacity: _appProvider.showCardAudio ? 1.0 : 0.0, // Controla la opacidad
+        //   child: const Card(
+        //     elevation: 4,
+        //     margin: EdgeInsets.all(16),
+        //     child: Padding(
+        //       padding: EdgeInsets.all(16),
+        //       child: Text(
+        //         'Audio file copied successfully',
+        //         style: TextStyle(
+        //           fontSize: 13,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
 
       ],
     );

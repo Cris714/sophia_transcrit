@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sophia_transcrit2/colors.dart';
 import 'package:sophia_transcrit2/documents_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:isolate';

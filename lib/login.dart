@@ -28,19 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Future signIn() async {
-  //   final user = await GoogleSignInApi.login();
-  //   if(user == null){
-  //     showMessage('Sign In Failed');
-  //   } else {
-  //     // appProvider.setUser(user);
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => Home()),
-  //     );
-  //   }
-  // }
-
   void signUserIn() async {
     showDialog(
       context: context,
@@ -209,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.red,
               ),
               onPressed: GoogleServiceApi.signInWithGoogle,
-              label: const Text('Sign Up with Google'),
+              label: const Text('Sign In with Google'),
             ),
           )
         ],
