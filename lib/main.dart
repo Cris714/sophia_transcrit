@@ -17,6 +17,7 @@ void main() async {
   );
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   final fcmToken = await FirebaseMessaging.instance.getToken();
+
   print("a\na\na\na\na\na\na\na\na\na\na\na\na\na\n");
   print(fcmToken);
   print("\n");

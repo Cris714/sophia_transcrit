@@ -28,18 +28,18 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Future signIn() async {
-  //   final user = await GoogleSignInApi.login();
-  //   if(user == null){
-  //     showMessage('Sign In Failed');
-  //   } else {
-  //     // appProvider.setUser(user);
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => Home()),
-  //     );
-  //   }
-  // }
+  /*Future signIn() async {
+    final user = await GoogleSignInApi.login();
+    if(user == null){
+      showMessage('Sign In Failed');
+    } else {
+      // appProvider.setUser(user);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+    }
+  }*/
 
   void signUserIn() async {
     showDialog(

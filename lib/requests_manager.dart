@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
@@ -5,22 +6,37 @@ import 'dart:io';
 const address = 'http://146.83.216.166/api2';
 // const address = 'http://192.168.156.108:5001';
 
+Future<String> getUserTokenId() async {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final idToken = await auth.currentUser?.getIdToken();
+
+  return idToken!;
+}
+
 Future getTranscription(String query) async {
+  String userId = await getUserTokenId();
+
   http.Response response = await http.get(
-      Uri.parse('$address/transcript?File=$query'));
+      Uri.parse('$address/transcript/$userId?File=$query'));
+
   return response;
 }
 
 Future getProcessedContent(List<String> query, List<String> req) async {
+  String userId = await getUserTokenId();
+
   http.Response response = await http.get(
-      Uri.parse('$address/process?File=$query&Req=${req.join(",,,")}'));
+      Uri.parse('$address/process/$userId?File=$query&Req=${req.join(",,,")}'));
+
   return response;
 }
 
 
 sendText(String path) async {
+  String userId = await getUserTokenId();
+
   http.MultipartRequest request = http.MultipartRequest('POST',
-      Uri.parse('$address/text'));
+      Uri.parse('$address/text/$userId'));
 
   print(File(path).path);
 
@@ -38,8 +54,10 @@ sendText(String path) async {
 }
 
 sendAudio(String path) async {
+  String userId = await getUserTokenId();
+
   http.MultipartRequest request = http.MultipartRequest('POST',
-      Uri.parse('$address/audio'));
+      Uri.parse('$address/audio/$userId'));
 
   request.files.add(
     await http.MultipartFile.fromPath(
