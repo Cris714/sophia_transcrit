@@ -58,85 +58,87 @@ class _HomeState extends State<Home> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MaterialButton(
-                      minWidth: 40,
-                      onPressed: () {
-                        setState(() {
-                          currentScreen = GetAudioPage();
-                          currentTab = 1;
-                          appProvider.setScreen(GetAudioPage(), 1);
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add,
-                            color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
-                          ),
-                          Text(
-                            'Record',
-                            style: TextStyle(
+              IntrinsicWidth(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: MaterialButton(
+                        minWidth: 40,
+                        onPressed: () {
+                          setState(() {
+                            currentScreen = GetAudioPage();
+                            currentTab = 1;
+                            appProvider.setScreen(GetAudioPage(), 1);
+                          });
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add,
                               color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
                             ),
-                          )
-                        ],
-                      )
-                  ),
-                  MaterialButton(
-                      minWidth: 40,
-                      onPressed: () {
-                        setState(() {
-                          currentScreen = TranscriptionsPage();
-                          currentTab = 0;
-                          appProvider.setScreen(TranscriptionsPage(), 0);
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.storage,
-                            color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
-                          ),
-                          Text(
-                            'Transcripts',
-                            style: TextStyle(
+                            Text(
+                              'Record',
+                              style: TextStyle(
+                                color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
+                              ),
+                            )
+                          ],
+                        )
+                    )),
+                    Expanded(child: MaterialButton(
+                        minWidth: 40,
+                        onPressed: () {
+                          setState(() {
+                            currentScreen = TranscriptionsPage();
+                            currentTab = 0;
+                            appProvider.setScreen(TranscriptionsPage(), 0);
+                          });
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.storage,
                               color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
                             ),
-                          )
-                        ],
-                      )
-                  ),
-                  MaterialButton(
-                      minWidth: 40,
-                      onPressed: () {
-                        setState(() {
-                          currentScreen = DocumentsPage();
-                          currentTab = 2;
-                          appProvider.setScreen(DocumentsPage(), 2);
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.article,
-                            color: currentTab == 2 ? Colors.white : sophiasecondarygreen[200],
-                          ),
-                          Text(
-                            'Documents',
-                            style: TextStyle(
+                            Text(
+                              'Transcripts',
+                              style: TextStyle(
+                                color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
+                              ),
+                            )
+                          ],
+                        )
+                    )),
+                    Expanded(child: MaterialButton(
+                        minWidth: 40,
+                        onPressed: () {
+                          setState(() {
+                            currentScreen = DocumentsPage();
+                            currentTab = 2;
+                            appProvider.setScreen(DocumentsPage(), 2);
+                          });
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.article,
                               color: currentTab == 2 ? Colors.white : sophiasecondarygreen[200],
                             ),
-                          )
-                        ],
-                      )
-                  ),
-                ],
+                            Text(
+                              'Documents',
+                              style: TextStyle(
+                                color: currentTab == 2 ? Colors.white : sophiasecondarygreen[200],
+                              ),
+                            )
+                          ],
+                        )
+                    )),
+                  ],
+                )
               )
             ],
           ),
