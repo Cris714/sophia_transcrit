@@ -169,7 +169,7 @@ class _ViewAudio extends State<ViewAudio> {
         writeDocument('transcriptions',message[1], message[2]);
       } else {
         countError = countError + 1;
-        _appProvider.addError(errorItem("${message[1]}.txt", message[3]));
+        _appProvider.addError(ErrorItem("${message[1]}.txt", message[3]));
         if(countError == 1) {
           msg = "${message[0]}/${record.length} done. $countError error found.";
         } else {

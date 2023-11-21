@@ -7,7 +7,6 @@ import 'package:share_plus/share_plus.dart';
 
 import 'app_provider.dart';
 import 'get_audio_page.dart';
-import 'login.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
 import 'delete_popup.dart';
@@ -27,6 +26,27 @@ class _DocumentsPage extends State<DocumentsPage> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _appProvider = Provider.of<AppProvider>(context, listen: false);
+
+      if(_appProvider.showCardDocs) {
+        showMessage('Your document has been sent correctly');
+        _appProvider.setShowCardDocs(false);
+      }
+    });
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 60),
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        )
+    );
   }
 
   void signUserOut() {
@@ -34,17 +54,12 @@ class _DocumentsPage extends State<DocumentsPage> {
   }
 
   void updateScreen() {
-    _appProvider.setScreen(GetAudioPage(),1);
+    _appProvider.setScreen(const GetAudioPage(),1);
   }
 
   @override
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context, listen: true);
-    if(_appProvider.showCardDocs){
-      Timer(const Duration(seconds: 1), () {
-        _appProvider.setShowCardDocs(false);
-      });
-    }
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
@@ -112,17 +127,8 @@ class _DocumentsPage extends State<DocumentsPage> {
                       ]
                   ),
                 )
-                    : Row(
+                    : const Row(
                   children: [
-                    IconButton(
-                      onPressed: signUserOut,
-                        // onPressed: () async {
-                        //   await GoogleSignInApi.logout();
-                        //
-                        //   Navigator.of(context).pop();
-                        //   },
-                        icon: Icon(Icons.logout, size: 35)
-                    ),
                     SizedBox(width: 20),
                     Center(
                       child: Text(
@@ -179,7 +185,7 @@ class _DocumentsPage extends State<DocumentsPage> {
             )
           ),
 
-          _appProvider.showDocsErrors ? AlertDialog(
+          if(_appProvider.showDocsErrors) AlertDialog(
               title: const Text('Errors found'),
               content: SingleChildScrollView(
                   child:SizedBox(
@@ -200,7 +206,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                       )
                   )
               ),
-              contentPadding: EdgeInsets.all(10),
+              contentPadding: const EdgeInsets.all(10),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -210,25 +216,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                   child: const Text('Close'),
                 )
               ]
-          ) : const Text(""),
-
-          AnimatedOpacity(
-            duration: const Duration(seconds: 2),
-            opacity: _appProvider.showCardDocs ? 1.0 : 0.0, // Controla la opacidad
-            child: const Card(
-              elevation: 4,
-              margin: EdgeInsets.all(16),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  'Document has been processed correctly',
-                  style: TextStyle(
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          )
 
         ],
       ),
