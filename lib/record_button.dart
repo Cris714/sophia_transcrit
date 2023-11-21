@@ -280,7 +280,7 @@ class _RecordButtonState extends State<RecordButton> {
                     if(status.isGranted && dirPath != "" && nameController.text != ""){
                       await saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
-                      _startBackgroundTask();
+                      await sendAudio("$dirPath/${nameController.text}");
                       _appProvider.setShowCardTrans(true);
                       _appProvider.setScreen(const TranscriptionsPage(), 0);
                       setState(() {
@@ -365,7 +365,7 @@ class _RecordButtonState extends State<RecordButton> {
       ),
   );
 
-  void _startBackgroundTask() async {
+  /*void _startBackgroundTask() async {
     await Isolate.spawn(_backgroundTask, [_port.sendPort, dirPath, nameController.text]);
     _port.listen((message) {
       var msg;
@@ -417,6 +417,6 @@ class _RecordButtonState extends State<RecordButton> {
         sendPort.send([i++, filename, "error", 0]);
       }
     }();
-  }
+  }*/
 
 }

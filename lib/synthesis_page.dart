@@ -25,7 +25,7 @@ class _SynthesisPage extends State<SynthesisPage> {
   late int counter;
   late AppProvider _appProvider;
   late final NotificationService notificationService;
-  final ReceivePort _port = ReceivePort();
+  //final ReceivePort _port = ReceivePort();
   late TextEditingController myController;
   late TextEditingController nameController;
   late TextEditingController modifyController;
@@ -174,7 +174,12 @@ class _SynthesisPage extends State<SynthesisPage> {
               ElevatedButton(
                 onPressed: () {
                   if(reqList.isNotEmpty && nameController.text != ""){
-                    _startBackgroundTask();
+                    () async {
+                      for (var file in pathList) {
+                        await sendText('$folder/$file');
+                      }
+                      //await getProcessedContent(pathList, reqList);
+                    }();
                     Navigator.pop(context);
                     _appProvider.setScreen(const DocumentsPage(), 2);
                     _appProvider.setShowCardDocs(true);
@@ -248,7 +253,7 @@ class _SynthesisPage extends State<SynthesisPage> {
       myController.clear();
     }
 
-    void _startBackgroundTask() async {
+    /*void _startBackgroundTask() async {
       await Isolate.spawn(_backgroundTask, [_port.sendPort, folder, pathList, reqList]);
       _port.listen((message) {
         // Handle background task completion
@@ -304,5 +309,5 @@ class _SynthesisPage extends State<SynthesisPage> {
           sendPort.send(["Error", 0]);
         }
       }();
-    }
+    }*/
   }

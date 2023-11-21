@@ -147,7 +147,11 @@ class _ViewAudio extends State<ViewAudio> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(elevation: 8.0),
               onPressed: () {
-                _startBackgroundTask();
+                () async {
+                  for (var rec in record){
+                    await sendAudio(rec.path);
+                  }
+                }();
                 Navigator.pop(context);
                 _appProvider.setScreen(const TranscriptionsPage(), 0);
                 _appProvider.setShowCardTrans(true);
@@ -160,7 +164,7 @@ class _ViewAudio extends State<ViewAudio> {
     );
   }
 
-  void _startBackgroundTask() async {
+  /*void _startBackgroundTask() async {
     await Isolate.spawn(_backgroundTask, [_port.sendPort, record]);
     _port.listen((message) {
       var msg;
@@ -228,6 +232,6 @@ class _ViewAudio extends State<ViewAudio> {
         }
       }
     }();
-  }
+  }*/
 }
 
