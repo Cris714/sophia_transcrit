@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sophia_transcrit2/colors.dart';
 import 'package:sophia_transcrit2/login.dart';
 
 import 'app_provider.dart';
@@ -40,6 +41,19 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
   }
 
   @override
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text),
+          backgroundColor: yellow,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 60),
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        )
+    );
+  }
+
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context, listen: true);
     if(_appProvider.showCardTrans){
@@ -246,6 +260,11 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
 
           _showOptions ?
           ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
               onPressed: () {
                 Iterable<ListItem> checkedItem =
                 _appProvider.fileTrans.where((item) => item.checked);
@@ -264,9 +283,17 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                 }
                 },
               child: const Text('Process files')
-          ) : const ElevatedButton(
-              onPressed: null,
-              child: Text('Check Files to Process'))
+          ) : ElevatedButton(
+              onPressed: () {
+                showMessage('Check file to process');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[400],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text('Process files')),
         ],
       ),
     );

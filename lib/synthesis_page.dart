@@ -119,16 +119,11 @@ class _SynthesisPage extends State<SynthesisPage> {
                 ),
               ),
               const SizedBox(height: 50),
-              FloatingActionButton.extended(
-                onPressed: () async {
-                  final req = await openDialog();
-                  if (req == null || req.isEmpty) return;
-                  setState(() { reqList.add(req); });
-                },
-                label: const Text('New request'),
-                icon: const Icon(Icons.add),
+              const Text(
+                  "Request's list",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SizedBox(
                 child: Container(
                   height: MediaQuery.of(context).size.height / 3 - 11,
@@ -162,6 +157,20 @@ class _SynthesisPage extends State<SynthesisPage> {
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                child: FloatingActionButton.extended(
+                  onPressed: () async {
+                    final req = await openDialog();
+                    if (req == null || req.isEmpty) return;
+                    setState(() { reqList.insert(0,req); });
+                  },
+                  label: const Text('New request'),
+                  icon: const Icon(Icons.add),
+
+                ),
+                alignment: Alignment.bottomRight,
               ),
               const SizedBox(height: 30),
               TextField(

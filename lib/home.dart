@@ -64,31 +64,6 @@ class _HomeState extends State<Home> {
                   MaterialButton(
                       minWidth: 40,
                       onPressed: () {
-                      setState(() {
-                        currentScreen = TranscriptionsPage();
-                        currentTab = 0;
-                        appProvider.setScreen(TranscriptionsPage(), 0);
-                      });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.storage,
-                            color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
-                          ),
-                          Text(
-                            'Transcriptions',
-                            style: TextStyle(
-                              color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
-                            ),
-                          )
-                        ],
-                      )
-                  ),
-                  MaterialButton(
-                      minWidth: 40,
-                      onPressed: () {
                         setState(() {
                           currentScreen = GetAudioPage();
                           currentTab = 1;
@@ -103,9 +78,34 @@ class _HomeState extends State<Home> {
                             color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
                           ),
                           Text(
-                            'Get audio',
+                            'Record',
                             style: TextStyle(
                               color: currentTab == 1 ? Colors.white : sophiasecondarygreen[200],
+                            ),
+                          )
+                        ],
+                      )
+                  ),
+                  MaterialButton(
+                      minWidth: 40,
+                      onPressed: () {
+                        setState(() {
+                          currentScreen = TranscriptionsPage();
+                          currentTab = 0;
+                          appProvider.setScreen(TranscriptionsPage(), 0);
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.storage,
+                            color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
+                          ),
+                          Text(
+                            'Transcripts',
+                            style: TextStyle(
+                              color: currentTab == 0 ? Colors.white : sophiasecondarygreen[200],
                             ),
                           )
                         ],
