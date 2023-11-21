@@ -1,17 +1,12 @@
-import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sophia_transcrit2/login.dart';
 
 import 'app_provider.dart';
 import 'synthesis_page.dart';
 import 'view_text_page.dart';
 import 'file_manager_s.dart';
 import 'delete_popup.dart';
-import 'get_audio_page.dart';
 
 class TranscriptionsPage extends StatefulWidget {
   const TranscriptionsPage({super.key});
@@ -29,24 +24,32 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _appProvider = Provider.of<AppProvider>(context, listen: false);
+
+      if(_appProvider.showCardTrans) {
+        showMessage('Your transcription has been sent correctly');
+        _appProvider.setShowCardTrans(false);
+      }
+    });
   }
 
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
-  }
-
-  void updateScreen() {
-    _appProvider.setScreen(GetAudioPage(),1);
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 60),
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        )
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context, listen: true);
-    if(_appProvider.showCardTrans){
-      Timer(const Duration(seconds: 1), () {
-        _appProvider.setShowCardTrans(false);
-      });
-    }
+
     return Container(
       margin: const EdgeInsets.fromLTRB(15, 40, 15, 0),
       child: Column(
@@ -114,10 +117,10 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                     ]
                 ),
               )
-            : Row(
+            : const Row(
                 children: [
-                  const SizedBox(width: 20),
-                  const Center(
+                  SizedBox(width: 20),
+                  Center(
                     child: Text(
                         "My Transcriptions",
                         style: TextStyle(fontSize: 20)
@@ -225,24 +228,6 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
           )
         ]
       ),
-
-        AnimatedOpacity(
-          duration: const Duration(seconds: 2),
-          opacity: _appProvider.showCardTrans ? 1.0 : 0.0, // Controla la opacidad
-          child: const Card(
-            elevation: 4,
-            margin: EdgeInsets.all(16),
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                'Transcription has been performed correctly',
-                style: TextStyle(
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ),
-        ),
 
           _showOptions ?
           ElevatedButton(

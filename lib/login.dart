@@ -20,12 +20,34 @@ class _LoginScreenState extends State<LoginScreen> {
   late AppProvider appProvider;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final emailResetController = TextEditingController();
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
     return ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(text),
-          backgroundColor: Colors.red,)
+          backgroundColor: Colors.red,
+        )
     );
+  }
+
+  void signInWithGoogle() async {
+    User? user = await GoogleServiceApi.signInWithGoogle();
+    appProvider.setUser(user);
+  }
+
+  void resetPassword() async {
+    try {
+      String? email = await resetPasswordDialog();
+      // if(email != null && email.isNotEmpty) {
+      //   await FirebaseAuth.instance.sendPasswordResetEmail(email: emailResetController.text);
+      // } else {
+      //   showMessage('Empty email');
+      // }
+      debugPrint(email);
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email!);
+    } on FirebaseAuthException catch(e) {
+      showMessage(e.code);
+    }
   }
 
   void signUserIn() async {
@@ -43,16 +65,16 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailController.text,
         password: passwordController.text,
       );
+      Navigator.pop(context);
       appProvider.setUser(FirebaseAuth.instance.currentUser);
     } on FirebaseAuthException catch(e) {
+      Navigator.pop(context);
       if(e.code == 'user-not-found') {
         showMessage('No user found for that email');
       } else {
         showMessage('Incorrect username or password');
       }
     }
-
-    Navigator.pop(context);
   }
 
   Widget _buildEmailTF() {
@@ -123,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: () => print('Forgot Password Button Pressed'),
+        onPressed: resetPassword,
         child: const Text(
           'Forgot Password?',
         ),
@@ -195,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 FontAwesomeIcons.google,
                 color: Colors.red,
               ),
-              onPressed: GoogleServiceApi.signInWithGoogle,
+              onPressed: signInWithGoogle,
               label: const Text('Sign In with Google'),
             ),
           )
@@ -203,6 +225,33 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     // );
   }
+
+  Future<String?> resetPasswordDialog() => showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+        title: const Text('Reset your password'),
+        content: TextField(
+            autofocus: true,
+            decoration: const InputDecoration(
+                hintText: 'Enter your email address'
+            ),
+            controller: emailResetController
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {Navigator.of(context).pop();},
+            child: const Text('Go back'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(emailResetController.text);
+              emailResetController.clear();
+            },
+            child: const Text('Send email'),
+          )
+        ]
+    ),
+  );
 
   Widget _buildSignupBtn() {
     return Row(
@@ -227,32 +276,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ],
     );
-    // return GestureDetector(
-    //   // onTap: null,
-    //   onTap: widget.onTap,
-    //   child: RichText(
-    //     text: const TextSpan(
-    //       children: [
-    //         TextSpan(
-    //           text: 'Don\'t have an Account? ',
-    //           style: TextStyle(
-    //             color: Colors.black,
-    //             // fontSize: 18.0,
-    //             // fontWeight: FontWeight.w400,
-    //           ),
-    //         ),
-    //         TextSpan(
-    //           text: 'Register Now',
-    //           style: TextStyle(
-    //             // fontSize: 18.0,
-    //             color: Colors.blue,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   @override

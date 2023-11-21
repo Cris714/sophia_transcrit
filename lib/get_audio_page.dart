@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/google_auth_service.dart';
 import 'package:sophia_transcrit2/view_audio_page.dart';
 import 'package:sophia_transcrit2/record_button.dart';
 
@@ -14,7 +16,11 @@ class GetAudioPage extends StatefulWidget {
 }
 
 class _GetAudioPage extends State<GetAudioPage> {
-  // late AppProvider _appProvider;
+
+  void signUserOut() {
+    FirebaseAuth.instance.signOut();
+    GoogleServiceApi.logout();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,10 @@ class _GetAudioPage extends State<GetAudioPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
+              IconButton(
+                  onPressed: signUserOut,
+                  icon: const Icon(Icons.logout, size: 35)
+              ),
               const Center(
                 child: Text(
                     "Welcome Back",

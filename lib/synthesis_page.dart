@@ -9,9 +9,6 @@ import 'requests_manager.dart';
 import 'file_manager_s.dart';
 import 'notification_service.dart';
 
-// modificar texto
-
-
 class SynthesisPage extends StatefulWidget {
   final String folder;
   final List<String> pathList;
@@ -56,7 +53,7 @@ class _SynthesisPage extends State<SynthesisPage> {
     myController = TextEditingController();
     nameController = TextEditingController();
 
-    reqList = ['Dame las palabras clave del texto','Dame las palabras clave del texto','Dame las palabras clave del texto','Dame las palabras clave del texto','Dame las palabras clave del texto', 'Dame el resumen del texto.'];
+    reqList = ['Dame las palabras clave del texto','Dame el resumen del texto.'];
   }
 
   void listenToNotificationStream() =>
@@ -127,20 +124,20 @@ class _SynthesisPage extends State<SynthesisPage> {
                 label: const Text('New request'),
                 icon: const Icon(Icons.add),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SizedBox(
                 child: Container(
                   height: MediaQuery.of(context).size.height / 3 - 11,
                   //color: primary[100],
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey, width: 4),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0))
                   ),
                   child: Scrollbar(
                     child: ListView.builder(
                       itemCount: reqList.length,
                       scrollDirection: Axis.vertical,
-                      padding: EdgeInsets.only(top: 5),
+                      padding: const EdgeInsets.only(top: 5),
                       itemBuilder: (context, index) {
                         return Card(
                             child: ListTile(
@@ -166,7 +163,7 @@ class _SynthesisPage extends State<SynthesisPage> {
               TextField(
                   obscureText: false,
                   autofocus: false,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Document Name',
                   ),
@@ -264,7 +261,7 @@ class _SynthesisPage extends State<SynthesisPage> {
           _incrementCounter();
         } else {
           countError = countError + 1;
-          _appProvider.addDocsError(errorItem("${nameController.text}.txt", message[1]));
+          _appProvider.addDocsError(ErrorItem("${nameController.text}.txt", message[1]));
           msg = "$countError error found processing your document.";
         }
 

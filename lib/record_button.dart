@@ -91,7 +91,9 @@ class _RecordButtonState extends State<RecordButton> {
         SnackBar(content: Text(text),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(bottom: 60),
+          margin: const EdgeInsets.only(bottom: 60),
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
         )
     );
   }
@@ -180,11 +182,6 @@ class _RecordButtonState extends State<RecordButton> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width * 0.5;
     _appProvider = Provider.of<AppProvider>(context, listen: true);
-    // if(_appProvider.showCardAudio){
-    //   Timer(const Duration(seconds: 1), () {
-    //     _appProvider.setShowCardAudio(false);
-    //   });
-    // }
 
     return Column(
       children: [
@@ -250,6 +247,7 @@ class _RecordButtonState extends State<RecordButton> {
               actions: [
                 TextButton(
                   onPressed: () {
+                    showMessage('Audio file has been discarded');
                     setState(() {
                       isSaving = false;
                     });
@@ -265,7 +263,6 @@ class _RecordButtonState extends State<RecordButton> {
                     if(status.isGranted && dirPath != "" && nameController.text != ""){
                       await saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
-                      _appProvider.setShowCardAudio(true);
                       showMessage('Audio file saved successfully');
                       setState(() {
                         isSaving = false;
@@ -377,7 +374,7 @@ class _RecordButtonState extends State<RecordButton> {
         writeDocument('transcriptions',message[1], message[2]);
       } else {
         countError = countError + 1;
-        _appProvider.addError(errorItem("${message[1]}.txt", message[3]));
+        _appProvider.addError(ErrorItem("${message[1]}.txt", message[3]));
         msg = "$countError error found.";
       }
       // Handle background task completion

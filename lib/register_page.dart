@@ -49,10 +49,14 @@ class _RegisterPageState extends State<RegisterPage> {
         showMessage('Passwords don\'t match!');
       }
     } on FirebaseAuthException catch(e) {
-      if(e.code == 'user-not-found') {
-        showMessage('No user found for that email');
-      } else {
-        showMessage('Incorrect username or password');
+      if(e.code == 'email-already-in-use') {
+        showMessage('Email already in use');
+      } else if(e.code == 'invalid-email') {
+        showMessage('Invalid email');
+      } else if(e.code == 'operation-not-allowed') {
+        showMessage('operation-not-allowed');
+      } else if(e.code == 'weak-password') {
+        showMessage('Weak password');
       }
     }
 
@@ -189,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
               FontAwesomeIcons.google,
               color: Colors.red,
             ),
-            onPressed: GoogleServiceApi.signInWithGoogle,
+            onPressed: null,
             label: const Text('Sign In with Google'),
           ),
         )
