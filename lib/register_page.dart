@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'app_provider.dart';
-import 'google_auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -18,6 +17,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   late AppProvider appProvider;
   final emailController = TextEditingController();
+  final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
@@ -39,28 +39,37 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     try {
-      if(passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-        appProvider.setUser(FirebaseAuth.instance.currentUser);
+      if(nameController.text.isNotEmpty) {
+        if(passwordController.text == confirmPasswordController.text) {
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text,
+          );
+          debugPrint(nameController.text);
+          await FirebaseAuth.instance.currentUser!.updateDisplayName(nameController.text);
+          debugPrint(FirebaseAuth.instance.currentUser!.displayName);
+          appProvider.setUser(FirebaseAuth.instance.currentUser);
+          Navigator.pop(context);
+        } else {
+          Navigator.pop(context);
+          showMessage('Passwords don\'t match!');
+        }
       } else {
-        showMessage('Passwords don\'t match!');
+        Navigator.pop(context);
+        showMessage("Complete the Name field");
       }
     } on FirebaseAuthException catch(e) {
+      Navigator.pop(context);
       if(e.code == 'email-already-in-use') {
         showMessage('Email already in use');
       } else if(e.code == 'invalid-email') {
         showMessage('Invalid email');
-      } else if(e.code == 'operation-not-allowed') {
-        showMessage('operation-not-allowed');
       } else if(e.code == 'weak-password') {
         showMessage('Weak password');
+      } else {
+        showMessage('Sign Up Failed');
       }
     }
-
-    Navigator.pop(context);
   }
 
   Widget _buildEmailTF() {
@@ -89,6 +98,38 @@ class _RegisterPageState extends State<RegisterPage> {
               hintText: 'Enter your Email',
             ),
             controller: emailController,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNameTF() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          'Name',
+        ),
+        const SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          height: 60.0,
+          child: TextField(
+            keyboardType: TextInputType.name,
+            style: const TextStyle(
+              fontFamily: 'OpenSans',
+            ),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.person,
+                color: Color(0xFF4C29C9),
+              ),
+              hintText: 'Enter your Name',
+            ),
+            controller: nameController,
           ),
         ),
       ],
@@ -262,6 +303,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 30.0),
                       _buildEmailTF(),
+                      _buildNameTF(),
                       _buildPasswordTF(),
                       _buildConfirmPasswordTF(),
                       _buildLoginBtn(),

@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void signInWithGoogle() async {
-    User? user = await GoogleServiceApi.signInWithGoogle();
+    final user = await GoogleServiceApi.signInWithGoogle();
     appProvider.setUser(user);
   }
 
@@ -65,8 +65,8 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailController.text,
         password: passwordController.text,
       );
-      Navigator.pop(context);
       appProvider.setUser(FirebaseAuth.instance.currentUser);
+      Navigator.pop(context);
     } on FirebaseAuthException catch(e) {
       Navigator.pop(context);
       if(e.code == 'user-not-found') {

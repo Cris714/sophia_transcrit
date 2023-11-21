@@ -16,10 +16,20 @@ class GetAudioPage extends StatefulWidget {
 }
 
 class _GetAudioPage extends State<GetAudioPage> {
+  User? user;
 
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
-    GoogleServiceApi.logout();
+  void signUserOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      await GoogleServiceApi.logout();
+    } catch(e) {
+      debugPrint("Error when sign out");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -73,7 +83,7 @@ class _GetAudioPage extends State<GetAudioPage> {
               ),
               Center(
                 child: Text(
-                    appProvider.user == null ? 'HOLLOW' : '${appProvider.user!.email}',
+                    appProvider.user == null ? 'HOLLOW' : '${appProvider.user!.displayName}',
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
                 ),
               ),
