@@ -150,6 +150,7 @@ class _ViewAudio extends State<ViewAudio> {
                 () async {
                   for (var rec in record){
                     await sendAudio(rec.path);
+
                   }
                 }();
                 Navigator.pop(context);

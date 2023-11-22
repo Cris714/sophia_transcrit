@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/requests_manager.dart';
 
 import 'app_provider.dart';
 
@@ -45,11 +46,9 @@ class _RegisterPageState extends State<RegisterPage> {
             email: emailController.text,
             password: passwordController.text,
           );
-          debugPrint(nameController.text);
           await FirebaseAuth.instance.currentUser!.updateDisplayName(nameController.text);
-          debugPrint(FirebaseAuth.instance.currentUser!.displayName);
           appProvider.setUser(FirebaseAuth.instance.currentUser);
-          Navigator.pop(context);
+          await registerUser();
         } else {
           Navigator.pop(context);
           showMessage('Passwords don\'t match!');

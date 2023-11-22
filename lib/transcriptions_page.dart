@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:sophia_transcrit2/requests_manager.dart';
 
 import 'app_provider.dart';
 import 'synthesis_page.dart';
@@ -32,7 +32,17 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
         showMessage('Your transcription has been sent correctly');
         _appProvider.setShowCardTrans(false);
       }
+
+      () async {
+        await getTranscription();
+        _appProvider.getTranscriptions();
+      } ();
     });
+  }
+
+  Future<void> updateFiles() async{
+    await getTranscription();
+    _appProvider.getTranscriptions();
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
@@ -136,7 +146,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
           // Lista de archivos transcritos
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _appProvider.getTranscriptions,
+              onRefresh: updateFiles,
               child: ListView.separated(
                 itemCount: _appProvider.fileTrans.length,
                 separatorBuilder: (context, index) => const Divider(),
@@ -252,7 +262,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
               child: const Text('Process files')
           ) : const ElevatedButton(
               onPressed: null,
-              child: Text('Check Files to Process'))
+              child: Text('Check Files to Process')),
         ],
       ),
     );

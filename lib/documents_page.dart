@@ -34,6 +34,10 @@ class _DocumentsPage extends State<DocumentsPage> {
         showMessage('Your document has been sent correctly');
         _appProvider.setShowCardDocs(false);
       }
+      () async {
+        // await getDocument();
+        _appProvider.getDocuments();
+      } ();
     });
   }
 

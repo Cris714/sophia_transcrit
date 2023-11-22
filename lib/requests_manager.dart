@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 
-const address = 'http://146.83.216.166/api2';
-// const address = 'http://192.168.156.108:5001';
+import 'file_manager_s.dart';
+
+// const address = 'http://146.83.216.166/api2';
+const address = 'http://172.17.32.254:5001';
 
 Future<String> getUserTokenId() async {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -13,13 +19,24 @@ Future<String> getUserTokenId() async {
   return idToken!;
 }
 
-Future getTranscription(String query) async {
+// Future getTranscription(String query) async {
+//   String userId = await getUserTokenId();
+//
+//   http.Response response = await http.get(
+//       Uri.parse('$address/transcript/$userId?File=$query'));
+//
+//   return response;
+// }
+
+Future getTranscription() async {
   String userId = await getUserTokenId();
 
   http.Response response = await http.get(
-      Uri.parse('$address/transcript/$userId?File=$query'));
+      Uri.parse('$address/transcripts/$userId'));
 
-  return response;
+  Map<String, dynamic> data = jsonDecode(response.body);
+
+  data.forEach((key, value) {writeDocument('transcriptions', key, value);});
 }
 
 Future getProcessedContent(List<String> query, List<String> req) async {
@@ -70,4 +87,39 @@ sendAudio(String path) async {
   http.StreamedResponse r = await request.send();
   print(r.statusCode);
   // print(await r.stream.transform(utf8.decoder).join());
+}
+
+registerUser() async {
+  String userId = await getUserTokenId();
+
+  http.Response response = await http.get(
+      Uri.parse('$address/register/$userId'));
+
+  print(response.statusCode);
+}
+
+updateTokenNotification() async {
+  final notifToken = await FirebaseMessaging.instance.getToken();
+
+  String userId = await getUserTokenId();
+
+  http.MultipartRequest request = http.MultipartRequest('PUT',
+      Uri.parse('$address/notifications/$userId?token=$notifToken'));
+
+  http.StreamedResponse r = await request.send();
+
+  print(r.statusCode);
+}
+
+deleteFilesSV(List<String> filenames) async {
+  String userId = await getUserTokenId();
+
+  final data = jsonEncode(filenames.map((e) => e).toList());
+
+  http.MultipartRequest request = http.MultipartRequest('DELETE',
+      Uri.parse('$address/delete/$userId?Files=$data'));
+
+  http.StreamedResponse r = await request.send();
+
+  print(r.statusCode);
 }

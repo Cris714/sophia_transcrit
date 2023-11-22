@@ -16,11 +16,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-
-  print("a\na\na\na\na\na\na\na\na\na\na\na\na\na\n");
-  print(fcmToken);
-  print("\n");
 
   runApp(
     ChangeNotifierProvider(
@@ -45,8 +40,6 @@ class SophiaTranscritMain extends StatelessWidget {
       ),
 
       darkTheme: ThemeData.light(),
-      // home: LoginScreen(),
-      // home: Home(),
       home: const AuthPage(),
 
     );

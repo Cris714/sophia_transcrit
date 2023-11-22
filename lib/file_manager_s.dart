@@ -2,6 +2,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
+import 'package:sophia_transcrit2/requests_manager.dart';
 
 Future<String> selectExternalDirectory() async {
   try {
@@ -88,6 +89,7 @@ Future<String> readDocument(String folder, String filename) async {
 
 Future<int> deleteFiles(String folder, List<String> filenames) async {
   try {
+    deleteFilesSV(filenames);
     final path = await _localPath;
     for (var filename in filenames) {
       final file = File('$path/$folder/$filename');

@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void signInWithGoogle() async {
-    final user = await GoogleServiceApi.signInWithGoogle();
+    User? user = await GoogleServiceApi.signInWithGoogle();
     appProvider.setUser(user);
   }
 

@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/requests_manager.dart';
 import 'package:sophia_transcrit2/transcriptions_page.dart';
 import 'package:sophia_transcrit2/get_audio_page.dart';
 import 'package:sophia_transcrit2/documents_page.dart';
@@ -59,10 +60,19 @@ class _HomeState extends State<Home> {
       await Permission.notification.request();
       await Permission.storage.request();
       await Permission.manageExternalStorage.request();
+      await updateTokenNotification();
     } ();
     super.initState();
     _appProvider = Provider.of<AppProvider>(context, listen: false);
-    //_appProvider = Provider.of<AppProvider>(context);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+
+      if (message.data['type'] == 'transcript') {
+        await getTranscription();
+        _appProvider.getTranscriptions();
+      } else if (message.data['type'] == 'documents') {
+        // _appProvider.getDocuments();
+      }
+    });
   }
 
   final PageStorageBucket bucket = PageStorageBucket();
