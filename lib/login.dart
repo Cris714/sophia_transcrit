@@ -25,6 +25,14 @@ class _LoginScreenState extends State<LoginScreen> {
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
     return ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(text),
+          backgroundColor: Colors.green,
+        )
+    );
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showError(String text) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text),
           backgroundColor: Colors.red,
         )
     );
@@ -38,15 +46,14 @@ class _LoginScreenState extends State<LoginScreen> {
   void resetPassword() async {
     try {
       String? email = await resetPasswordDialog();
-      // if(email != null && email.isNotEmpty) {
-      //   await FirebaseAuth.instance.sendPasswordResetEmail(email: emailResetController.text);
-      // } else {
-      //   showMessage('Empty email');
-      // }
-      debugPrint(email);
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email!);
+      if(email != null && email.isNotEmpty) {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+        showMessage('Email sent successfully');
+      } else {
+        if(email != null && email.isEmpty) showError('Empty email');
+      }
     } on FirebaseAuthException catch(e) {
-      showMessage(e.code);
+      showError(e.code);
     }
   }
 
@@ -70,9 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch(e) {
       Navigator.pop(context);
       if(e.code == 'user-not-found') {
-        showMessage('No user found for that email');
+        showError('No user found for that email');
       } else {
-        showMessage('Incorrect username or password');
+        showError('Incorrect username or password');
       }
     }
   }

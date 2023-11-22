@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'app_provider.dart';
@@ -140,7 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Password'),
+        const Text('Password'),
         const SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -170,7 +169,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Confirm Password'),
+        const Text('Confirm Password'),
         const SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -213,34 +212,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-  }
-
-  Widget _buildSocialBtnRow() {
-    // return Padding(
-    //   padding: const EdgeInsets.symmetric(vertical: 30.0),
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 25.0),
-          width: 200,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.black,
-              backgroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 50),
-            ),
-            icon: const FaIcon(
-              FontAwesomeIcons.google,
-              color: Colors.red,
-            ),
-            onPressed: null,
-            label: const Text('Sign In with Google'),
-          ),
-        )
-      ],
-    );
-    // );
   }
 
   Widget _buildSigninBtn() {
@@ -308,7 +279,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       _buildConfirmPasswordTF(),
                       _buildLoginBtn(),
                       _buildSigninBtn(),
-                      _buildSocialBtnRow(),
                     ],
                   ),
                 ),
