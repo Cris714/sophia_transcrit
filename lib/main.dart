@@ -45,3 +45,7 @@ class SophiaTranscritMain extends StatelessWidget {
     );
   }
 }
+
+//Agregar carpetas por usuario
+//Mandar token de notificación al registrar
+//Verificación de correo y contraseña

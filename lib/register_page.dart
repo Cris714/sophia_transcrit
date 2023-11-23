@@ -22,6 +22,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
     return ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(text),
@@ -30,14 +35,14 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void signUserUp() async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-    );
+    // showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //       return const Center(
+    //         child: CircularProgressIndicator(),
+    //       );
+    //     }
+    // );
 
     try {
       if(nameController.text.isNotEmpty) {
@@ -47,18 +52,14 @@ class _RegisterPageState extends State<RegisterPage> {
             password: passwordController.text,
           );
           await FirebaseAuth.instance.currentUser!.updateDisplayName(nameController.text);
-          appProvider.setUser(FirebaseAuth.instance.currentUser);
           await registerUser();
         } else {
-          Navigator.pop(context);
           showMessage('Passwords don\'t match!');
         }
       } else {
-        Navigator.pop(context);
         showMessage("Complete the Name field");
       }
     } on FirebaseAuthException catch(e) {
-      Navigator.pop(context);
       if(e.code == 'email-already-in-use') {
         showMessage('Email already in use');
       } else if(e.code == 'invalid-email') {

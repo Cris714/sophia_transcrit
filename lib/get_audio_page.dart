@@ -16,7 +16,7 @@ class GetAudioPage extends StatefulWidget {
 }
 
 class _GetAudioPage extends State<GetAudioPage> {
-  User? user;
+  late AppProvider appProvider;
 
   void signUserOut() async {
     try {
@@ -34,7 +34,7 @@ class _GetAudioPage extends State<GetAudioPage> {
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context, listen: true);
+    appProvider = Provider.of<AppProvider>(context, listen: true);
 
     return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
@@ -83,7 +83,7 @@ class _GetAudioPage extends State<GetAudioPage> {
               ),
               Center(
                 child: Text(
-                    appProvider.user == null ? '' : '${appProvider.user!.displayName}',
+                    FirebaseAuth.instance.currentUser == null ? '' : '${FirebaseAuth.instance.currentUser!.displayName}',
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
                 ),
               ),

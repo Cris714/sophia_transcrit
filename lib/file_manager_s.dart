@@ -89,7 +89,11 @@ Future<String> readDocument(String folder, String filename) async {
 
 Future<int> deleteFiles(String folder, List<String> filenames) async {
   try {
-    deleteFilesSV(filenames);
+    if(folder == "transcriptions") {
+      deleteFilesSV(filenames,"transcript");
+    } else {
+      deleteFilesSV(filenames,"document");
+    }
     final path = await _localPath;
     for (var filename in filenames) {
       final file = File('$path/$folder/$filename');

@@ -2,15 +2,14 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 
 import 'file_manager_s.dart';
 
-// const address = 'http://146.83.216.166/api2';
-const address = 'http://172.17.32.254:5001';
+const address = 'http://146.83.216.166/api2';
+//  const address = 'http://172.17.32.254:5006';
 
 Future<String> getUserTokenId() async {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -42,7 +41,7 @@ Future getTranscription() async {
 Future getProcessedContent(List<String> query, List<String> req) async {
   String userId = await getUserTokenId();
 
-  http.Response response = await http.get(
+  http.Response response = await http.put(
       Uri.parse('$address/process/$userId?File=$query&Req=${req.join(",,,")}'));
 
   return response;
@@ -111,13 +110,13 @@ updateTokenNotification() async {
   print(r.statusCode);
 }
 
-deleteFilesSV(List<String> filenames) async {
+deleteFilesSV(List<String> filenames, String type) async {
   String userId = await getUserTokenId();
 
   final data = jsonEncode(filenames.map((e) => e).toList());
 
   http.MultipartRequest request = http.MultipartRequest('DELETE',
-      Uri.parse('$address/delete/$userId?Files=$data'));
+      Uri.parse('$address/delete/$userId?Files=$data&Type=$type'));
 
   http.StreamedResponse r = await request.send();
 

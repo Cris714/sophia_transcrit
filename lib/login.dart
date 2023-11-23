@@ -31,8 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void signInWithGoogle() async {
-    User? user = await GoogleServiceApi.signInWithGoogle();
-    appProvider.setUser(user);
+    await GoogleServiceApi.signInWithGoogle();
   }
 
   void resetPassword() async {
@@ -51,24 +50,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void signUserIn() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-    );
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return const Center(
+    //       child: CircularProgressIndicator(),
+    //     );
+    //   }
+    // );
 
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-      appProvider.setUser(FirebaseAuth.instance.currentUser);
-      Navigator.pop(context);
     } on FirebaseAuthException catch(e) {
-      Navigator.pop(context);
       if(e.code == 'user-not-found') {
         showMessage('No user found for that email');
       } else {

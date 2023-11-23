@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sophia_transcrit2/get_audio_page.dart';
 import 'file_manager_s.dart';
@@ -38,7 +37,6 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   List<ErrorItem> _errors = [];
   bool _showDocsErrors = false;
   List<ErrorItem> _docsErrors = [];
-  User? _user;
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
@@ -52,12 +50,6 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   bool get showDocsErrors => _showDocsErrors;
   List<ErrorItem> get errors => _errors;
   List<ErrorItem> get docsErrors => _docsErrors;
-  User? get user => _user;
-
-  void setUser(User? newUser) {
-    _user = newUser;
-    notifyListeners();
-  }
 
   void clearErrors(){
     _errors.clear();
