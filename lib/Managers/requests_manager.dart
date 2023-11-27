@@ -9,8 +9,8 @@ import 'dart:io';
 
 import 'file_manager_s.dart';
 
-// const address = 'http://146.83.216.166/api2';
- const address = 'http://172.17.32.254:5006';
+const address = 'http://146.83.216.166/api2';
+//  const address = 'http://172.17.32.254:5006';
 
 Future<String> getUserTokenId() async {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -25,8 +25,6 @@ Future getTranscription() async {
   var folder = await createFolderInAppDocDir("${FirebaseAuth.instance.currentUser!.uid}/transcriptions");
   final filenames = await getFilesInFolder(folder);
 
-  for (var element in filenames) {debugPrint(element);}
-
   final json = jsonEncode({'filenames': filenames});
 
   http.Response response = await http.get(
@@ -34,17 +32,19 @@ Future getTranscription() async {
 
   Map<String, dynamic> data = jsonDecode(response.body);
 
-  debugPrint('AAA');
-  data.forEach((key, value) {debugPrint(key);});
-
   data.forEach((key, value) {writeDocument('${FirebaseAuth.instance.currentUser!.uid}/transcriptions', key, value);});
 }
 
 Future getDocument() async {
   String userId = await getUserTokenId();
 
+  var folder = await createFolderInAppDocDir("${FirebaseAuth.instance.currentUser!.uid}/documents");
+  final filenames = await getFilesInFolder(folder);
+
+  final json = jsonEncode({'filenames': filenames});
+
   http.Response response = await http.get(
-      Uri.parse('$address/documents/$userId'));
+      Uri.parse('$address/documents/$userId?Except=$json'));
 
   Map<String, dynamic> data = jsonDecode(response.body);
 
@@ -69,8 +69,6 @@ sendText(String path) async {
   http.MultipartRequest request = http.MultipartRequest('POST',
       Uri.parse('$address/text/$userId'));
 
-  print(File(path).path);
-
   request.files.add(
     await http.MultipartFile.fromPath(
       'text',
@@ -80,7 +78,7 @@ sendText(String path) async {
   );
 
   http.StreamedResponse r = await request.send();
-  print(r.statusCode);
+  debugPrint('$r.statusCode');
 }
 
 sendAudio(String path) async {
@@ -98,8 +96,7 @@ sendAudio(String path) async {
   );
 
   http.StreamedResponse r = await request.send();
-  print(r.statusCode);
-  // print(await r.stream.transform(utf8.decoder).join());
+  debugPrint('$r.statusCode');
 }
 
 registerUser() async {
@@ -108,7 +105,7 @@ registerUser() async {
   http.Response response = await http.get(
       Uri.parse('$address/register/$userId'));
 
-  print(response.statusCode);
+  debugPrint('$response.statusCode');
 }
 
 updateTokenNotification() async {
@@ -121,7 +118,7 @@ updateTokenNotification() async {
 
   http.StreamedResponse r = await request.send();
 
-  print(r.statusCode);
+  debugPrint('$r.statusCode');
 }
 
 deleteFilesSV(List<String> filenames, String type) async {
@@ -134,5 +131,5 @@ deleteFilesSV(List<String> filenames, String type) async {
 
   http.StreamedResponse r = await request.send();
 
-  print(r.statusCode);
+  debugPrint('$r.statusCode');
 }

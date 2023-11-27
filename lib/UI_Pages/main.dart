@@ -45,6 +45,3 @@ class SophiaTranscritMain extends StatelessWidget {
     );
   }
 }
-
-//Autologueo cuando entrar a la app
-//Verificación de correo y contraseña
