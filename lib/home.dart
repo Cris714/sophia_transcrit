@@ -60,7 +60,6 @@ class _HomeState extends State<Home> {
       await Permission.notification.request();
       await Permission.storage.request();
       await Permission.manageExternalStorage.request();
-      await updateTokenNotification();
     } ();
     super.initState();
     _appProvider = Provider.of<AppProvider>(context, listen: false);

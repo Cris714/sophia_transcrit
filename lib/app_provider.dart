@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sophia_transcrit2/get_audio_page.dart';
 import 'file_manager_s.dart';
@@ -37,6 +38,7 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   List<ErrorItem> _errors = [];
   bool _showDocsErrors = false;
   List<ErrorItem> _docsErrors = [];
+  User? _user;
 
   Widget get currentScreen => _currentScreen;
   int get currentTab => _currentTab;
@@ -50,6 +52,12 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   bool get showDocsErrors => _showDocsErrors;
   List<ErrorItem> get errors => _errors;
   List<ErrorItem> get docsErrors => _docsErrors;
+  User? get user => _user;
+
+  void setUser(User? newUser) {
+    _user = newUser;
+    notifyListeners();
+  }
 
   void clearErrors(){
     _errors.clear();
@@ -119,7 +127,7 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   }
 
   Future<void> getTranscriptions() async {
-    _folderTrans = await createFolderInAppDocDir("transcriptions");
+    _folderTrans = await createFolderInAppDocDir("${FirebaseAuth.instance.currentUser!.uid}/transcriptions");
     final filenames = await getFilesInFolder(_folderTrans);
     final files = filenames.map((text) => ListItem(text, false)).toList();
     setTranscriptions(files);
@@ -127,7 +135,7 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   }
 
   Future<void> getDocuments() async {
-    _folderDocs = await createFolderInAppDocDir("documents");
+    _folderDocs = await createFolderInAppDocDir("${FirebaseAuth.instance.currentUser!.uid}/documents");
     final filenames = await getFilesInFolder(_folderDocs);
     final files = filenames.map((text) => ListItem(text, false)).toList();
     setDocuments(files);

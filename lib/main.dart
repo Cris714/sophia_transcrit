@@ -46,6 +46,6 @@ class SophiaTranscritMain extends StatelessWidget {
   }
 }
 
-//Agregar carpetas por usuario
+//Autologueo cuando entrar a la app
 //Mandar token de notificación al registrar
 //Verificación de correo y contraseña

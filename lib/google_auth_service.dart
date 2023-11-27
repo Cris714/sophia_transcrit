@@ -15,10 +15,9 @@ class GoogleServiceApi {
 
     String _googleUserEmail = gUser!.email;
 
-    debugPrint("BBBBBBBBBBBBB");
     debugPrint(_googleUserEmail);
 
-    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+    final GoogleSignInAuthentication gAuth = await gUser.authentication;
 
     final credential = GoogleAuthProvider.credential(
       accessToken: gAuth.accessToken,

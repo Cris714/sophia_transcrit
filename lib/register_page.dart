@@ -53,6 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
           );
           await FirebaseAuth.instance.currentUser!.updateDisplayName(nameController.text);
           await registerUser();
+          await updateTokenNotification();
         } else {
           showMessage('Passwords don\'t match!');
         }
@@ -271,7 +272,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     appProvider = Provider.of<AppProvider>(context, listen: true);
-
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,

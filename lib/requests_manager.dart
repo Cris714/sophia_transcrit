@@ -18,15 +18,6 @@ Future<String> getUserTokenId() async {
   return idToken!;
 }
 
-// Future getTranscription(String query) async {
-//   String userId = await getUserTokenId();
-//
-//   http.Response response = await http.get(
-//       Uri.parse('$address/transcript/$userId?File=$query'));
-//
-//   return response;
-// }
-
 Future getTranscription() async {
   String userId = await getUserTokenId();
 
@@ -35,7 +26,7 @@ Future getTranscription() async {
 
   Map<String, dynamic> data = jsonDecode(response.body);
 
-  data.forEach((key, value) {writeDocument('transcriptions', key, value);});
+  data.forEach((key, value) {writeDocument('${FirebaseAuth.instance.currentUser!.uid}/transcriptions', key, value);});
 }
 
 Future getProcessedContent(List<String> query, List<String> req) async {
@@ -66,7 +57,6 @@ sendText(String path) async {
 
   http.StreamedResponse r = await request.send();
   print(r.statusCode);
-  // print(await r.stream.transform(utf8.decoder).join());
 }
 
 sendAudio(String path) async {

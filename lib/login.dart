@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:sophia_transcrit2/requests_manager.dart';
 
 import 'app_provider.dart';
 import 'google_auth_service.dart';
@@ -32,6 +33,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void signInWithGoogle() async {
     await GoogleServiceApi.signInWithGoogle();
+    await updateTokenNotification();
+    if(_rememberMe) {
+      appProvider.setUser(FirebaseAuth.instance.currentUser);
+    }
   }
 
   void resetPassword() async {
@@ -64,6 +69,10 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailController.text,
         password: passwordController.text,
       );
+      await updateTokenNotification();
+      if(_rememberMe) {
+        appProvider.setUser(FirebaseAuth.instance.currentUser);
+      }
     } on FirebaseAuthException catch(e) {
       if(e.code == 'user-not-found') {
         showMessage('No user found for that email');
