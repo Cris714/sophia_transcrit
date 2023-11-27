@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sophia_transcrit2/requests_manager.dart';
+import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
 //hacer prueba crear cuenta google y luego por correo
 

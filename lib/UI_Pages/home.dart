@@ -1,14 +1,14 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sophia_transcrit2/requests_manager.dart';
-import 'package:sophia_transcrit2/transcriptions_page.dart';
-import 'package:sophia_transcrit2/get_audio_page.dart';
-import 'package:sophia_transcrit2/documents_page.dart';
-import 'package:sophia_transcrit2/colors.dart';
+import 'package:sophia_transcrit2/Managers/requests_manager.dart';
+import 'package:sophia_transcrit2/UI_Pages/transcriptions_page.dart';
+import 'package:sophia_transcrit2/UI_Pages/get_audio_page.dart';
+import 'package:sophia_transcrit2/UI_Pages/documents_page.dart';
+import 'package:sophia_transcrit2/Styles/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'app_provider.dart';
+import '../Managers/app_provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

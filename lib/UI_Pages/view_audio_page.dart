@@ -2,13 +2,12 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sophia_transcrit2/transcriptions_page.dart';
+import 'package:sophia_transcrit2/UI_Pages/transcriptions_page.dart';
 import 'dart:isolate';
 
-import 'app_provider.dart';
-import 'requests_manager.dart';
-import 'file_manager_s.dart';
-import 'notification_service.dart';
+import '../Managers/app_provider.dart';
+import '../Managers/requests_manager.dart';
+import '../Notification/notification_service.dart';
 
 class Recording {
   final PlatformFile file;
@@ -150,7 +149,6 @@ class _ViewAudio extends State<ViewAudio> {
                 () async {
                   for (var rec in record){
                     await sendAudio(rec.path);
-
                   }
                 }();
                 Navigator.pop(context);

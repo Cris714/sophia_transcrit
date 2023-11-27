@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sophia_transcrit2/google_auth_service.dart';
-import 'package:sophia_transcrit2/view_audio_page.dart';
-import 'package:sophia_transcrit2/record_button.dart';
-import 'app_provider.dart';
+import 'package:sophia_transcrit2/Authentication/google_auth_service.dart';
+import 'package:sophia_transcrit2/UI_Pages/view_audio_page.dart';
+import 'package:sophia_transcrit2/UI_Pages/record_button.dart';
+import '../Managers/app_provider.dart';
 
-import 'file_manager_s.dart';
+import '../Managers/file_manager_s.dart';
 
 class GetAudioPage extends StatefulWidget {
   const GetAudioPage({super.key});

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sophia_transcrit2/documents_page.dart';
+import 'package:sophia_transcrit2/UI_Pages/documents_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'app_provider.dart';
-import 'requests_manager.dart';
-import 'notification_service.dart';
+import '../Managers/app_provider.dart';
+import '../Managers/requests_manager.dart';
+import '../Notification/notification_service.dart';
 
 class SynthesisPage extends StatefulWidget {
   final String folder;
@@ -176,7 +176,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                       for (var file in pathList) {
                         await sendText('$folder/$file');
                       }
-                      getProcessedContent(pathList, reqList);
+                      getProcessedContent(pathList, reqList, nameController.text);
                     }();
                     Navigator.pop(context);
                     _appProvider.setScreen(const DocumentsPage(), 2);

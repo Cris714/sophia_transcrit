@@ -4,11 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
-import 'app_provider.dart';
+import '../Managers/app_provider.dart';
 import 'get_audio_page.dart';
 import 'view_text_page.dart';
-import 'file_manager_s.dart';
+import '../Managers/file_manager_s.dart';
 import 'delete_popup.dart';
 
 class DocumentsPage extends StatefulWidget {
@@ -18,13 +19,14 @@ class DocumentsPage extends StatefulWidget {
   State<DocumentsPage> createState() => _DocumentsPage();
 }
 
-class _DocumentsPage extends State<DocumentsPage> {
+class _DocumentsPage extends State<DocumentsPage> with WidgetsBindingObserver {
   Future<void> computeFuture = Future.value();
   bool _showOptions = false;
   late AppProvider _appProvider;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -35,10 +37,26 @@ class _DocumentsPage extends State<DocumentsPage> {
         _appProvider.setShowCardDocs(false);
       }
       () async {
-        // await getDocument();
+        await getDocument();
         _appProvider.getDocuments();
       } ();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      () async {
+        await getDocument();
+        _appProvider.getDocuments();
+      } ();
+    }
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
@@ -114,7 +132,7 @@ class _DocumentsPage extends State<DocumentsPage> {
                                     builder: (BuildContext context) {
                                       return DeleteConfirmationDialog(
                                         onConfirm: () {
-                                          deleteFiles("documents",checkedItems.map((file) => file.text).toList()); //Elimina un archivo de la carpeta
+                                          deleteFiles("${FirebaseAuth.instance.currentUser!.uid}/documents",checkedItems.map((file) => file.text).toList()); //Elimina un archivo de la carpeta
                                           setState(() {
                                             _appProvider.fileDocs.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
                                             _showOptions = false;

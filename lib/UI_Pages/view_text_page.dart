@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'file_manager_s.dart';
+import '../Managers/file_manager_s.dart';
 
 class ViewText extends StatelessWidget {
   final String filename;

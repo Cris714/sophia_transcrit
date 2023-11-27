@@ -2,7 +2,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
-import 'package:sophia_transcrit2/requests_manager.dart';
+import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
 Future<String> selectExternalDirectory() async {
   try {

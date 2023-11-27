@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:sophia_transcrit2/login.dart';
-import 'package:sophia_transcrit2/register_page.dart';
+import 'package:sophia_transcrit2/Authentication/login.dart';
+import 'package:sophia_transcrit2/Authentication/register_page.dart';
 
 class LoginOrRegisterPage extends StatefulWidget {
   const LoginOrRegisterPage({super.key});

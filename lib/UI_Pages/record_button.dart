@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sophia_transcrit2/colors.dart';
+import 'package:sophia_transcrit2/Styles/colors.dart';
 import 'package:record/record.dart';
-import 'package:sophia_transcrit2/requests_manager.dart';
-import 'package:sophia_transcrit2/transcriptions_page.dart';
+import 'package:sophia_transcrit2/Managers/requests_manager.dart';
+import 'package:sophia_transcrit2/UI_Pages/transcriptions_page.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-import 'app_provider.dart';
-import 'file_manager_s.dart';
-import 'notification_service.dart';
+import '../Managers/app_provider.dart';
+import '../Managers/file_manager_s.dart';
+import '../Notification/notification_service.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({super.key});

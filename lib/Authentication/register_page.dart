@@ -1,10 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:sophia_transcrit2/requests_manager.dart';
-
-import 'app_provider.dart';
+import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -15,7 +12,6 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  late AppProvider appProvider;
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -242,7 +238,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    appProvider = Provider.of<AppProvider>(context, listen: true);
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,

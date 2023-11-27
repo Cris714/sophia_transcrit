@@ -1,12 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sophia_transcrit2/requests_manager.dart';
+import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
-import 'app_provider.dart';
+import '../Managers/app_provider.dart';
 import 'synthesis_page.dart';
 import 'view_text_page.dart';
-import 'file_manager_s.dart';
+import '../Managers/file_manager_s.dart';
 import 'delete_popup.dart';
 
 class TranscriptionsPage extends StatefulWidget {
@@ -16,7 +17,7 @@ class TranscriptionsPage extends StatefulWidget {
   State<TranscriptionsPage> createState() => _TranscriptionsPage();
 }
 
-class _TranscriptionsPage extends State<TranscriptionsPage> {
+class _TranscriptionsPage extends State<TranscriptionsPage> with WidgetsBindingObserver {
   bool _showOptions = false;
   late AppProvider _appProvider;
   final ScrollController _horizontal = ScrollController(),
@@ -24,6 +25,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _appProvider = Provider.of<AppProvider>(context, listen: false);
@@ -38,6 +40,22 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
         _appProvider.getTranscriptions();
       } ();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      () async {
+        await getTranscription();
+        _appProvider.getTranscriptions();
+      } ();
+    }
   }
 
   Future<void> updateFiles() async{
@@ -111,7 +129,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> {
                                   builder: (BuildContext context) {
                                     return DeleteConfirmationDialog(
                                       onConfirm: () {
-                                        deleteFiles("transcriptions",checkedItems.map((file) => file.text).toList());
+                                        deleteFiles("${FirebaseAuth.instance.currentUser!.uid}/transcriptions",checkedItems.map((file) => file.text).toList());
                                         setState(() {
                                           _appProvider.fileTrans.removeWhere((element) => element.checked); // Actualiza la lista eliminándolo de la misma
                                           _showOptions = false;

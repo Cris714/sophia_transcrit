@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:sophia_transcrit2/get_audio_page.dart';
+import 'package:sophia_transcrit2/UI_Pages/get_audio_page.dart';
 import 'file_manager_s.dart';
 
 Map<int, String> statusError = {

@@ -2,10 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:sophia_transcrit2/requests_manager.dart';
+import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
-import 'app_provider.dart';
 import 'google_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,7 +16,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
-  late AppProvider appProvider;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final emailResetController = TextEditingController();
@@ -42,9 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void signInWithGoogle() async {
     await GoogleServiceApi.signInWithGoogle();
     await updateTokenNotification();
-    if(_rememberMe) {
-      appProvider.setUser(FirebaseAuth.instance.currentUser);
-    }
   }
 
   void resetPassword() async {
@@ -77,9 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
         password: passwordController.text,
       );
       await updateTokenNotification();
-      if(_rememberMe) {
-        appProvider.setUser(FirebaseAuth.instance.currentUser);
-      }
     } on FirebaseAuthException catch(e) {
       if(e.code == 'user-not-found') {
         showError('No user found for that email');
@@ -292,8 +283,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    appProvider = Provider.of<AppProvider>(context, listen: true);
-
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,

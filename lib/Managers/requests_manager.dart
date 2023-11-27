@@ -2,14 +2,15 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 
 import 'file_manager_s.dart';
 
-const address = 'http://146.83.216.166/api2';
-//  const address = 'http://172.17.32.254:5006';
+// const address = 'http://146.83.216.166/api2';
+ const address = 'http://172.17.32.254:5006';
 
 Future<String> getUserTokenId() async {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -21,19 +22,42 @@ Future<String> getUserTokenId() async {
 Future getTranscription() async {
   String userId = await getUserTokenId();
 
+  var folder = await createFolderInAppDocDir("${FirebaseAuth.instance.currentUser!.uid}/transcriptions");
+  final filenames = await getFilesInFolder(folder);
+
+  for (var element in filenames) {debugPrint(element);}
+
+  final json = jsonEncode({'filenames': filenames});
+
   http.Response response = await http.get(
-      Uri.parse('$address/transcripts/$userId'));
+      Uri.parse('$address/transcripts/$userId?Except=$json'));
 
   Map<String, dynamic> data = jsonDecode(response.body);
+
+  debugPrint('AAA');
+  data.forEach((key, value) {debugPrint(key);});
 
   data.forEach((key, value) {writeDocument('${FirebaseAuth.instance.currentUser!.uid}/transcriptions', key, value);});
 }
 
-Future getProcessedContent(List<String> query, List<String> req) async {
+Future getDocument() async {
   String userId = await getUserTokenId();
 
+  http.Response response = await http.get(
+      Uri.parse('$address/documents/$userId'));
+
+  Map<String, dynamic> data = jsonDecode(response.body);
+
+  data.forEach((key, value) {writeDocument('${FirebaseAuth.instance.currentUser!.uid}/documents', key, value);});
+}
+
+Future getProcessedContent(List<String> query, List<String> req, String name) async {
+  String userId = await getUserTokenId();
+
+  final data = jsonEncode({'query': query, 'req': req, 'name': name});
+
   http.Response response = await http.put(
-      Uri.parse('$address/process/$userId?File=$query&Req=${req.join(",,,")}'));
+      Uri.parse('$address/process/$userId?Data=$data'));
 
   return response;
 }
