@@ -47,7 +47,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
       setState(() {
         canResendEmail = true;
       });
-    } catch (e) {;
+    } catch (e) {
       showError("Error sending email");
     }
   }

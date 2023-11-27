@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
-//hacer prueba crear cuenta google y luego por correo
-
 class GoogleServiceApi {
 
   static signInWithGoogle() async {
@@ -13,9 +11,9 @@ class GoogleServiceApi {
       clientId: '889827346403-gh0d7fio87dickr412uapn4qaunu8f3u.apps.googleusercontent.com',
     ).signIn();
 
-    String _googleUserEmail = gUser!.email;
+    String googleUserEmail = gUser!.email;
 
-    debugPrint(_googleUserEmail);
+    debugPrint(googleUserEmail);
 
     final GoogleSignInAuthentication gAuth = await gUser.authentication;
 

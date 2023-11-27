@@ -68,8 +68,9 @@ class _HomeState extends State<Home> {
       if (message.data['type'] == 'transcript') {
         await getTranscription();
         _appProvider.getTranscriptions();
-      } else if (message.data['type'] == 'documents') {
-        // _appProvider.getDocuments();
+      } else if (message.data['type'] == 'document') {
+        await getDocument();
+        _appProvider.getDocuments();
       }
     });
   }
@@ -92,9 +93,9 @@ class _HomeState extends State<Home> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
         color: sophiaprimary,
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         notchMargin: 10,
-        child: Container(
+        child: SizedBox(
           height: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -106,9 +107,9 @@ class _HomeState extends State<Home> {
                       minWidth: 40,
                       onPressed: () {
                       setState(() {
-                        currentScreen = TranscriptionsPage();
+                        currentScreen = const TranscriptionsPage();
                         currentTab = 0;
-                        appProvider.setScreen(TranscriptionsPage(), 0);
+                        appProvider.setScreen(const TranscriptionsPage(), 0);
                       });
                       },
                       child: Column(
@@ -131,9 +132,9 @@ class _HomeState extends State<Home> {
                       minWidth: 40,
                       onPressed: () {
                         setState(() {
-                          currentScreen = GetAudioPage();
+                          currentScreen = const GetAudioPage();
                           currentTab = 1;
-                          appProvider.setScreen(GetAudioPage(), 1);
+                          appProvider.setScreen(const GetAudioPage(), 1);
                         });
                       },
                       child: Column(
@@ -156,9 +157,9 @@ class _HomeState extends State<Home> {
                       minWidth: 40,
                       onPressed: () {
                         setState(() {
-                          currentScreen = DocumentsPage();
+                          currentScreen = const DocumentsPage();
                           currentTab = 2;
-                          appProvider.setScreen(DocumentsPage(), 2);
+                          appProvider.setScreen(const DocumentsPage(), 2);
                         });
                       },
                       child: Column(

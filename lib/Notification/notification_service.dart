@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 import 'dart:ui';
@@ -27,7 +28,7 @@ class NotificationService {
 
   void onDidReceiveLocalNotification(int id, String? title, String? body,
       String? payload) {
-    print('id $id');
+    debugPrint('id $id');
   }
 
   void selectNotification(String? payload) {
@@ -85,5 +86,5 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  print("Handling a background message: ${message.messageId}");
+  debugPrint("Handling a background message: ${message.messageId}");
 }

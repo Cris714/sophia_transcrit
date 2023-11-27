@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -29,7 +28,6 @@ class _RecordButtonState extends State<RecordButton> {
   Timer? timer;
 
   late final NotificationService notificationService;
-  final ReceivePort _port = ReceivePort();
   var isRecording = false;
   var isSaving = false;
   var pause = false;
@@ -130,7 +128,7 @@ class _RecordButtonState extends State<RecordButton> {
         });
       }
     } catch(e){
-      print("Error starting record: $e");
+      debugPrint("Error starting record: $e");
     }
   }
 
@@ -142,7 +140,7 @@ class _RecordButtonState extends State<RecordButton> {
         pause = true;
       });
     } catch(e) {
-      print("Error pausing record: $e");
+      debugPrint("Error pausing record: $e");
     }
   }
 
@@ -154,7 +152,7 @@ class _RecordButtonState extends State<RecordButton> {
         pause = false;
       });
     } catch(e) {
-      print("Error resuming record: $e");
+      debugPrint("Error resuming record: $e");
     }
   }
 
@@ -174,7 +172,7 @@ class _RecordButtonState extends State<RecordButton> {
         time = 0;
       });
     } catch(e) {
-      print("Error stopping record: $e");
+      debugPrint("Error stopping record: $e");
     }
   }
 
