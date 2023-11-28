@@ -9,8 +9,8 @@ import 'dart:io';
 
 import 'file_manager_s.dart';
 
-// const address = 'http://146.83.216.166/api2';
- const address = 'http://172.17.32.254:5006';
+const address = 'http://146.83.216.166/api2';
+// const address = 'http://172.17.32.254:5006';
 
 Future<String> getUserTokenId() async {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -43,8 +43,13 @@ Future getTranscription() async {
 Future getDocument() async {
   String userId = await getUserTokenId();
 
+  var folder = await createFolderInAppDocDir("${FirebaseAuth.instance.currentUser!.uid}/documents");
+  final filenames = await getFilesInFolder(folder);
+
+  final json = jsonEncode({'filenames': filenames});
+
   http.Response response = await http.get(
-      Uri.parse('$address/documents/$userId'));
+      Uri.parse('$address/documents/$userId?Except=$json'));
 
   Map<String, dynamic> data = jsonDecode(response.body);
 

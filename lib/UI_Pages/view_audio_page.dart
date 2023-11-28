@@ -7,7 +7,6 @@ import 'dart:isolate';
 
 import '../Managers/app_provider.dart';
 import '../Managers/requests_manager.dart';
-import '../Notification/notification_service.dart';
 
 class Recording {
   final PlatformFile file;
@@ -27,7 +26,6 @@ class ViewAudio extends StatefulWidget {
 
 class _ViewAudio extends State<ViewAudio> {
   late List<Recording> record;
-  late final NotificationService notificationService;
   final ReceivePort _port = ReceivePort();
   late AppProvider _appProvider;
   int countError = 0;
@@ -36,9 +34,6 @@ class _ViewAudio extends State<ViewAudio> {
 
   @override
   void initState() {
-    notificationService = NotificationService();
-    listenToNotificationStream();
-    notificationService.initializePlatformNotifications();
     record = widget.record;
 
     super.initState();
@@ -80,11 +75,6 @@ class _ViewAudio extends State<ViewAudio> {
       });
     }
   }
-
-  void listenToNotificationStream() =>
-      notificationService.behaviorSubject.listen((payload) {
-        _appProvider.setScreen(const TranscriptionsPage(), 0);
-      });
 
   @override
   Widget build(BuildContext context) {

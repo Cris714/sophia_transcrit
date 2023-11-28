@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Managers/app_provider.dart';
 import '../Managers/requests_manager.dart';
-import '../Notification/notification_service.dart';
 
 class SynthesisPage extends StatefulWidget {
   final String folder;
@@ -22,8 +21,6 @@ class _SynthesisPage extends State<SynthesisPage> {
   late List<String> pathList;
   late int counter;
   late AppProvider _appProvider;
-  late final NotificationService notificationService;
-  //final ReceivePort _port = ReceivePort();
   late TextEditingController myController;
   late TextEditingController nameController;
   late TextEditingController modifyController;
@@ -38,9 +35,6 @@ class _SynthesisPage extends State<SynthesisPage> {
   @override
   void initState() {
     getSharedPref();
-    notificationService = NotificationService();
-    listenToNotificationStream();
-    notificationService.initializePlatformNotifications();
 
     super.initState();
     folder = widget
@@ -53,11 +47,6 @@ class _SynthesisPage extends State<SynthesisPage> {
 
     reqList = ['Dame las palabras clave del texto','Dame el resumen del texto.'];
   }
-
-  void listenToNotificationStream() =>
-      notificationService.behaviorSubject.listen((payload) {
-        _appProvider.setScreen(const DocumentsPage(), 2);
-      });
 
   void getSharedPref() async {
     final prefs = await SharedPreferences.getInstance();

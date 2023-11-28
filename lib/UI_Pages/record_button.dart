@@ -11,9 +11,9 @@ import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 import 'package:sophia_transcrit2/UI_Pages/transcriptions_page.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+import '../Notification/notification_service.dart';
 import '../Managers/app_provider.dart';
 import '../Managers/file_manager_s.dart';
-import '../Notification/notification_service.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({super.key});
@@ -28,8 +28,6 @@ class _RecordButtonState extends State<RecordButton> {
   int time = 0;
   Timer? timer;
 
-  late final NotificationService notificationService;
-  final ReceivePort _port = ReceivePort();
   var isRecording = false;
   var isSaving = false;
   var pause = false;
@@ -70,15 +68,7 @@ class _RecordButtonState extends State<RecordButton> {
   void initState() {
     super.initState();
     getSharedPref();
-    notificationService = NotificationService();
-    listenToNotificationStream();
-    notificationService.initializePlatformNotifications();
   }
-
-  void listenToNotificationStream() =>
-      notificationService.behaviorSubject.listen((payload) {
-        _appProvider.setScreen(const TranscriptionsPage(), 0);
-      });
 
   @override
   void dispose(){
@@ -118,6 +108,10 @@ class _RecordButtonState extends State<RecordButton> {
     timer?.cancel();
   }
 
+  static Future<void> xd(a){
+    print('aaa');
+    return Future.value();
+}
   void startRecording() async {
     try {
       if (await record.hasPermission()) {
@@ -128,6 +122,8 @@ class _RecordButtonState extends State<RecordButton> {
         setState(() {
           isRecording = true;
         });
+        NotificationController.startListeningNotificationEvents(xd);
+        NotificationController.createNewNotification();
       }
     } catch(e){
       print("Error starting record: $e");
