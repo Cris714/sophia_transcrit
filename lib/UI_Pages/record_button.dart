@@ -278,7 +278,7 @@ class _RecordButtonState extends State<RecordButton> {
                     if(status.isGranted && dirPath != "" && nameController.text != ""){
                       await saveAudioFile(dirPath, nameController.text, audioPath);
                       _incrementCounter();
-                      await sendAudio("$dirPath/${nameController.text}");
+                      sendAudio("$dirPath/${nameController.text}.m4a");
                       _appProvider.setShowCardTrans(true);
                       _appProvider.setScreen(const TranscriptionsPage(), 0);
                       setState(() {
