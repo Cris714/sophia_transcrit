@@ -7,7 +7,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
 import '../Managers/app_provider.dart';
-import 'get_audio_page.dart';
 import 'view_text_page.dart';
 import '../Managers/file_manager_s.dart';
 import 'delete_popup.dart';
@@ -75,8 +74,9 @@ class _DocumentsPage extends State<DocumentsPage> with WidgetsBindingObserver {
     FirebaseAuth.instance.signOut();
   }
 
-  void updateScreen() {
-    _appProvider.setScreen(const GetAudioPage(),1);
+  Future<void> updateFiles() async{
+    await getTranscription();
+    _appProvider.getTranscriptions();
   }
 
   @override
@@ -167,7 +167,7 @@ class _DocumentsPage extends State<DocumentsPage> with WidgetsBindingObserver {
           // Lista de archivos transcritos
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _appProvider.getDocuments,
+              onRefresh: updateFiles,
               child: ListView.separated(
                 itemCount: _appProvider.fileDocs.length,
                 separatorBuilder: (context, index) => const Divider(),

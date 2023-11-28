@@ -166,6 +166,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                         await sendText('$folder/$file');
                       }
                       getProcessedContent(pathList, reqList, nameController.text);
+                      _incrementCounter();
                     }();
                     Navigator.pop(context);
                     _appProvider.setScreen(const DocumentsPage(), 2);

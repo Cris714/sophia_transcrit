@@ -3,7 +3,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sophia_transcrit2/UI_Pages/transcriptions_page.dart';
-import 'dart:isolate';
 
 import '../Managers/app_provider.dart';
 import '../Managers/requests_manager.dart';
@@ -26,7 +25,6 @@ class ViewAudio extends StatefulWidget {
 
 class _ViewAudio extends State<ViewAudio> {
   late List<Recording> record;
-  final ReceivePort _port = ReceivePort();
   late AppProvider _appProvider;
   int countError = 0;
   final audioPlayer = AudioPlayer();
@@ -50,7 +48,7 @@ class _ViewAudio extends State<ViewAudio> {
       Source urlSource = UrlSource(audioPath);
       await audioPlayer.play(urlSource);
     } catch(e) {
-      print("Error playing record: $e");
+      debugPrint("Error playing record: $e");
     }
   }
 
@@ -58,7 +56,7 @@ class _ViewAudio extends State<ViewAudio> {
     try {
       await audioPlayer.stop();
     } catch(e) {
-      print("Error stopping record: $e");
+      debugPrint("Error stopping record: $e");
     }
   }
 

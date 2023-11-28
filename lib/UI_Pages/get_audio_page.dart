@@ -20,6 +20,7 @@ class _GetAudioPage extends State<GetAudioPage> {
 
   void signUserOut() async {
     try {
+      appProvider.clearTextData();
       await FirebaseAuth.instance.signOut();
       await GoogleServiceApi.logout();
     } catch(e) {

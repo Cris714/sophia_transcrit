@@ -30,15 +30,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void signUserUp() async {
-    // showDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return const Center(
-    //         child: CircularProgressIndicator(),
-    //       );
-    //     }
-    // );
-
     try {
       if(nameController.text.isNotEmpty) {
         if(passwordController.text == confirmPasswordController.text) {

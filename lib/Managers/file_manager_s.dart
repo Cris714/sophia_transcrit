@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -17,7 +18,7 @@ Future<String> selectExternalDirectory() async {
       return "";
     }
   } catch (e) {
-    print('Error selecting external directory: $e');
+    debugPrint('Error selecting external directory: $e');
     return "";
   }
 }
@@ -28,12 +29,12 @@ Future<void> saveAudioFile(externalDir, String filename, String audioPath) async
     File destinationFile = File(path.join(externalDir, "$filename.m4a"));
     try {
       await sourceFile.copy(destinationFile.path);
-      print('Archivo de audio copiado con éxito.');
+      debugPrint('Archivo de audio copiado con éxito.');
     } catch (e) {
-      print('Error al copiar el archivo de audio: $e');
+      debugPrint('Error al copiar el archivo de audio: $e');
     }
   } else {
-    print('El archivo de audio de origen no existe.');
+    debugPrint('El archivo de audio de origen no existe.');
   }
 }
 
@@ -141,7 +142,7 @@ Future<List<String>> getFilesInFolder(String folderPath) async {
 
     return filenames;
   } catch (e) {
-    print("Error al leer archivos: $e");
+    debugPrint("Error al leer archivos: $e");
     return [];
   }
 }

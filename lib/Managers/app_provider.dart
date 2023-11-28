@@ -116,6 +116,12 @@ class AppProvider extends ChangeNotifier { // create a common file for data
     notifyListeners();
   }
 
+  void clearTextData() {
+    _fileTrans.clear();
+    _fileDocs.clear();
+    notifyListeners();
+  }
+
   void setTranscriptions(newFileObj) {
     _fileTrans = newFileObj;
     notifyListeners();
