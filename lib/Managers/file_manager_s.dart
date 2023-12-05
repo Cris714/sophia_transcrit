@@ -90,7 +90,7 @@ Future<String> readDocument(String folder, String filename) async {
 
 Future<int> deleteFiles(String folder, List<String> filenames) async {
   try {
-    if(folder == "transcriptions") {
+    if(folder.split('/').last == "transcriptions") {
       deleteFilesSV(filenames,"transcript");
     } else {
       deleteFilesSV(filenames,"document");
@@ -105,24 +105,6 @@ Future<int> deleteFiles(String folder, List<String> filenames) async {
     return 0;
   }
 }
-
-// Future<List<String>> getFilesInFolder(String folderPath) async {
-//   try {
-//     final files = Directory(folderPath).listSync();
-//
-//     final filenames = files
-//         .whereType<File>() // Filtra solo los elementos que son archivos
-//         .where((file) => file.uri.path.endsWith('.txt')) // Filtra por extensión .txt
-//         .map((file) => file.uri.pathSegments.last) // Extrae los nombres de archivo
-//         .toList();
-//
-//     return filenames;
-//
-//   } catch (e) {
-//     print("Error al leer archivos: $e");
-//     return [];
-//   }
-// }
 
 Future<List<String>> getFilesInFolder(String folderPath) async {
   try {

@@ -63,3 +63,5 @@ class SophiaTranscritMain extends StatelessWidget {
     );
   }
 }
+
+// Colocar circulito en la lista de transcripciones

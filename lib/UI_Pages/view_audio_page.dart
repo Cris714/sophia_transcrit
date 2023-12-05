@@ -38,7 +38,7 @@ class _ViewAudio extends State<ViewAudio> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     audioPlayer.dispose();
     super.dispose();
   }
@@ -47,7 +47,7 @@ class _ViewAudio extends State<ViewAudio> {
     try {
       Source urlSource = UrlSource(audioPath);
       await audioPlayer.play(urlSource);
-    } catch(e) {
+    } catch (e) {
       debugPrint("Error playing record: $e");
     }
   }
@@ -55,7 +55,7 @@ class _ViewAudio extends State<ViewAudio> {
   Future<void> stopRecording() async {
     try {
       await audioPlayer.stop();
-    } catch(e) {
+    } catch (e) {
       debugPrint("Error stopping record: $e");
     }
   }
@@ -111,7 +111,10 @@ class _ViewAudio extends State<ViewAudio> {
               margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
 
               child: SizedBox(
-                height: MediaQuery.of(context).size.height - 200,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height - 200,
                 child: ListView.separated(
                   itemCount: record.length,
                   separatorBuilder: (context, index) => const Divider(),
@@ -120,11 +123,13 @@ class _ViewAudio extends State<ViewAudio> {
                       title: Text(record[index].file.name),
                       subtitle: Text(record[index].file.extension ?? ""),
                       leading: IconButton(
-                            onPressed: () {
-                              togglePlay(index);
-                            },
-                            icon: playIndex != index ? const Icon(Icons.play_arrow, size: 35) : const Icon(Icons.pause, size: 35)
-                        ),
+                          onPressed: () {
+                            togglePlay(index);
+                          },
+                          icon: playIndex != index ? const Icon(Icons
+                              .play_arrow, size: 35) : const Icon(Icons.pause,
+                              size: 35)
+                      ),
                       trailing: Text(record[index].size),
                     );
                   },
@@ -135,10 +140,11 @@ class _ViewAudio extends State<ViewAudio> {
               style: ElevatedButton.styleFrom(elevation: 8.0),
               onPressed: () {
                 () async {
-                  for (var rec in record){
+                  for (var rec in record) {
                     await sendAudio(rec.path);
                   }
-                }();
+                }
+                ();
                 Navigator.pop(context);
                 _appProvider.setScreen(const TranscriptionsPage(), 0);
                 _appProvider.setShowCardTrans(true);
@@ -150,75 +156,4 @@ class _ViewAudio extends State<ViewAudio> {
       ),
     );
   }
-
-  /*void _startBackgroundTask() async {
-    await Isolate.spawn(_backgroundTask, [_port.sendPort, record]);
-    _port.listen((message) {
-      var msg;
-      if(message[3] == 200){
-        msg = "${message[0]}/${record.length} done.";
-        writeDocument('transcriptions',message[1], message[2]);
-      } else {
-        countError = countError + 1;
-        _appProvider.addError(ErrorItem("${message[1]}.txt", message[3]));
-        if(countError == 1) {
-          msg = "${message[0]}/${record.length} done. $countError error found.";
-        } else {
-          msg = "${message[0]}/${record.length} done. $countError errors found.";
-        }
-      }
-      // Handle background task completion
-      if (message[0] != record.length) {
-        notificationService.showLocalNotification(
-            id: 0,
-            title: "Transcribing files...",
-            body: msg,
-            payload: ""
-        );
-      }
-      else{
-        notificationService.showLocalNotification(
-            id: 0,
-            title: "Your transcriptions are ready!",
-            body: msg,
-            payload: ""
-        );
-        if(countError != 0){
-          _appProvider.setShowErrors(true);
-        }
-        countError = 0;
-      }
-      _appProvider.getTranscriptions();
-    });
-    notificationService.showLocalNotification(
-        id: 0,
-        title: "Transcribing files...",
-        body: "0/${record.length} done.",
-        payload: ""
-    );
-  }
-
-  static void _backgroundTask(List<dynamic> args) {
-    var i = 1;
-    SendPort sendPort = args[0];
-    List<Recording> record = args[1];
-    () async {
-      for (var rec in record){
-        String filename = rec.path.split('/').last.split('.').first;
-        String file = rec.path.split('/').last;
-        try {
-          await sendAudio(rec.path);
-          var response = await getTranscription(file);
-          var content = response.body;
-          // Send result back to the main UI isolate
-          sendPort.send([i++, filename, content, response.statusCode]);
-          // sendPort.send([i++, filename, 'error', 0]);
-        }
-        catch (e) {
-          sendPort.send([i++, filename, 'error', 0]);
-        }
-      }
-    }();
-  }*/
 }
-

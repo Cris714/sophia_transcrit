@@ -37,7 +37,7 @@ class _TranscriptionsPage extends State<TranscriptionsPage> with WidgetsBindingO
 
       () async {
         await getTranscription();
-        _appProvider.getTranscriptions();
+        await _appProvider.getTranscriptions();
       } ();
     });
   }
