@@ -11,10 +11,10 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required this.onTap});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final emailResetController = TextEditingController();

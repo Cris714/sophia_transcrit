@@ -69,7 +69,7 @@ class NotificationController {
     if (receivedAction.actionType == ActionType.KeepOnTop ||
         receivedAction.actionType == ActionType.SilentBackgroundAction) {
       // For background actions, you must hold the execution until the end
-      print(
+      debugPrint(
           'Message sent via notification input: "${receivedAction
               .buttonKeyInput}"');
     } else {
@@ -77,13 +77,13 @@ class NotificationController {
       // to a new page or use a valid context, since parallel isolates do not
       // have valid context, so you need redirect the execution to main isolate
       if (receivePort == null) {
-        print(
+        debugPrint(
             'onActionReceivedMethod was called inside a parallel dart isolate.');
         SendPort? sendPort =
         IsolateNameServer.lookupPortByName('notification_action_port');
 
         if (sendPort != null) {
-          print('Redirecting the execution to main isolate process.');
+          debugPrint('Redirecting the execution to main isolate process.');
           sendPort.send(receivedAction);
           return;
         }
@@ -149,5 +149,5 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  print("Handling a background message: ${message.messageId}");
+  debugPrint("Handling a background message: ${message.messageId}");
 }

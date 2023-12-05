@@ -35,9 +35,9 @@ class AppProvider extends ChangeNotifier { // create a common file for data
   List<ListItem> _fileDocs = [];
   String _folderDocs = "";
   bool _showCardDocs = false;
-  List<ErrorItem> _errors = [];
+  final List<ErrorItem> _errors = [];
   bool _showDocsErrors = false;
-  List<ErrorItem> _docsErrors = [];
+  final List<ErrorItem> _docsErrors = [];
   User? _user;
 
   Widget get currentScreen => _currentScreen;

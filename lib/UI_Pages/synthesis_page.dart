@@ -143,6 +143,7 @@ class _SynthesisPage extends State<SynthesisPage> {
               ),
               const SizedBox(height: 10),
               Container(
+                alignment: Alignment.bottomRight,
                 child: FloatingActionButton.extended(
                   onPressed: () async {
                     final req = await openDialog();
@@ -151,9 +152,7 @@ class _SynthesisPage extends State<SynthesisPage> {
                   },
                   label: const Text('New request'),
                   icon: const Icon(Icons.add),
-
                 ),
-                alignment: Alignment.bottomRight,
               ),
               const SizedBox(height: 30),
               TextField(

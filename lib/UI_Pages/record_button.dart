@@ -110,7 +110,7 @@ class _RecordButtonState extends State<RecordButton> {
 
   static Future<void> xd(a) async {
     await staticRecord.pause();
-    print('aaa');
+    debugPrint('aaa');
     return Future.value();
   }
 
