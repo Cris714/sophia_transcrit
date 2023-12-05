@@ -130,3 +130,25 @@ const MaterialColor sophiasecondaryredAccent = MaterialColor(_sophiasecondaryred
 });
 const int _sophiasecondaryredAccentValue = 0xFFFFFFFF;
 
+const MaterialColor yellow = MaterialColor(_yellowPrimaryValue, <int, Color>{
+  50: Color(0xFFFFF8E0),
+  100: Color(0xFFFFEEB3),
+  200: Color(0xFFFFE280),
+  300: Color(0xFFFFD64D),
+  400: Color(0xFFFFCE26),
+  500: Color(_yellowPrimaryValue),
+  600: Color(0xFFFFBF00),
+  700: Color(0xFFFFB800),
+  800: Color(0xFFFFB000),
+  900: Color(0xFFFFA300),
+});
+const int _yellowPrimaryValue = 0xFFFFC500;
+
+const MaterialColor yellowAccent = MaterialColor(_yellowAccentValue, <int, Color>{
+  100: Color(0xFFFFFFFF),
+  200: Color(_yellowAccentValue),
+  400: Color(0xFFFFE5BF),
+  700: Color(0xFFFFDBA6),
+});
+const int _yellowAccentValue = 0xFFFFFAF2;
+

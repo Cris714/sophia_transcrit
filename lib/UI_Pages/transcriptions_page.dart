@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sophia_transcrit2/Styles/colors.dart';
+import 'package:sophia_transcrit2/Authentication/login.dart';
 import 'package:sophia_transcrit2/Managers/requests_manager.dart';
 
 import '../Managers/app_provider.dart';
@@ -76,6 +78,19 @@ class _TranscriptionsPage extends State<TranscriptionsPage> with WidgetsBindingO
   }
 
   @override
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showMessage(String text) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text),
+          backgroundColor: yellow,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 60),
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        )
+    );
+  }
+
   Widget build(BuildContext context) {
     _appProvider = Provider.of<AppProvider>(context, listen: true);
 
@@ -260,6 +275,11 @@ class _TranscriptionsPage extends State<TranscriptionsPage> with WidgetsBindingO
 
           _showOptions ?
           ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
               onPressed: () {
                 Iterable<ListItem> checkedItem =
                 _appProvider.fileTrans.where((item) => item.checked);
@@ -278,9 +298,17 @@ class _TranscriptionsPage extends State<TranscriptionsPage> with WidgetsBindingO
                 }
                 },
               child: const Text('Process files')
-          ) : const ElevatedButton(
-              onPressed: null,
-              child: Text('Check Files to Process')),
+          ) : ElevatedButton(
+              onPressed: () {
+                showMessage('Check file to process');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[400],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text('Process files')),
         ],
       ),
     );
