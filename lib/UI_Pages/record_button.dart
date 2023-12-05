@@ -35,6 +35,7 @@ class _RecordButtonState extends State<RecordButton> {
   late TextEditingController nameController;
   late AppProvider _appProvider;
   final record = AudioRecorder();
+  static dynamic staticRecord;
   final audioPlayer = AudioPlayer();
   String audioPath = "";
   int countError = 0;
@@ -107,10 +108,12 @@ class _RecordButtonState extends State<RecordButton> {
     timer?.cancel();
   }
 
-  static Future<void> xd(a){
+  static Future<void> xd(a) async {
+    await staticRecord.pause();
     print('aaa');
     return Future.value();
-}
+  }
+
   void startRecording() async {
     try {
       if (await record.hasPermission()) {
@@ -121,6 +124,7 @@ class _RecordButtonState extends State<RecordButton> {
         setState(() {
           isRecording = true;
         });
+        staticRecord = record;
         NotificationController.startListeningNotificationEvents(xd);
         NotificationController.createNewNotification();
       }
@@ -156,6 +160,7 @@ class _RecordButtonState extends State<RecordButton> {
   void stopRecording() async {
     try {
       final path = await record.stop();
+      await NotificationController.dismissRecordingNotification();
       stopTime();
       if(dirPath == "") {
         setDirPath();

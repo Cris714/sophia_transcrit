@@ -72,7 +72,6 @@ class NotificationController {
       print(
           'Message sent via notification input: "${receivedAction
               .buttonKeyInput}"');
-      await executeLongTaskInBackground();
     } else {
       // this process is only necessary when you need to redirect the user
       // to a new page or use a valid context, since parallel isolates do not
@@ -100,15 +99,6 @@ class NotificationController {
   }
 
   ///  *********************************************
-  ///     BACKGROUND TASKS TEST
-  ///  *********************************************
-  static Future<void> executeLongTaskInBackground() async {
-    print("starting long task");
-
-    print("long task done");
-  }
-
-  ///  *********************************************
   ///     NOTIFICATION CREATION METHODS
   ///  *********************************************
   ///
@@ -121,14 +111,14 @@ class NotificationController {
         id: 1,
         // -1 is replaced by a random number
         channelKey: 'alerts',
-        title: 'Recording...',
-        body: '00:00:01',
+        title: 'Recording audio...',
+        body: 'Tap to manage',
         locked: true,
         autoDismissible: false,
         displayOnBackground: true,
         displayOnForeground: true
       ),
-      actionButtons: [
+      /*actionButtons: [
         NotificationActionButton(
           key: 'PAUSE',
           label: 'Pause',
@@ -142,8 +132,12 @@ class NotificationController {
           isDangerousOption: true,
           showInCompactView: true
         ),
-      ]
+      ]*/
     );
+  }
+
+  static dismissRecordingNotification() async {
+    AwesomeNotifications().dismiss(1);
   }
 }
 

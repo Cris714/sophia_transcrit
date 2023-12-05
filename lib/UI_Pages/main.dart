@@ -2,13 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'Authentication/auth_page.dart';
+import '../Authentication/auth_page.dart';
 
 import 'package:sophia_transcrit2/Styles/colors.dart';
 
-import 'Managers/app_provider.dart';
-import 'Authentication/firebase_options.dart';
-import 'Notification/notification_service.dart';
+import '../Managers/app_provider.dart';
+import '../Authentication/firebase_options.dart';
+import '../Notification/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
