@@ -8,7 +8,7 @@ class GoogleServiceApi {
   static signInWithGoogle() async {
 
     final GoogleSignInAccount? gUser = await GoogleSignIn(
-      clientId: '889827346403-gh0d7fio87dickr412uapn4qaunu8f3u.apps.googleusercontent.com',
+      clientId: '889827346403-6bugg1c0qak8pop1ur1v78121o8oss6p.apps.googleusercontent.com',
     ).signIn();
 
     String googleUserEmail = gUser!.email;
